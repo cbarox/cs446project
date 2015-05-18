@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="building_names">
+        <item>Accelerator Centre</item>
+        <item>Arts Lecture Hall</item>
+        <item>Biology 1</item>
+        <item>Biology 2</item>
+        <item>Bauer Warehouse</item>
+        <item>B.C. Matthews Hall</item>
+        <item>Brubacher House</item>
+        <item>Chemistry 2</item>
+        <item>Conrad Grebel University College</item>
+        <item>Columbia Icefield </item>
+        <item>Columbia Lake Village North</item>
+        <item>Columbia Lake Village</item>
+        <item>Columbia Greenhouses</item>
+        <item>Commissary (UW Police &amp; Parking)</item>
+        <item>Carl A. Pollock Hall</item>
+        <item>Central Services Building</item>
+        <item>William G. Davis Computer Research Centre</item>
+        <item>Douglas Wright Engineering Building</item>
+        <item>Engineering 2</item>
+        <item>Engineering 3</item>
+        <item>Engineering 5</item>
+        <item>Engineering 6</item>
+        <item>East Campus 1</item>
+        <item>East Campus 2</item>
+        <item>East Campus 3</item>
+        <item>East Campus Hall</item>
+        <item>Centre for Environmental and Information Technology</item>
+        <item>Energy Research Centre</item>
+        <item>Environment 1 </item>
+        <item>Environment 2</item>
+        <item>Environment 3</item>
+        <item>Earth Sciences &amp; Chemistry</item>
+        <item>Federation Hall</item>
+        <item>Graduate House</item>
+        <item>General Services Complex</item>
+        <item>J.G. Hagey Hall of the Humanities</item>
+        <item>Hildegard Marsden Nursery</item>
+        <item>Health Services</item>
+        <item>Klemmer Day Care</item>
+        <item>Lyle S. Hallman Institute for Health Promotion</item>
+        <item>Dana Porter Library</item>
+        <item>Mathematics 3</item>
+        <item>Mathematics &amp; Computer Building </item>
+        <item>Minota Hagey Residence</item>
+        <item>William Lyon Mackenzie King Village</item>
+        <item>Modern Languages</item>
+        <item>Ira G. Needles Hall</item>
+        <item>Optometry Building</item>
+        <item>Physical Activities Complex</item>
+        <item>Psychology, Anthropology, Sociology</item>
+        <item>Physics</item>
+        <item>Mike &amp; Ophelia Lazaridis Quantum-Nano Centre</item>
+        <item>Research Advancement Centre 2</item>
+        <item>Research Advancement Centre</item>
+        <item>J.R. Coutts Engineering Lecture Hall</item>
+        <item>Renison University College</item>
+        <item>Ron Eydt Village</item>
+        <item>South Campus Hall</item>
+        <item>Student Life Centre</item>
+        <item>St. Jerome\'s University</item>
+        <item>St. Paul\'s University College</item>
+        <item>William M. Tatham Centre for Co-operative Education &amp; Career Action</item>
+        <item>Tutors\' Houses</item>
+        <item>University Club</item>
+        <item>University of Waterloo Place </item>
+        <item>Student Village 1</item>
+    </string-array>
+</resources>

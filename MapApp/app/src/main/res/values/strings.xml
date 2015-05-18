@@ -2,6 +2,13 @@
     <string name="app_name">Map App</string>
 
     <string name="hello_world">Hello world!</string>
+
+    <!--MENU ACTIONS-->
     <string name="action_settings">Settings</string>
-    <string name="title_activity_building">BuildingActivity</string>
+
+    <!--ERRORS-->
+    <string name="error_get_building_code">Error Getting Building Code</string>
+
+    <!--ACTIVITY TITLES-->
+    <string name="title_activity_building">Building Activity</string>
 </resources>

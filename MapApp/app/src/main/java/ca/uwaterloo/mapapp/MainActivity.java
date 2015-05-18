@@ -14,21 +14,18 @@ import android.widget.ListView;
 public class MainActivity extends AppCompatActivity {
 
     private ListView buildingsListView;
-    private String[] buildingsStringArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        buildingsStringArray = getResources().getStringArray(R.array.building_codes);
-
         buildingsListView = (ListView) findViewById(R.id.buildingsListView);
         buildingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent buildingActivityIntent = new Intent(getApplicationContext(), BuildingActivity.class);
-                buildingActivityIntent.putExtra(BuildingActivity.EXTRA_BUILDING, buildingsStringArray[position]);
+                buildingActivityIntent.putExtra(BuildingActivity.EXTRA_BUILDING_ID, position);
                 startActivity(buildingActivityIntent);
             }
         });

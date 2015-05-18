@@ -8,5 +8,5 @@
         android:id="@+id/buildingsListView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:entries="@array/building_codes" />
+        android:entries="@array/building_names" />
 </RelativeLayout>

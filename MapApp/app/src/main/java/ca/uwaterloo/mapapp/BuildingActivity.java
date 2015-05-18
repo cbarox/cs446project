@@ -10,9 +10,10 @@ import android.widget.TextView;
 @SuppressWarnings("FieldCanBeLocal")
 public class BuildingActivity extends AppCompatActivity {
 
-    public static final String EXTRA_BUILDING = "building";
+    public static final String EXTRA_BUILDING_ID = "EXTRA_BUILDING_ID";
 
     private TextView nameTextView;
+    private String buildingCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,18 +21,22 @@ public class BuildingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_building);
 
 
-        // Get building name from intent extras
+        // Get info from intent extras
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        String buildingName = "Error Getting Building Name";
+        int buildingId = -1;
         if (extras != null) {
-            buildingName = extras.getString(EXTRA_BUILDING);
+            if (extras.keySet().contains(EXTRA_BUILDING_ID)) {
+                buildingId = extras.getInt(EXTRA_BUILDING_ID);
+            }
         }
 
-        setTitle(buildingName);
+        buildingCode = getResources().getStringArray(R.array.building_codes)[buildingId];
+
+        setTitle(buildingCode);
 
         nameTextView = (TextView) findViewById(R.id.nameTextView);
-        nameTextView.setText(buildingName + " Notes");
+        nameTextView.setText(String.format("%s Notes", buildingCode));
     }
 
     @Override
