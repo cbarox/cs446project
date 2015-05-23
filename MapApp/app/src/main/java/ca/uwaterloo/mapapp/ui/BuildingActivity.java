@@ -1,4 +1,4 @@
-package ca.uwaterloo.mapapp;
+package ca.uwaterloo.mapapp.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,19 +7,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import ca.uwaterloo.mapapp.R;
+
 @SuppressWarnings("FieldCanBeLocal")
 public class BuildingActivity extends AppCompatActivity {
 
     public static final String EXTRA_BUILDING_ID = "EXTRA_BUILDING_ID";
 
-    private TextView nameTextView;
+    @InjectView(R.id.nameTextView)
+    protected TextView nameTextView;
+
     private String buildingCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
-
+        ButterKnife.inject(this);
 
         // Get info from intent extras
         Intent intent = getIntent();
