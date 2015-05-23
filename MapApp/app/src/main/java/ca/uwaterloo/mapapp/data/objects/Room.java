@@ -6,6 +6,10 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * Created by cjbarrac
  * 23/05/15
+ * <p/>
+ * This class is a Java Bean that acts as a database object.
+ * Each field represents a column in the table and the class represents a table in the database,
+ * where each row is an instance of this class.
  */
 @DatabaseTable(tableName = Room.TABLE)
 public class Room {

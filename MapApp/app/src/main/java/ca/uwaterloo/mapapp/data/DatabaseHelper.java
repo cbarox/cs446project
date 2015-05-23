@@ -10,10 +10,15 @@ import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 
 import ca.uwaterloo.mapapp.data.objects.Building;
+import ca.uwaterloo.mapapp.data.objects.Event;
+import ca.uwaterloo.mapapp.data.objects.Room;
 
 /**
  * Created by cjbarrac
  * 23/05/15
+ * <p/>
+ * This class basically controls all the accesses to the database, and handles the creation and
+ * upgrading of the database.
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
@@ -28,6 +33,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
             TableUtils.createTable(connectionSource, Building.class);
+            TableUtils.createTable(connectionSource, Room.class);
+            TableUtils.createTable(connectionSource, Event.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -35,6 +42,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
-
+        // This doesn't do anything because there is no older versions
     }
 }
