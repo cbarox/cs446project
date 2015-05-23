@@ -20,9 +20,21 @@ android {
 }
 
 dependencies {
+    // We don't have any jars but they would go into the libs folder if we did
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // This is for making sure all devices
     compile 'com.android.support:appcompat-v7:22.1.1'
+
+    // This is for the database
     compile 'com.j256.ormlite:ormlite-android:4.48'
+
+    // This is for the google maps style sliding panel
     compile 'com.sothree.slidinguppanel:library:3.0.0'
+
+    // This is for view injections and event injections
     compile 'com.jakewharton:butterknife:6.1.0'
+
+    // This is for converting json to Java objects and vice versa
+    compile 'com.google.code.gson:gson:2.3.1'
 }
