@@ -1,0 +1,70 @@
+import urllib2
+import re
+import os
+import shutil
+import json
+
+# Get webpage with all our pdf documents
+html = urllib2.urlopen("http://plantoperations.uwaterloo.ca/floor_plans/").read()
+
+buildings = re.findall("<a href=\"javascript:togglePlanList\\('.*?'\\)\">(.*?)</a>\\s*?<ul(.*?)</ul>", html, re.DOTALL)
+
+database = []
+
+try:
+    os.mkdir("download")
+except:
+    print("Download directory already exists")
+    
+try:
+    os.mkdir("png")
+except:
+    print("Download directory already exists")
+    shutil.rmtree("png")
+    os.mkdir("png")
+    
+os.chdir("download")
+
+mapLimit = 0
+mapCount = 0
+
+for building in buildings:
+    # Create the building object
+    print "Found building " + building[0]
+    buildingObject = {"name": building[0], "floors":[]}
+    
+    # Find all its maps
+    maps = re.findall("\"([\\w/:\\.]*?(\\w\\w)FLR\\.pdf)\"", building[1])
+    for map in maps:
+        print " - Floor " + map[1] + " - " + map[0]
+        
+        # Get PNG name
+        names = re.findall("/(\w*?)\\.pdf", map[0])
+        print " - Renaming to " + names[0] + ".png"
+        buildingObject["floors"].append({"name": map[1], "pdf": map[0], "png":names[0] + ".png"})
+        
+        # Download the map
+        os.system("curl -u bwjensen:@ZETAs59 -O " + map[0])
+        
+        mapCount = mapCount + 1
+        if mapCount >= mapLimit and mapLimit > 0:
+            break
+        
+        
+    database.append(buildingObject)
+    
+    if mapCount >= mapLimit and mapLimit > 0:
+        break
+    
+# Convert all our pdfs
+os.system("mogrify -format png *.pdf")
+os.system("mv *.png ../png/")
+os.chdir("..")
+shutil.rmtree("download")
+
+# Write database
+databaseJson = json.dumps(database)
+
+databaseFile = open("database.json", "w")
+databaseFile.write(databaseJson)
+databaseFile.close()
