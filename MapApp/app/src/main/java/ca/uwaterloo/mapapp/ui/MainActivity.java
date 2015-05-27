@@ -18,7 +18,6 @@ public class MainActivity extends AppCompatActivity {
     @InjectView(R.id.buildingsListView)
     protected ListView buildingsListView;
 
-    // Temporary ListView
     @OnItemClick(R.id.buildingsListView)
     void buildingClicked(int position) {
         Intent buildingActivityIntent = new Intent(getApplicationContext(), BuildingActivity.class);
@@ -32,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         // This has to come after setContentView
         ButterKnife.inject(this);
+
+
     }
 
     /**
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Handle action bar item clicks here.
+     *
      * @param item Item that was selected
      */
     @Override

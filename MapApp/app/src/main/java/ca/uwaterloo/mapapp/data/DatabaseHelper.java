@@ -16,7 +16,7 @@ import ca.uwaterloo.mapapp.data.objects.Room;
 /**
  * Created by cjbarrac
  * 23/05/15
- * <p/>
+ * <p>
  * This class basically controls all the accesses to the database, and handles the creation and
  * upgrading of the database.
  */
