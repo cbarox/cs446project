@@ -2,23 +2,24 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!--Main Content-->
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+
+    <!-- Map -->
+    <fragment
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.MainActivity">
+        map:cameraTargetLat="43.470622"
+        map:cameraTargetLng="-80.545"
+        map:cameraZoom="15"
+        map:uiCompass="true"/>
 
-        <ListView
-            android:id="@+id/buildingsListView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:entries="@array/building_names" />
-    </RelativeLayout>
     <!--Drawer-->
     <ListView
         android:id="@+id/left_drawer"
-        android:layout_width="240dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#fff"
@@ -26,4 +27,5 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
         android:entries="@array/building_names" />
+
 </android.support.v4.widget.DrawerLayout>
