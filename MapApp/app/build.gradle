@@ -25,6 +25,7 @@ dependencies {
 
     // This is for making sure all devices
     compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'com.android.support:support-v4:22'
 
     // This is for the database
     compile 'com.j256.ormlite:ormlite-android:4.48'
@@ -37,4 +38,7 @@ dependencies {
 
     // This is for HTTP operations
     compile 'com.koushikdutta.ion:ion:2.1.4'
+
+    // This is for google maps
+    compile 'com.google.android.gms:play-services-maps:7.5.0'
 }
