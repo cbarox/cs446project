@@ -6,6 +6,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -18,6 +19,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
+
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 import butterknife.ButterKnife;
 import ca.uwaterloo.mapapp.R;
@@ -32,8 +36,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private OverscrollHandler mOverscrollHandler = new OverscrollHandler();
     private GoogleMap mMap;
 
+    private SlidingUpPanelLayout mSlidingLayout;
+    private TextView mTestText;
+
     // TEMP
     private LatLng M3Location = new LatLng(43.473211, -80.544131);
+    private LatLng QNCLocation = new LatLng(43.471231, -80.544111);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        mSlidingLayout = (SlidingUpPanelLayout)findViewById(R.id.info_card_layout);
+        mTestText = (TextView)findViewById(R.id.icard_text);
     }
 
     /**
@@ -83,18 +94,49 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setIndoorEnabled(false);
         mMap.setBuildingsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
+        // show info card
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                return false;
+                TextView textView = (TextView) findViewById(R.id.icard_text);
+                textView.setText(marker.getTitle());
+                showHideInfoCard(true);
+
+                // zoom in and center the camera on the marker
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(marker.getPosition())
+                        .zoom(19)
+                        .build();
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 500, null);
+
+                return true; // disable Google marker popup
+            }
+        });
+        // hide info card
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                showHideInfoCard(false);
             }
         });
 
-        mMap.addMarker(new MarkerOptions()
-            .position(M3Location)
-        .title("M3"));
+        // Temporary code to add markers
+        mMap.addMarker(new MarkerOptions().position(M3Location).title("M3"));
+        mMap.addMarker(new MarkerOptions().position(QNCLocation).title("QNC"));
 
+        // restrict bounds
         mOverscrollHandler.sendEmptyMessageDelayed(0,REFRESH_TIME);
+    }
+
+    /**
+     * Shows or hides the info card
+     * @param enabled
+     */
+    private void showHideInfoCard(boolean enabled) {
+        if (enabled)
+            mSlidingLayout.setPanelState(PanelState.COLLAPSED);
+        else
+            mSlidingLayout.setPanelState(PanelState.HIDDEN);
     }
 
     /**
