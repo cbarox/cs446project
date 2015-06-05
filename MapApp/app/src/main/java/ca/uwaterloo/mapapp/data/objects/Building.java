@@ -19,7 +19,9 @@ public class Building {
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_CODE = "code";
     public static final String COLUMN_NAME = "name";
-
+    public static final String COLUMN_NUM_FLOORS = "num_floors";
+    public static final String COLUMN_COORDINATES = "coordinates";
+	
     @DatabaseField(columnName = COLUMN_ID, generatedId = true)
     private long id;
 
@@ -29,6 +31,12 @@ public class Building {
     @DatabaseField(columnName = COLUMN_NAME)
     private String name;
 
+    @DatabaseField(columnName = COLUMN_NUM_FLOORS)
+    private Long num_floors;
+
+    @DatabaseField(columnName = COLUMN_COORDINATES)
+    private String coordinates;
+	
     public long getId() {
         return id;
     }
@@ -44,7 +52,22 @@ public class Building {
     public void setCode(String code) {
         this.code = code;
     }
+	
+    public Long getNumFloors() {
+        return num_floors;
+    }
 
+    public void setNumFloors(Long num_floors) {
+        this.num_floors = num_floors;
+    }
+
+    public String getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(String coordinates) {
+        this.coordinates = coordinates;
+    }
     public String getName() {
         return name;
     }

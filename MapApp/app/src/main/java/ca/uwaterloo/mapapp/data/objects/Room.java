@@ -18,13 +18,21 @@ public class Room {
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_NUMBER = "number";
-
+    public static final String COLUMN_LOCATION = "location";
+    public static final String COLUMN_FLOOR_NUMBER = "floor_num";
+    
     @DatabaseField(columnName = COLUMN_ID, generatedId = true)
     private long id;
 
     @DatabaseField(columnName = COLUMN_NUMBER)
-    private String number;
+    private long number;
 
+    @DatabaseField(columnName = COLUMN_LOCATION)
+    private String location;
+
+    @DatabaseField(columnName = COLUMN_FLOOR_NUMBER)
+    private long floor_num;
+	
     public long getId() {
         return id;
     }
@@ -33,12 +41,27 @@ public class Room {
         this.id = id;
     }
 
-    public String getNumber() {
+    public long getNumber () {
         return number;
     }
 
-    public void setNumber(String number) {
+    public void setNumber(long number) {
         this.number = number;
     }
+		
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
+    public String getLocation() {
+        return location;
+    }
+		
+    public long getFloorNum() {
+        return floor_num;
+    }
+	
+    public void setFloorNum(long floor_num) {
+        this.floor_num = floor_num;
+    }
 }
