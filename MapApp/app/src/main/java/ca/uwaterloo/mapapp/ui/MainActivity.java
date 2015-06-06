@@ -1,8 +1,6 @@
 package ca.uwaterloo.mapapp.ui;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,26 +17,23 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
-
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 import butterknife.ButterKnife;
+import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private final LatLngBounds BOUNDS = new LatLngBounds(
-            // bottom left                    top right
-            new LatLng(43.461340, -80.573), new LatLng(43.487251, -80.532603));
-    private final int MIN_ZOOM = 15;
-    private final int REFRESH_TIME = 100; //ms
-    private OverscrollHandler mOverscrollHandler = new OverscrollHandler();
+    private static final LatLngBounds BOUNDS = new LatLngBounds(
+            new LatLng(43.461340, -80.573), // bottom-left
+            new LatLng(43.487251, -80.532603)); // top right
+    @InjectView(R.id.info_card_layout)
+    protected SlidingUpPanelLayout mSlidingLayout;
+    @InjectView(R.id.icard_text)
+    protected TextView mTestText;
     private GoogleMap mMap;
-
-    private SlidingUpPanelLayout mSlidingLayout;
-    private TextView mTestText;
-
     // TEMP
     private LatLng M3Location = new LatLng(43.473211, -80.544131);
     private LatLng QNCLocation = new LatLng(43.471231, -80.544111);
@@ -51,12 +46,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ButterKnife.inject(this);
 
         // initialize map
-        MapFragment mapFragment = (MapFragment) getFragmentManager()
-                .findFragmentById(R.id.map);
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        mSlidingLayout = (SlidingUpPanelLayout)findViewById(R.id.info_card_layout);
-        mTestText = (TextView)findViewById(R.id.icard_text);
     }
 
     /**
@@ -98,8 +89,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                TextView textView = (TextView) findViewById(R.id.icard_text);
-                textView.setText(marker.getTitle());
+                mTestText.setText(marker.getTitle());
                 showHideInfoCard(true);
 
                 // zoom in and center the camera on the marker
@@ -119,69 +109,92 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 showHideInfoCard(false);
             }
         });
+        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                correctVisibleRegion();
+            }
+        });
 
         // Temporary code to add markers
         mMap.addMarker(new MarkerOptions().position(M3Location).title("M3"));
         mMap.addMarker(new MarkerOptions().position(QNCLocation).title("QNC"));
-
-        // restrict bounds
-        mOverscrollHandler.sendEmptyMessageDelayed(0,REFRESH_TIME);
     }
 
     /**
      * Shows or hides the info card
-     * @param enabled
+     *
+     * @param enabled Whether to show the info card
      */
     private void showHideInfoCard(boolean enabled) {
-        if (enabled)
-            mSlidingLayout.setPanelState(PanelState.COLLAPSED);
-        else
-            mSlidingLayout.setPanelState(PanelState.HIDDEN);
+        mSlidingLayout.setPanelState(enabled ? PanelState.COLLAPSED : PanelState.HIDDEN);
     }
 
     /**
      * Returns the correction for Lat and Lng if camera is trying to get outside of visible map
+     *
      * @param cameraBounds Current camera bounds
      * @return Latitude and Longitude corrections to get back into bounds.
      */
-    private LatLng getLatLngCorrection(LatLngBounds cameraBounds) {
-        double latitude=0, longitude=0;
-        if(cameraBounds.southwest.latitude < BOUNDS.southwest.latitude) {
-            latitude = BOUNDS.southwest.latitude - cameraBounds.southwest.latitude;
+    private LatLngBounds getCorrectedRegion(LatLngBounds cameraBounds) {
+        double boundsWidth = Math.abs(BOUNDS.northeast.latitude - BOUNDS.southwest.latitude);
+        double boundsHeight = Math.abs(BOUNDS.northeast.longitude - BOUNDS.southwest.longitude);
+        double cameraWidth = Math.abs(cameraBounds.northeast.latitude - cameraBounds.southwest.latitude);
+        double cameraHeight = Math.abs(cameraBounds.northeast.longitude - cameraBounds.southwest.longitude);
+        double cameraAspectRatio = cameraWidth / cameraHeight;
+
+        // Use the camera aspect ratio to make a new bounds that has the same aspect ratio
+        LatLng adjustedSWBound, adjustedNEBound;
+        if (cameraAspectRatio > 1) {
+            double adjustedBoundsWidth = boundsHeight * cameraAspectRatio;
+            adjustedSWBound = new LatLng(BOUNDS.getCenter().latitude - adjustedBoundsWidth / 2, BOUNDS.southwest.longitude);
+            adjustedNEBound = new LatLng(BOUNDS.getCenter().latitude + adjustedBoundsWidth / 2, BOUNDS.northeast.longitude);
+        } else {
+            double adjustedBoundsHeight = boundsWidth / cameraAspectRatio;
+            adjustedSWBound = new LatLng(BOUNDS.southwest.latitude, BOUNDS.getCenter().longitude - adjustedBoundsHeight / 2);
+            adjustedNEBound = new LatLng(BOUNDS.northeast.latitude, BOUNDS.getCenter().longitude + adjustedBoundsHeight / 2);
         }
-        if(cameraBounds.southwest.longitude < BOUNDS.southwest.longitude) {
-            longitude = BOUNDS.southwest.longitude - cameraBounds.southwest.longitude;
+
+        // Check if the user is zoomed out too far
+        LatLngBounds adjustedBounds = new LatLngBounds(adjustedSWBound, adjustedNEBound);
+        double adjustedBoundsWidth = Math.abs(adjustedBounds.northeast.latitude - adjustedBounds.southwest.latitude);
+        double adjustedBoundsHeight = Math.abs(adjustedBounds.northeast.longitude - adjustedBounds.southwest.longitude);
+        if (adjustedBoundsWidth < cameraWidth) {
+            return adjustedBounds;
+        } else if (adjustedBoundsHeight < cameraHeight) {
+            return adjustedBounds;
         }
-        if(cameraBounds.northeast.latitude > BOUNDS.northeast.latitude) {
-            latitude = BOUNDS.northeast.latitude - cameraBounds.northeast.latitude;
+
+        // Fix latitude
+        double deltaLat = 0;
+        if (cameraBounds.southwest.latitude < adjustedBounds.southwest.latitude) {
+            deltaLat = adjustedBounds.southwest.latitude - cameraBounds.southwest.latitude;
+        } else if (cameraBounds.northeast.latitude > adjustedBounds.northeast.latitude) {
+            deltaLat = adjustedBounds.northeast.latitude - cameraBounds.northeast.latitude;
         }
-        if(cameraBounds.northeast.longitude > BOUNDS.northeast.longitude) {
-            longitude = BOUNDS.northeast.longitude - cameraBounds.northeast.longitude;
+        double swLat = cameraBounds.southwest.latitude + deltaLat;
+        double neLat = cameraBounds.northeast.latitude + deltaLat;
+
+        // Fix longitude
+        double deltaLong = 0;
+        if (cameraBounds.southwest.longitude < adjustedBounds.southwest.longitude) {
+            deltaLong = adjustedBounds.southwest.longitude - cameraBounds.southwest.longitude;
+        } else if (cameraBounds.northeast.longitude > adjustedBounds.northeast.longitude) {
+            deltaLong = adjustedBounds.northeast.longitude - cameraBounds.northeast.longitude;
         }
-        return new LatLng(latitude, longitude);
+        double swLong = cameraBounds.southwest.longitude + deltaLong;
+        double neLong = cameraBounds.northeast.longitude + deltaLong;
+
+        return new LatLngBounds(new LatLng(swLat, swLong), new LatLng(neLat, neLong));
     }
 
     /**
      * Bounds the user to the overlay.
      */
-    private class OverscrollHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            CameraPosition position = mMap.getCameraPosition();
-            VisibleRegion region = mMap.getProjection().getVisibleRegion();
-            float zoom = 0;
-            if(position.zoom < MIN_ZOOM) zoom = MIN_ZOOM;
-            LatLng correction = getLatLngCorrection(region.latLngBounds);
-            if(zoom != 0 || correction.latitude != 0 || correction.longitude != 0) {
-                zoom = (zoom==0)?position.zoom:zoom;
-                double lat = position.target.latitude + correction.latitude;
-                double lon = position.target.longitude + correction.longitude;
-                CameraPosition newPosition = new CameraPosition(new LatLng(lat,lon), zoom, position.tilt, position.bearing);
-                CameraUpdate update = CameraUpdateFactory.newCameraPosition(newPosition);
-                mMap.moveCamera(update);
-            }
-            /* Recursively call handler */
-            sendEmptyMessageDelayed(0,REFRESH_TIME);
-        }
+    public void correctVisibleRegion() {
+        VisibleRegion visibleRegion = mMap.getProjection().getVisibleRegion();
+        LatLngBounds correctedRegion = getCorrectedRegion(visibleRegion.latLngBounds);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(correctedRegion, 0);
+        mMap.animateCamera(cameraUpdate, 300, null);
     }
 }
