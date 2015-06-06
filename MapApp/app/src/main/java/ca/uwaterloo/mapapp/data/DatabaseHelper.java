@@ -11,7 +11,12 @@ import java.sql.SQLException;
 
 import ca.uwaterloo.mapapp.data.objects.Building;
 import ca.uwaterloo.mapapp.data.objects.Event;
+import ca.uwaterloo.mapapp.data.objects.EventType;
+import ca.uwaterloo.mapapp.data.objects.Floor;
+import ca.uwaterloo.mapapp.data.objects.Note;
 import ca.uwaterloo.mapapp.data.objects.Room;
+import ca.uwaterloo.mapapp.data.objects.Organization;
+import ca.uwaterloo.mapapp.data.objects.DayOfWeek;
 
 /**
  * Created by cjbarrac
@@ -35,6 +40,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Building.class);
             TableUtils.createTable(connectionSource, Room.class);
             TableUtils.createTable(connectionSource, Event.class);
+			TableUtils.createTable(connectionSource, EventType.class);
+			TableUtils.createTable(connectionSource, Floor.class);
+			TableUtils.createTable(connectionSource, Note.class);
+			TableUtils.createTable(connectionSource, Organization.class);
+			TableUtils.createTable(connectionSource, DayOfWeek.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
