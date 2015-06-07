@@ -118,6 +118,7 @@ public class DataManager<T, ID> {
                 }
             });
         } catch (Exception e) {
+            Logger.error("Error passively inserting %ss in the database", e, className);
         }
     }
 
@@ -142,6 +143,7 @@ public class DataManager<T, ID> {
             long duration = System.currentTimeMillis() - startTime;
             Logger.info("%d %ss passively inserted into to database in %dms", objects.size(), className, duration);
         } catch (Exception e) {
+            Logger.error("Error passively inserting %ss in the database", e, className);
         }
     }
 
