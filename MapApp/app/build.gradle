@@ -24,8 +24,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     // This is for making sure all devices
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.android.support:support-v4:22'
+    compile 'com.android.support:appcompat-v7:+'
+    compile 'com.android.support:support-v4:+'
 
     // This is for the database
     compile 'com.j256.ormlite:ormlite-android:4.48'
@@ -36,6 +36,7 @@ dependencies {
     // This is for view injections and event injections
     compile 'com.jakewharton:butterknife:6.1.0'
 
+    // TODO Replace Ion with basic HTTP client because its too slow
     // This is for HTTP operations
     compile 'com.koushikdutta.ion:ion:2.1.4'
 
