@@ -1,5 +1,9 @@
 package ca.uwaterloo.mapapp.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -20,23 +24,66 @@ import com.google.android.gms.maps.model.VisibleRegion;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import ca.uwaterloo.mapapp.MainApplication;
 import ca.uwaterloo.mapapp.R;
+import ca.uwaterloo.mapapp.data.DataManager;
+import ca.uwaterloo.mapapp.data.DatabaseHelper;
+import ca.uwaterloo.mapapp.data.objects.Building;
+import ca.uwaterloo.mapapp.logic.Buildings;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final LatLngBounds BOUNDS = new LatLngBounds(
             new LatLng(43.461340, -80.573), // bottom-left
             new LatLng(43.487251, -80.532603)); // top right
+    private static final String[] receiverActions = {
+            Buildings.ACTION_BUILDINGS_PROCESSED
+    };
+
     @InjectView(R.id.info_card_layout)
     protected SlidingUpPanelLayout mSlidingLayout;
     @InjectView(R.id.icard_text)
     protected TextView mTestText;
     private GoogleMap mMap;
-    // TEMP
-    private LatLng M3Location = new LatLng(43.473211, -80.544131);
-    private LatLng QNCLocation = new LatLng(43.471231, -80.544111);
+    private List<Building> buildingsCache;
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            switch (action) {
+                case Buildings.ACTION_BUILDINGS_PROCESSED: {
+                    handleBuildingsProcessed();
+                }
+            }
+        }
+    };
+
+    private void handleBuildingsProcessed() {
+        // Get all the buildings from the database
+        DatabaseHelper databaseHelper = MainApplication.getDatabaseHelper();
+        DataManager<Building, String> buildingDataManager = databaseHelper.getDataManager(Building.class);
+
+        // Cache the buildings so if the activity gets destroyed we don't have to call the database again
+        buildingsCache = buildingDataManager.getAll();
+        addBuildingMarkers();
+    }
+
+    private void addBuildingMarkers() {
+        // Add markers to the map
+        for (Building building : buildingsCache) {
+            LatLng buildingLocation = new LatLng(building.getLatitude(), building.getLongitude());
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(buildingLocation)
+                    .title(building.getCode());
+            mMap.addMarker(markerOptions);
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +91,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
         // This has to come after setContentView
         ButterKnife.inject(this);
+
+        IntentFilter intentFilter = new IntentFilter();
+        for (String action : receiverActions) {
+            intentFilter.addAction(action);
+        }
+        this.registerReceiver(broadcastReceiver, intentFilter);
+
+        if (buildingsCache != null) {
+            addBuildingMarkers();
+        }
 
         // initialize map
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
@@ -61,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return true;
     }
 
+    // MAP FUNCTIONS
+
     /**
      * Handle action bar item clicks here.
      *
@@ -70,14 +129,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_settings:
+            case R.id.action_settings: {
                 return true;
+            }
         }
 
         return super.onOptionsItemSelected(item);
     }
-
-    // MAP FUNCTIONS
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -116,9 +174,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        // Temporary code to add markers
-        mMap.addMarker(new MarkerOptions().position(M3Location).title("M3"));
-        mMap.addMarker(new MarkerOptions().position(QNCLocation).title("QNC"));
     }
 
     /**

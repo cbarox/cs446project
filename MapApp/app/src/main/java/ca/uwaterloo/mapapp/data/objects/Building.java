@@ -16,34 +16,27 @@ public class Building {
 
     public static final String TABLE = "building";
 
-    public static final String COLUMN_ID = "_id";
     public static final String COLUMN_CODE = "code";
     public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_NUM_FLOORS = "num_floors";
-    public static final String COLUMN_COORDINATES = "coordinates";
-	
-    @DatabaseField(columnName = COLUMN_ID, generatedId = true)
-    private long id;
+    public static final String COLUMN_FLOORS = "floors";
+    public static final String COLUMN_LATITUDE = "latitude";
+    public static final String COLUMN_LONGITUDE = "longitude";
 
-    @DatabaseField(columnName = COLUMN_CODE)
+    @DatabaseField(columnName = COLUMN_CODE, id = true)
     private String code;
 
     @DatabaseField(columnName = COLUMN_NAME)
     private String name;
 
-    @DatabaseField(columnName = COLUMN_NUM_FLOORS)
-    private Long num_floors;
+    @DatabaseField(columnName = COLUMN_FLOORS)
+    private int floors;
 
-    @DatabaseField(columnName = COLUMN_COORDINATES)
-    private String coordinates;
-	
-    public long getId() {
-        return id;
-    }
+    @DatabaseField(columnName = COLUMN_LATITUDE)
+    private double latitude;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+    @DatabaseField(columnName = COLUMN_LONGITUDE)
+    private double longitude;
+
 
     public String getCode() {
         return code;
@@ -52,27 +45,47 @@ public class Building {
     public void setCode(String code) {
         this.code = code;
     }
-	
-    public Long getNumFloors() {
-        return num_floors;
-    }
 
-    public void setNumFloors(Long num_floors) {
-        this.num_floors = num_floors;
-    }
-
-    public String getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCoordinates(String coordinates) {
-        this.coordinates = coordinates;
-    }
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getFloors() {
+        return floors;
+    }
+
+    public void setFloors(int floors) {
+        this.floors = floors;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    @Override
+    public String toString() {
+        return "Building{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", floors=" + floors +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
     }
 }
