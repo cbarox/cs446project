@@ -24,58 +24,79 @@ import com.google.android.gms.maps.model.VisibleRegion;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import ca.uwaterloo.mapapp.MainApplication;
 import ca.uwaterloo.mapapp.R;
-import ca.uwaterloo.mapapp.data.DataManager;
-import ca.uwaterloo.mapapp.data.DatabaseHelper;
 import ca.uwaterloo.mapapp.data.objects.Building;
 import ca.uwaterloo.mapapp.logic.Buildings;
+import ca.uwaterloo.mapapp.logic.Logger;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final LatLngBounds BOUNDS = new LatLngBounds(
             new LatLng(43.461340, -80.573), // bottom-left
             new LatLng(43.487251, -80.532603)); // top right
+    /**
+     * All the actions that are processed by the broadcast receiver
+     */
     private static final String[] receiverActions = {
             Buildings.ACTION_BUILDINGS_PROCESSED
     };
-
+    /**
+     * This has to be static so it isn't garbage collected when the activity is destroyed
+     */
+    private static ArrayList<Building> buildingsCache;
     @InjectView(R.id.info_card_layout)
     protected SlidingUpPanelLayout mSlidingLayout;
     @InjectView(R.id.icard_text)
     protected TextView mTestText;
     private GoogleMap mMap;
-    private List<Building> buildingsCache;
-
+    // TODO change this to inner class
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            Bundle extras = intent.getExtras();
             switch (action) {
                 case Buildings.ACTION_BUILDINGS_PROCESSED: {
-                    handleBuildingsProcessed();
+                    // Get the buildings from the intent extras
+                    if (extras == null) {
+                        Logger.error("No extras supplied from intent %s", Buildings.ACTION_BUILDINGS_PROCESSED);
+                        return;
+                    }
+                    Object buildingsObject = extras.get(Buildings.EXTRA_BUILDINGS);
+                    if (buildingsObject == null) {
+                        Logger.error("Couldn't get buildings from intent extras");
+                        return;
+                    }
+                    ArrayList<Building> buildings = (ArrayList<Building>) buildingsObject;
+                    handleBuildingsProcessed(buildings);
                 }
             }
         }
     };
 
-    private void handleBuildingsProcessed() {
-        // Get all the buildings from the database
-        DatabaseHelper databaseHelper = MainApplication.getDatabaseHelper();
-        DataManager<Building, String> buildingDataManager = databaseHelper.getDataManager(Building.class);
-
-        // Cache the buildings so if the activity gets destroyed we don't have to call the database again
-        buildingsCache = buildingDataManager.getAll();
-        addBuildingMarkers();
+    /**
+     * On startup, MainApplication will ask the Waterloo API for a list of buildings, but it takes a while.
+     * So when the buildings are finished getting retrieved from the API and added to the database, this method updates the UI.
+     * Also local caches the buildings so we don't need to get them again if the activity is destroyed
+     *
+     * @param buildings List of buildings retrieved from the API
+     */
+    private void handleBuildingsProcessed(ArrayList<Building> buildings) {
+        buildingsCache = buildings;
+        addBuildingMarkers(buildingsCache);
     }
 
-    private void addBuildingMarkers() {
-        // Add markers to the map
-        for (Building building : buildingsCache) {
+    /**
+     * Adds all the building markers to the map
+     *
+     * @param buildings A List of buildings to add
+     */
+    private void addBuildingMarkers(ArrayList<Building> buildings) {
+        for (Building building : buildings) {
             LatLng buildingLocation = new LatLng(building.getLatitude(), building.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(buildingLocation)
@@ -84,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,19 +112,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // This has to come after setContentView
         ButterKnife.inject(this);
 
+        // Register the broadcast receiver
         IntentFilter intentFilter = new IntentFilter();
         for (String action : receiverActions) {
             intentFilter.addAction(action);
         }
-        this.registerReceiver(broadcastReceiver, intentFilter);
+        registerReceiver(broadcastReceiver, intentFilter);
 
-        if (buildingsCache != null) {
-            addBuildingMarkers();
+        // Check if we need to get the buildings from the database/API or if we can just use the local cache
+        if (buildingsCache == null) {
+            Buildings.updateBuildings(this);
         }
 
         // initialize map
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
     }
 
     /**
@@ -117,8 +145,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-    // MAP FUNCTIONS
 
     /**
      * Handle action bar item clicks here.
@@ -174,6 +200,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        if (buildingsCache != null) {
+            addBuildingMarkers(buildingsCache);
+        }
     }
 
     /**

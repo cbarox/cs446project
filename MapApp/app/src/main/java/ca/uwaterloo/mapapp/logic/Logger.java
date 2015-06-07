@@ -8,7 +8,7 @@ import android.util.Log;
  */
 public class Logger {
 
-    public static String TAG = "MapApp";
+    public static String TAG = "Whats nUW";
 
     public static void debug(String message) {
         Log.d(TAG, message);

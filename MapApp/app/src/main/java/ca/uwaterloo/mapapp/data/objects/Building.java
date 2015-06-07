@@ -3,6 +3,8 @@ package ca.uwaterloo.mapapp.data.objects;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
+
 /**
  * Created by cjbarrac
  * 23/05/15
@@ -12,7 +14,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * where each row is an instance of this class.
  */
 @DatabaseTable(tableName = Building.TABLE)
-public class Building {
+public class Building implements Serializable {
 
     public static final String TABLE = "building";
 

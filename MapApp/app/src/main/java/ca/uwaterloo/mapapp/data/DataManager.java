@@ -78,6 +78,51 @@ public class DataManager<T, ID> {
 
     /**
      * Inserts multiple objects into the database quickly by committing them all at once
+     * If an object already exists, it just skips them
+     *
+     * @param objects The objects to insert
+     */
+    public void passiveInsertAll(final T[] objects) {
+        try {
+            dao.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for (T object : objects) {
+                        dao.createIfNotExists(object);
+                    }
+                    return null;
+                }
+            });
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * Inserts multiple objects into the database quickly by committing them all at once
+     * If an object already exists, it just skips them
+     *
+     * @param objects The objects to insert
+     */
+    public void passiveInsertAll(final List<T> objects) {
+        try {
+            long startTime = System.currentTimeMillis();
+            dao.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for (T object : objects) {
+                        dao.createIfNotExists(object);
+                    }
+                    return null;
+                }
+            });
+            long duration = System.currentTimeMillis() - startTime;
+            Logger.info("%d %ss passively inserted into to database in %dms", objects.size(), className, duration);
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * Inserts multiple objects into the database quickly by committing them all at once
      *
      * @param objects The objects to insert
      */
