@@ -33,21 +33,21 @@ public class Buildings {
             public void onCompleted(Exception e, JsonObject result) {
                 if (e != null) {
                     Logger.error("Couldn't get buildings from API");
-                    return;
                 }
                 long duration = System.currentTimeMillis() - start;
                 Logger.debug("Retrieving buildings from API took %sms", duration);
+                long start = System.currentTimeMillis();
                 List<Building> buildings = processBuildings(context, result);
-                broadcastBuildingsProcessed(buildings, context);
+                broadcastBuildingsProcessed(context, buildings);
                 duration = System.currentTimeMillis() - start;
-                Logger.debug("Updating buildings took %sms total", duration);
+                Logger.debug("Processing buildings took %sms", duration);
             }
         };
 
         NetworkHelper.getJsonWithKey(context, "buildings/list.json", futureCallback);
     }
 
-    private static void broadcastBuildingsProcessed(List<Building> buildings, Context context) {
+    private static void broadcastBuildingsProcessed(Context context, List<Building> buildings) {
         Intent buildingsIntent = new Intent(ACTION_BUILDINGS_PROCESSED);
         buildingsIntent.putExtra(EXTRA_BUILDINGS, new ArrayList<>(buildings));
         context.sendBroadcast(buildingsIntent);
@@ -64,6 +64,11 @@ public class Buildings {
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(context);
         DataManager<Building, String> buildingDataManager = databaseHelper.getDataManager(Building.class);
         List<Building> existingBuildings = buildingDataManager.getAll();
+        // If we can't access the waterloo API just use the database cached version
+        if (result == null) {
+            return existingBuildings;
+        }
+
         ArrayList<String> existingBuildingCodes = new ArrayList<>(existingBuildings.size());
         for (Building building : existingBuildings) {
             existingBuildingCodes.add(building.getCode());
