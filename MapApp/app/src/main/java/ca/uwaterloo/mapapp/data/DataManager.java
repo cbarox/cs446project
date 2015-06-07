@@ -1,11 +1,6 @@
 package ca.uwaterloo.mapapp.data;
 
-import android.database.Cursor;
-
-import com.j256.ormlite.android.AndroidDatabaseResults;
-import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -258,24 +253,6 @@ public class DataManager<T, ID> {
             Logger.error("Error getting all %ss from the database", e, className);
         }
         return objects;
-    }
-
-    public Cursor getCursor() {
-        CloseableIterator<T> closeableIterator = dao.iterator();
-        AndroidDatabaseResults results = (AndroidDatabaseResults) closeableIterator.getRawResults();
-        return results.getRawCursor();
-    }
-
-    public Cursor getCursor(String columnName, Object value) throws NullPointerException {
-        try {
-            PreparedQuery<T> preparedQuery = dao.queryBuilder().where().eq(columnName, value).prepare();
-            CloseableIterator<T> closeableIterator = dao.iterator(preparedQuery);
-            AndroidDatabaseResults results = (AndroidDatabaseResults) closeableIterator.getRawResults();
-            return results.getRawCursor();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public void update(T object) {
