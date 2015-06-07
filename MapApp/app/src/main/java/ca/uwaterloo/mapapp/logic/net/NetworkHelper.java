@@ -12,10 +12,10 @@ import com.koushikdutta.ion.Ion;
  */
 public class NetworkHelper {
 
-    public static final String API_KEY = "";
+    public static final String API_KEY = "22e67ab71cbd805f4f2dbe9d89fd7286";
     public static final String URL_PREFIX = "https://api.uwaterloo.ca/v2/";
 
-    public void getJson(Context context, String uriSuffix, FutureCallback<JsonObject> callback) {
+    public static void getJson(Context context, String uriSuffix, FutureCallback<JsonObject> callback) {
         String uri = String.format("%s%s", URL_PREFIX, uriSuffix);
         Ion.with(context)
                 .load(uri)
@@ -23,7 +23,7 @@ public class NetworkHelper {
                 .setCallback(callback);
     }
 
-    public void getJsonWithKey(Context context, String uriSuffix, FutureCallback<JsonObject> callback) {
+    public static void getJsonWithKey(Context context, String uriSuffix, FutureCallback<JsonObject> callback) {
         String uri = String.format("%s?key=%s", uriSuffix, API_KEY);
         getJson(context, uri, callback);
     }

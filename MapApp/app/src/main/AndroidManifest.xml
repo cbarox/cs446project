@@ -3,6 +3,7 @@
     package="ca.uwaterloo.mapapp">
 
     <application
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -26,8 +27,7 @@
         </activity>
         <activity
             android:name=".ui.BuildingActivity"
-            android:label="@string/title_activity_building">
-        </activity>
+            android:label="@string/title_activity_building" />
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
