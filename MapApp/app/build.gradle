@@ -1,9 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+    }
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
-
     defaultConfig {
         applicationId "ca.uwaterloo.mapapp"
         minSdkVersion 15
@@ -16,30 +17,35 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+        }
     }
+    productFlavors {
+    }
+}
+
+repositories {
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
     // We don't have any jars but they would go into the libs folder if we did
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     // This is for making sure all devices
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.android.support:support-v4:+'
-
     // This is for the database
     compile 'com.j256.ormlite:ormlite-android:4.48'
-
-    // This is for the google maps style sliding panel
-    compile 'com.sothree.slidinguppanel:library:3.0.0'
-
+    // This is for the google maps style sliding panel with floating action button
+    compile 'com.github.TR4Android:AndroidSlidingUpPanel:3.1.0'
+    // This is for the floating action button
+    compile 'com.melnykov:floatingactionbutton:1.3.0'
     // This is for view injections and event injections
     compile 'com.jakewharton:butterknife:6.1.0'
 
     // TODO Replace Ion with basic HTTP client because its too slow
     // This is for HTTP operations
     compile 'com.koushikdutta.ion:ion:2.1.4'
-
     // This is for google maps
     compile 'com.google.android.gms:play-services-maps:7.5.0'
 }

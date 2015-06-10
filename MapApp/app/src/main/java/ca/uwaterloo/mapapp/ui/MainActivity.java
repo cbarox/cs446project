@@ -50,9 +50,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static ArrayList<Building> buildingsCache;
     @InjectView(R.id.info_card_layout)
     protected SlidingUpPanelLayout mSlidingLayout;
-    @InjectView(R.id.icard_text)
-    protected TextView mTestText;
+
     private GoogleMap mMap;
+
+    // icard info
+    @InjectView(R.id.icard_buildName)
+    protected TextView mCardBuildName;
+    @InjectView(R.id.icard_buildcode)
+    protected  TextView mCardBuildCode;
+
     // TODO change this to inner class
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -100,7 +106,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             LatLng buildingLocation = new LatLng(building.getLatitude(), building.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(buildingLocation)
-                    .title(building.getCode());
+                    .title(building.getName())
+                    .snippet(building.getCode());
             mMap.addMarker(markerOptions);
         }
     }
@@ -133,6 +140,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(broadcastReceiver);
+
+        mSlidingLayout = (SlidingUpPanelLayout)findViewById(R.id.info_card_layout);
     }
 
     /**
@@ -173,7 +182,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                mTestText.setText(marker.getTitle());
+
+                mCardBuildName.setText(marker.getTitle());
+                mCardBuildCode.setText(marker.getSnippet());
+
                 showHideInfoCard(true);
 
                 // zoom in and center the camera on the marker
