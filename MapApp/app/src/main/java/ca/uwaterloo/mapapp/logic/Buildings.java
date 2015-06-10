@@ -59,11 +59,13 @@ public class Buildings {
      * @param context A context for the database helper
      * @param result  The JSON object returned by the API call
      * @return The list of buildings returned from the API
+     * TODO Generify this for other object types
      */
     private static List<Building> processBuildings(Context context, JsonObject result) {
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(context);
         DataManager<Building, String> buildingDataManager = databaseHelper.getDataManager(Building.class);
         List<Building> existingBuildings = buildingDataManager.getAll();
+
         // If we can't access the waterloo API just use the database cached version
         if (result == null) {
             return existingBuildings;
@@ -79,47 +81,64 @@ public class Buildings {
         for (int buildingIndex = 0; buildingIndex < dataArray.size(); buildingIndex++) {
             JsonObject buildingObject = (JsonObject) dataArray.get(buildingIndex);
 
-            JsonElement jsonElement = buildingObject.get("building_code");
-            if (jsonElement.isJsonNull()) {
-                continue;
-            }
-            String code = jsonElement.getAsString();
-
             // Skip if it's already in the database
-            if (existingBuildingCodes.contains(code)) {
-                continue;
+            JsonElement jsonElement = buildingObject.get("building_code");
+            if (!jsonElement.isJsonNull()) {
+                if (existingBuildingCodes.contains(jsonElement.getAsString())) {
+                    continue;
+                }
             }
 
-            jsonElement = buildingObject.get("building_name");
-            if (jsonElement.isJsonNull()) {
-                continue;
+            Building newBuilding = parseBuilding(buildingObject);
+            if (newBuilding != null) {
+                buildingsToInsert.add(newBuilding);
             }
-            String name = jsonElement.getAsString();
-
-            jsonElement = buildingObject.get("latitude");
-            if (jsonElement.isJsonNull()) {
-                continue;
-            }
-            double latitude = jsonElement.getAsDouble();
-
-            jsonElement = buildingObject.get("longitude");
-            if (jsonElement.isJsonNull()) {
-                continue;
-            }
-            double longitude = jsonElement.getAsDouble();
-
-            Building newBuilding = new Building();
-            newBuilding.setCode(code);
-            newBuilding.setName(name);
-            newBuilding.setLatitude(latitude);
-            newBuilding.setLongitude(longitude);
-            buildingsToInsert.add(newBuilding);
         }
 
         buildingDataManager.passiveInsertAll(buildingsToInsert);
         existingBuildings.addAll(buildingsToInsert);
 
         return existingBuildings;
+    }
+
+    /**
+     * Parses a building from the API
+     *
+     * @param jsonObject The JSON object representing a building
+     * @return An instance of building or null if one of it's fields is null
+     * TODO Replace this with a Gson adapter
+     */
+    private static Building parseBuilding(JsonObject jsonObject) {
+        JsonElement jsonElement = jsonObject.get("building_code");
+        if (jsonElement.isJsonNull()) {
+            return null;
+        }
+        String code = jsonElement.getAsString();
+
+        jsonElement = jsonObject.get("building_name");
+        if (jsonElement.isJsonNull()) {
+            return null;
+        }
+        String name = jsonElement.getAsString();
+
+        jsonElement = jsonObject.get("latitude");
+        if (jsonElement.isJsonNull()) {
+            return null;
+        }
+        double latitude = jsonElement.getAsDouble();
+
+        jsonElement = jsonObject.get("longitude");
+        if (jsonElement.isJsonNull()) {
+            return null;
+        }
+        double longitude = jsonElement.getAsDouble();
+
+        Building building = new Building();
+        building.setCode(code);
+        building.setName(name);
+        building.setLatitude(latitude);
+        building.setLongitude(longitude);
+        return building;
     }
 
 }
