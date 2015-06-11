@@ -18,20 +18,20 @@ public class Building implements Serializable {
 
     public static final String TABLE = "building";
 
-    public static final String COLUMN_CODE = "code";
-    public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_FLOORS = "floors";
+    public static final String COLUMN_BUILDING_ID = "building_id";
+    public static final String COLUMN_BUILDING_CODE = "building_code";
+    public static final String COLUMN_BUILDING_NAME = "building_name";
     public static final String COLUMN_LATITUDE = "latitude";
     public static final String COLUMN_LONGITUDE = "longitude";
 
-    @DatabaseField(columnName = COLUMN_CODE, id = true)
-    private String code;
+    @DatabaseField(columnName = COLUMN_BUILDING_ID, id = true)
+    private String buildingId;
 
-    @DatabaseField(columnName = COLUMN_NAME)
-    private String name;
+    @DatabaseField(columnName = COLUMN_BUILDING_CODE)
+    private String buildingCode;
 
-    @DatabaseField(columnName = COLUMN_FLOORS)
-    private int floors;
+    @DatabaseField(columnName = COLUMN_BUILDING_NAME)
+    private String buildingName;
 
     @DatabaseField(columnName = COLUMN_LATITUDE)
     private double latitude;
@@ -39,29 +39,28 @@ public class Building implements Serializable {
     @DatabaseField(columnName = COLUMN_LONGITUDE)
     private double longitude;
 
-
-    public String getCode() {
-        return code;
+    public String getBuildingId() {
+        return buildingId;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setBuildingId(String buildingId) {
+        this.buildingId = buildingId;
     }
 
-    public String getName() {
-        return name;
+    public String getBuildingCode() {
+        return buildingCode;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setBuildingCode(String buildingCode) {
+        this.buildingCode = buildingCode;
     }
 
-    public int getFloors() {
-        return floors;
+    public String getBuildingName() {
+        return buildingName;
     }
 
-    public void setFloors(int floors) {
-        this.floors = floors;
+    public void setBuildingName(String buildingName) {
+        this.buildingName = buildingName;
     }
 
     public double getLatitude() {
@@ -83,9 +82,9 @@ public class Building implements Serializable {
     @Override
     public String toString() {
         return "Building{" +
-                "code='" + code + '\'' +
-                ", name='" + name + '\'' +
-                ", floors=" + floors +
+                "buildingId='" + buildingId + '\'' +
+                ", buildingCode='" + buildingCode + '\'' +
+                ", buildingName='" + buildingName + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 '}';

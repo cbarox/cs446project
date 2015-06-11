@@ -50,15 +50,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static ArrayList<Building> buildingsCache;
     @InjectView(R.id.info_card_layout)
     protected SlidingUpPanelLayout mSlidingLayout;
-
-    private GoogleMap mMap;
-
     // icard info
     @InjectView(R.id.icard_buildName)
     protected TextView mCardBuildName;
     @InjectView(R.id.icard_buildcode)
     protected  TextView mCardBuildCode;
-
+    private GoogleMap mMap;
     // TODO change this to inner class
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -106,8 +103,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             LatLng buildingLocation = new LatLng(building.getLatitude(), building.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(buildingLocation)
-                    .title(building.getName())
-                    .snippet(building.getCode());
+                    .title(building.getBuildingName())
+                    .snippet(building.getBuildingCode());
             mMap.addMarker(markerOptions);
         }
     }
@@ -128,7 +125,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Check if we need to get the buildings from the database/API or if we can just use the local cache
         if (buildingsCache == null) {
-            Buildings.updateBuildings(this);
+            // TODO Do this in android service
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Buildings.updateBuildings(getApplicationContext());
+                }
+            }).start();
         }
 
         // initialize map
