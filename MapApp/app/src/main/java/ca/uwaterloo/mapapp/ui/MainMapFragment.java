@@ -1,13 +1,15 @@
 package ca.uwaterloo.mapapp.ui;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -33,7 +35,7 @@ import ca.uwaterloo.mapapp.data.objects.Building;
 import ca.uwaterloo.mapapp.logic.Buildings;
 import ca.uwaterloo.mapapp.logic.Logger;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MainMapFragment extends Fragment implements OnMapReadyCallback {
 
     private static final LatLngBounds BOUNDS = new LatLngBounds(
             new LatLng(43.461340, -80.573), // bottom-left
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static ArrayList<Building> buildingsCache;
     @InjectView(R.id.info_card_layout)
     protected SlidingUpPanelLayout mSlidingLayout;
+
+    private Context context;
 
     private GoogleMap mMap;
 
@@ -113,63 +117,48 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_map, container, false);
+        context = this.getActivity();
         // This has to come after setContentView
-        ButterKnife.inject(this);
+        ButterKnife.inject(this, view);
 
         // Register the broadcast receiver
         IntentFilter intentFilter = new IntentFilter();
         for (String action : receiverActions) {
             intentFilter.addAction(action);
         }
-        registerReceiver(broadcastReceiver, intentFilter);
+        context.registerReceiver(broadcastReceiver, intentFilter);
 
         // Check if we need to get the buildings from the database/API or if we can just use the local cache
         if (buildingsCache == null) {
-            Buildings.updateBuildings(this);
+            Buildings.updateBuildings(this.getActivity());
         }
 
         // initialize map
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        return view;
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDetach() {
+        super.onDetach();
+        destroyMap();
+    }
+
+    @Override
+    public void onDestroyView() {
         super.onDestroy();
-        unregisterReceiver(broadcastReceiver);
-
-        mSlidingLayout = (SlidingUpPanelLayout)findViewById(R.id.info_card_layout);
+        destroyMap();
     }
 
-    /**
-     * Inflate the menu; this adds items to the action bar if it is present.
-     *
-     * @param menu Menu that's being inflated
-     */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    /**
-     * Handle action bar item clicks here.
-     *
-     * @param item Item that was selected
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_settings: {
-                return true;
-            }
-        }
-
-        return super.onOptionsItemSelected(item);
+    public void onDestroy() {
+        super.onDestroy();
+        context.unregisterReceiver(broadcastReceiver);
     }
 
     @Override
@@ -214,6 +203,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (buildingsCache != null) {
             addBuildingMarkers(buildingsCache);
+        }
+    }
+
+    private void destroyMap() {
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            FragmentManager fm = getFragmentManager();
+            fm.beginTransaction().remove(mapFragment).commit();
         }
     }
 

@@ -1,0 +1,129 @@
+<com.sothree.slidinguppanel.FloatingActionButtonLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    sothree:umanoFabMode="circular_reveal">
+
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:sothree="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/info_card_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        sothree:umanoAnchorPoint="0.7"
+        sothree:umanoInitialState="hidden"
+        sothree:umanoPanelHeight="68dp"
+        sothree:umanoShadowHeight="4dp">
+
+        <!-- Map -->
+        <fragment
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:map="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            map:cameraTargetLat="43.470622"
+            map:cameraTargetLng="-80.545"
+            map:cameraZoom="15"
+            map:uiCompass="true" />
+
+        <!-- Info Card Panel -->
+        <LinearLayout
+            android:id="@+id/info_card_panel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF"
+            android:orientation="vertical">
+
+            <!-- Visible when collapsed -->
+            <LinearLayout
+                android:id="@+id/icard_top"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp">
+
+                <TextView
+                    android:id="@+id/icard_buildName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:background="#00FFFFFF"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Student Life Center"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/icard_buildcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SLC"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <Button
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/abc_btn_check_to_on_mtrl_015"
+                android:text="Floor Plans" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:text="Events"
+                android:textSize="16sp" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/temp_list" />
+
+            <Button
+                android:id="@+id/icard_more_events"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="more" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:text="Notes"
+                android:textSize="16sp" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/temp_list" />
+
+            <Button
+                android:id="@+id/icard_more_notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="more" />
+
+        </LinearLayout>
+
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+    <!--Floating Button-->
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add_black_24dp"
+        fab:fab_colorNormal="@color/primary"
+        fab:fab_colorPressed="@color/primaryDark"
+        fab:fab_colorRipple="@color/accent" />
+
+</com.sothree.slidinguppanel.FloatingActionButtonLayout>
