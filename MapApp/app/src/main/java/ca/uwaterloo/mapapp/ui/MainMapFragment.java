@@ -26,7 +26,7 @@ import com.google.android.gms.maps.model.VisibleRegion;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -44,19 +44,19 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
      * All the actions that are processed by the broadcast receiver
      */
     private static final String[] receiverActions = {
-            WaterlooApi.ACTION_GOT_BUILDINGS
+            WaterlooApi.ACTION_GOT_LIST
     };
     /**
      * This has to be static so it isn't garbage collected when the activity is destroyed
      */
-    private static ArrayList<Building> buildingsCache;
+    private static List<Building> buildingsCache;
     @InjectView(R.id.info_card_layout)
     protected SlidingUpPanelLayout mSlidingLayout;
     // icard info
     @InjectView(R.id.icard_buildName)
     protected TextView mCardBuildName;
     @InjectView(R.id.icard_buildcode)
-    protected  TextView mCardBuildCode;
+    protected TextView mCardBuildCode;
     private Context context;
     private GoogleMap mMap;
     // TODO change this to inner class
@@ -66,19 +66,24 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
             String action = intent.getAction();
             Bundle extras = intent.getExtras();
             switch (action) {
-                case WaterlooApi.ACTION_GOT_BUILDINGS: {
-                    // Get the buildings from the intent extras
+                case WaterlooApi.ACTION_GOT_LIST: {
                     if (extras == null) {
-                        Logger.error("No extras supplied from intent %s", WaterlooApi.ACTION_GOT_BUILDINGS);
+                        Logger.error("No extras supplied from intent %s", WaterlooApi.ACTION_GOT_LIST);
                         return;
                     }
-                    Object buildingsObject = extras.get(WaterlooApi.EXTRA_BUILDINGS);
-                    if (buildingsObject == null) {
-                        Logger.error("Couldn't get buildings from intent extras");
+                    List list = (List) extras.get(WaterlooApi.EXTRA_LIST);
+                    if (list == null) {
+                        Logger.error("Couldn't get list from intent extras");
                         return;
                     }
-                    ArrayList<Building> buildings = (ArrayList<Building>) buildingsObject;
-                    handleBuildingsProcessed(buildings);
+                    String className = extras.getString(WaterlooApi.EXTRA_CLASS);
+                    if (className == null) {
+                        Logger.error("Couldn't get class name from intent extras");
+                        return;
+                    }
+                    if (className.equals("Building")) {
+                        handleBuildingsProcessed(list);
+                    }
                 }
             }
         }
@@ -86,12 +91,12 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
 
     /**
      * On startup, MainApplication will ask the Waterloo API for a list of buildings, but it takes a while.
-     * So when the buildings are finished getting retrieved from the API and added to the database, this method updates the UI.
+     * So when the buildings are finished getting retrieved from the API, this method updates the UI.
      * Also local caches the buildings so we don't need to get them again if the activity is destroyed
      *
      * @param buildings List of buildings retrieved from the API
      */
-    private void handleBuildingsProcessed(ArrayList<Building> buildings) {
+    private void handleBuildingsProcessed(List<Building> buildings) {
         buildingsCache = buildings;
         addBuildingMarkers(buildingsCache);
     }
@@ -101,7 +106,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
      *
      * @param buildings A List of buildings to add
      */
-    private void addBuildingMarkers(ArrayList<Building> buildings) {
+    private void addBuildingMarkers(List<Building> buildings) {
         for (Building building : buildings) {
             LatLng buildingLocation = new LatLng(building.getLatitude(), building.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions()
@@ -130,7 +135,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         // Check if we need to get the buildings from the database/API or if we can just use the local cache
         if (buildingsCache == null) {
             final Context context = this.getActivity();
-            WaterlooApi.requestBuildings(context);
+            WaterlooApi.requestList(context, Building.class);
         }
 
         // initialize map
