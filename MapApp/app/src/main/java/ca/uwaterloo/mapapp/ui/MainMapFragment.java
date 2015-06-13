@@ -31,9 +31,9 @@ import java.util.ArrayList;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
-import ca.uwaterloo.mapapp.data.objects.Building;
-import ca.uwaterloo.mapapp.logic.Buildings;
 import ca.uwaterloo.mapapp.logic.Logger;
+import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
+import ca.uwaterloo.mapapp.logic.net.objects.Building;
 
 public class MainMapFragment extends Fragment implements OnMapReadyCallback {
 
@@ -44,7 +44,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
      * All the actions that are processed by the broadcast receiver
      */
     private static final String[] receiverActions = {
-            Buildings.ACTION_BUILDINGS_PROCESSED
+            WaterlooApi.ACTION_GOT_BUILDINGS
     };
     /**
      * This has to be static so it isn't garbage collected when the activity is destroyed
@@ -52,17 +52,13 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
     private static ArrayList<Building> buildingsCache;
     @InjectView(R.id.info_card_layout)
     protected SlidingUpPanelLayout mSlidingLayout;
-
-    private Context context;
-
-    private GoogleMap mMap;
-
     // icard info
     @InjectView(R.id.icard_buildName)
     protected TextView mCardBuildName;
     @InjectView(R.id.icard_buildcode)
     protected  TextView mCardBuildCode;
-
+    private Context context;
+    private GoogleMap mMap;
     // TODO change this to inner class
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -70,13 +66,13 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
             String action = intent.getAction();
             Bundle extras = intent.getExtras();
             switch (action) {
-                case Buildings.ACTION_BUILDINGS_PROCESSED: {
+                case WaterlooApi.ACTION_GOT_BUILDINGS: {
                     // Get the buildings from the intent extras
                     if (extras == null) {
-                        Logger.error("No extras supplied from intent %s", Buildings.ACTION_BUILDINGS_PROCESSED);
+                        Logger.error("No extras supplied from intent %s", WaterlooApi.ACTION_GOT_BUILDINGS);
                         return;
                     }
-                    Object buildingsObject = extras.get(Buildings.EXTRA_BUILDINGS);
+                    Object buildingsObject = extras.get(WaterlooApi.EXTRA_BUILDINGS);
                     if (buildingsObject == null) {
                         Logger.error("Couldn't get buildings from intent extras");
                         return;
@@ -110,8 +106,8 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
             LatLng buildingLocation = new LatLng(building.getLatitude(), building.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(buildingLocation)
-                    .title(building.getName())
-                    .snippet(building.getCode());
+                    .title(building.getBuildingName())
+                    .snippet(building.getBuildingCode());
             mMap.addMarker(markerOptions);
         }
     }
@@ -133,7 +129,8 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
 
         // Check if we need to get the buildings from the database/API or if we can just use the local cache
         if (buildingsCache == null) {
-            Buildings.updateBuildings(this.getActivity());
+            final Context context = this.getActivity();
+            WaterlooApi.requestBuildings(context);
         }
 
         // initialize map

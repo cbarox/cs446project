@@ -6,17 +6,14 @@ import android.database.sqlite.SQLiteDatabase;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import ca.uwaterloo.mapapp.data.objects.Building;
-
 /**
  * Created by cjbarrac
  * 23/05/15
- * <p/>
+ * <p>
  * This class basically controls all the accesses to the database, and handles the creation and
  * upgrading of the database.
  */
@@ -47,18 +44,17 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
-        try {
-            TableUtils.createTable(connectionSource, Building.class);
-//            TableUtils.createTable(connectionSource, Room.class);
-//            TableUtils.createTable(connectionSource, Event.class);
-//            TableUtils.createTable(connectionSource, EventType.class);
-//            TableUtils.createTable(connectionSource, Floor.class);
-//            TableUtils.createTable(connectionSource, Note.class);
-//            TableUtils.createTable(connectionSource, Organization.class);
-//            TableUtils.createTable(connectionSource, DayOfWeek.class);
+        /*try {
+            TableUtils.createTable(connectionSource, Room.class);
+            TableUtils.createTable(connectionSource, Event.class);
+            TableUtils.createTable(connectionSource, EventType.class);
+            TableUtils.createTable(connectionSource, Floor.class);
+            TableUtils.createTable(connectionSource, Note.class);
+            TableUtils.createTable(connectionSource, Organization.class);
+            TableUtils.createTable(connectionSource, DayOfWeek.class);
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override
