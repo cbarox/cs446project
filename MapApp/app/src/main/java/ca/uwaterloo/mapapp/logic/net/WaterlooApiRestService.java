@@ -4,6 +4,7 @@ package ca.uwaterloo.mapapp.logic.net;
 import java.util.List;
 
 import ca.uwaterloo.mapapp.logic.net.objects.Building;
+import ca.uwaterloo.mapapp.logic.net.objects.event.Event;
 import retrofit.http.GET;
 
 /**
@@ -17,4 +18,7 @@ public interface WaterlooApiRestService {
 
     @GET("/buildings/list.json?key=" + API_KEY)
     List<Building> getBuildings();
+
+    @GET("/events.json?key=" + API_KEY)
+    List<Event> getEvents();
 }
