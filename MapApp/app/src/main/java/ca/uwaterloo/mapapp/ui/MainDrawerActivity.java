@@ -1,14 +1,9 @@
 package ca.uwaterloo.mapapp.ui;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
-import ca.uwaterloo.mapapp.R;
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
-import it.neokree.materialnavigationdrawer.elements.MaterialSection;
 
 public class MainDrawerActivity extends MaterialNavigationDrawer {
 
@@ -24,4 +19,6 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
 
        this.addBottomSection(newSection("Settings", new Intent(this, SettingsActivity.class)));
    }
+
+
 }
