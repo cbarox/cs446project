@@ -52,7 +52,7 @@ for building in buildings:
         buildingObject["floors"].append({"name": map[1], "pdf": map[0], "png":names[0] + ".png"})
         
         # Download the map
-        os.system("curl -u bwjensen:@ZETAs59 -O " + map[0])
+        os.system("curl -u " + username + ":" + password + " -O " + map[0])
         
         mapCount = mapCount + 1
         if mapCount >= mapLimit and mapLimit > 0:
