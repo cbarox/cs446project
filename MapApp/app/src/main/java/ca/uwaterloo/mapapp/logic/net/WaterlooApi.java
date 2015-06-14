@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import ca.uwaterloo.mapapp.logic.Logger;
@@ -36,14 +37,21 @@ public class WaterlooApi {
             .build();
     private static WaterlooApiRestService service = restAdapter.create(WaterlooApiRestService.class);
 
+    private static HashMap<String, List> localCacheMap = new HashMap<>();
+
     public static void requestList(final Context context, final Class clazz) {
+        final String className = clazz.getSimpleName();
+        if (localCacheMap.containsKey(className)) {
+            broadcastGotList(context, localCacheMap.get(className), clazz);
+            return;
+        }
         new Thread(new Runnable() {
             @Override
             public void run() {
                 final long startTime = System.currentTimeMillis();
-                final String className = clazz.getSimpleName();
                 try {
                     final List result = invokeApiMethodFromClassName(className);
+                    localCacheMap.put(className, result);
                     final long duration = System.currentTimeMillis() - startTime;
                     Logger.info("Got list of %ss from API in %dms", className, duration);
                     broadcastGotList(context, result, clazz);
@@ -55,8 +63,8 @@ public class WaterlooApi {
         }).start();
     }
 
-    private static List invokeApiMethodFromClassName(String clazzSimpleName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        String format = String.format("get%ss", clazzSimpleName);
+    private static List invokeApiMethodFromClassName(String className) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        String format = String.format("get%ss", className);
         Method method = service.getClass().getMethod(format);
         return (List) method.invoke(service);
     }

@@ -1,14 +1,15 @@
 package ca.uwaterloo.mapapp.logic.net.objects.event;
 
+import java.io.Serializable;
+
 /**
  * Created by Hyunwook on 2015-06-13.
  */
-public class Event {
+public class Event implements Serializable {
 
     private double id;
     private String title;
     private String link;
-    private Times times;
 
     public double getId() {
         return id;
@@ -34,21 +35,5 @@ public class Event {
         this.link = link;
     }
 
-    public Times getTimes() {
-        return times;
-    }
 
-    public void setTimes(Times times) {
-        this.times = times;
-    }
-
-    @Override
-    public String toString() {
-        return "Event{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", link='" + link + '\'' +
-                ", times=" + times +
-                '}';
-    }
 }

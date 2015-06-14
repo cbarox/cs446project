@@ -1,14 +1,19 @@
 package ca.uwaterloo.mapapp.ui;
 
-import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.List;
 
 import ca.uwaterloo.mapapp.R;
+import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
+import ca.uwaterloo.mapapp.logic.net.objects.event.Event;
 
 
 /**
@@ -28,6 +33,11 @@ public class AllEventsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private TextView textView;
+
+    public AllEventsFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -47,24 +57,35 @@ public class AllEventsFragment extends Fragment {
         return fragment;
     }
 
-    public AllEventsFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        Context context = getActivity();
+        WaterlooApi.requestList(context, Event.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_all_events, container, false);
+        View inflate = inflater.inflate(R.layout.fragment_all_events, container, false);
+        textView = (TextView) inflate.findViewById(R.id.hello);
+        return inflate;
+    }
+
+    public void handleGotEvents(List<Event> events) {
+        // Handle the events from API here
+        String hello = "";
+        for (Event event : events) {
+            hello += event.getTitle() + "\n";
+        }
+        textView.setText(hello);
     }
 
     /**

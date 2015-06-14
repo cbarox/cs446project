@@ -14,66 +14,60 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = Note.TABLE)
 public class Note {
 
-	public static final String TABLE = "note";
+    public static final String TABLE = "note";
+
     public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_USERNAME = "username";
-    public static final String COLUMN_DATE_CREATED = "date_created";
-	public static final String COLUMN_DATE_MOTIFIED = "date_modified";
-	public static final String COLUMN_CONTENT = "content";
-	public static final String COLUMN_ROOM_ID = "room_id";
-	
-    @DatabaseField(columnName = COLUMN_ID, generatedId = true  )
+    public static final String COLUMN_TITLE = "title";
+    public static final String COLUMN_DESCRIPTION = "description";
+    public static final String COLUMN_BUILDING_CODE = "building_code";
+
+    @DatabaseField(columnName = COLUMN_ID, generatedId = true)
     private long id;
 
-    @DatabaseField(columnName = COLUMN_USERNAME)
-    private String username;
+    @DatabaseField(columnName = COLUMN_TITLE)
+    private String title;
 
-    @DatabaseField(columnName = COLUMN_DATE_CREATED)
-    private long date_created;
+    @DatabaseField(columnName = COLUMN_DESCRIPTION)
+    private String description;
 
-    @DatabaseField(columnName = COLUMN_DATE_MOTIFIED)
-    private long date_motified;
+    @DatabaseField(columnName = COLUMN_BUILDING_CODE)
+    private String buildingCode;
 
-    @DatabaseField(columnName = COLUMN_CONTENT)
-    private String date_content;
-
-    @DatabaseField(columnName = COLUMN_ROOM_ID)
-    private long room_id;
-	
-    public long getId () {
+    public long getId() {
         return id;
     }
-    public void setId (long id) {
-        this.id = id;
-    }
-	
-	public String getUsername () {
-        return username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
-	
-	public long getDateCreated () {
-        return date_created;
-    }
-    public void setDateCreated(long date_created) {
-        this.date_created = date_created;
+
+    public String getTitle() {
+        return title;
     }
 
-	public long getDateModified () {
-        return date_motified;
-    }
-    public void setDateModified(long date_motified) {
-        this.date_created = date_motified;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-		
-    public long getRoomId () {
-        return room_id;
+    public String getDescription() {
+        return description;
     }
-    public void setRoomId (long room_id) {
-        this.room_id = room_id;
+
+    public void setDescription(String description) {
+        this.description = description;
     }
-	
+
+    public String getBuildingCode() {
+        return buildingCode;
+    }
+
+    public void setBuildingCode(String buildingCode) {
+        this.buildingCode = buildingCode;
+    }
+
+    @Override
+    public String toString() {
+        return "Note{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", buildingCode='" + buildingCode + '\'' +
+                '}';
+    }
 }
