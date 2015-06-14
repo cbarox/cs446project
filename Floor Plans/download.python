@@ -3,6 +3,7 @@ import re
 import os
 import shutil
 import json
+import sys
 
 # Get webpage with all our pdf documents
 html = urllib2.urlopen("http://plantoperations.uwaterloo.ca/floor_plans/").read()
@@ -10,6 +11,13 @@ html = urllib2.urlopen("http://plantoperations.uwaterloo.ca/floor_plans/").read(
 buildings = re.findall("<a href=\"javascript:togglePlanList\\('.*?'\\)\">(.*?)</a>\\s*?<ul(.*?)</ul>", html, re.DOTALL)
 
 database = []
+
+if len(sys.argv) != 3:
+    print("Usage: download.python questUsername questPassword");
+    sys.exit(1);
+
+username = sys.argv[1];
+password = sys.argv[2];
 
 try:
     os.mkdir("download")
