@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
+import com.melnykov.fab.FloatingActionButton;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
@@ -38,8 +39,8 @@ import ca.uwaterloo.mapapp.logic.net.objects.Building;
 public class MainMapFragment extends Fragment implements OnMapReadyCallback {
 
     private static final LatLngBounds BOUNDS = new LatLngBounds(
-            new LatLng(43.461340, -80.573), // bottom-left
-            new LatLng(43.487251, -80.532603)); // top right
+            new LatLng(43.451340, -80.583), // bottom-left
+            new LatLng(43.497251, -80.522603)); // top right
     /**
      * All the actions that are processed by the broadcast receiver
      */
@@ -141,6 +142,17 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         // initialize map
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        // setup Fab action
+        FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.fab_new_note);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, NewNoteActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
+            }
+        });
 
         return view;
     }
