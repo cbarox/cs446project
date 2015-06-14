@@ -2,10 +2,8 @@ package ca.uwaterloo.mapapp.ui;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +30,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
-import ca.uwaterloo.mapapp.logic.Logger;
 import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
 import ca.uwaterloo.mapapp.logic.net.objects.Building;
 
@@ -41,12 +38,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
     private static final LatLngBounds BOUNDS = new LatLngBounds(
             new LatLng(43.451340, -80.583), // bottom-left
             new LatLng(43.497251, -80.522603)); // top right
-    /**
-     * All the actions that are processed by the broadcast receiver
-     */
-    private static final String[] receiverActions = {
-            WaterlooApi.ACTION_GOT_LIST
-    };
+
     /**
      * This has to be static so it isn't garbage collected when the activity is destroyed
      */
@@ -60,35 +52,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
     protected TextView mCardBuildCode;
     private Context context;
     private GoogleMap mMap;
-    // TODO change this to inner class
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            Bundle extras = intent.getExtras();
-            switch (action) {
-                case WaterlooApi.ACTION_GOT_LIST: {
-                    if (extras == null) {
-                        Logger.error("No extras supplied from intent %s", WaterlooApi.ACTION_GOT_LIST);
-                        return;
-                    }
-                    List list = (List) extras.get(WaterlooApi.EXTRA_LIST);
-                    if (list == null) {
-                        Logger.error("Couldn't get list from intent extras");
-                        return;
-                    }
-                    String className = extras.getString(WaterlooApi.EXTRA_CLASS);
-                    if (className == null) {
-                        Logger.error("Couldn't get class name from intent extras");
-                        return;
-                    }
-                    if (className.equals("Building")) {
-                        handleBuildingsProcessed(list);
-                    }
-                }
-            }
-        }
-    };
+
 
     /**
      * On startup, MainApplication will ask the Waterloo API for a list of buildings, but it takes a while.
@@ -97,7 +61,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
      *
      * @param buildings List of buildings retrieved from the API
      */
-    private void handleBuildingsProcessed(List<Building> buildings) {
+    public void handleGotBuildings(List<Building> buildings) {
         buildingsCache = buildings;
         addBuildingMarkers(buildingsCache);
     }
@@ -126,12 +90,6 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         // This has to come after setContentView
         ButterKnife.inject(this, view);
 
-        // Register the broadcast receiver
-        IntentFilter intentFilter = new IntentFilter();
-        for (String action : receiverActions) {
-            intentFilter.addAction(action);
-        }
-        context.registerReceiver(broadcastReceiver, intentFilter);
 
         // Check if we need to get the buildings from the database/API or if we can just use the local cache
         if (buildingsCache == null) {
@@ -167,12 +125,6 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
     public void onDestroyView() {
         super.onDestroy();
         destroyMap();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        context.unregisterReceiver(broadcastReceiver);
     }
 
     @Override
