@@ -23,42 +23,45 @@
             android:layout_height="wrap_content"
             android:hint="Title"
             android:inputType="textCapWords"
-            android:maxLines="1"
             android:textColor="#FFFFFF"
             android:textColorHint="@color/primaryLight"
-            android:textSize="48sp" />
+            android:textSize="48sp"
+            android:scrollHorizontally="false"/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="5dp">
+            android:layout_height="48dp"
+            android:paddingLeft="5dp"
+            android:gravity="center_vertical">
 
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:text="QNC"
-                android:layout_gravity="left"
-                android:layout_weight="1"
-                android:textColor="@color/primaryLight"/>
-
-            <LinearLayout
+            <!-- building -->
+            <Button
+                android:id="@+id/btn_building"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right">
+                android:drawableLeft="@drawable/ic_store_black_24dp"
+                style="?android:attr/borderlessButtonStyle"
+                android:text="No location"
+                android:textColor="@color/primaryLight"
+                android:onClick="selectNewBuilding"/>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="#00000000"
-                    android:src="@drawable/ic_local_offer_black_18dp"/>
+            <!-- filler -->
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/primaryLight"
-                    android:text="2"/>
-
-            </LinearLayout>
+            <!-- Tags -->
+            <Button
+                android:id="@+id/btn_tags"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|right"
+                android:gravity="right|center_vertical"
+                android:drawableRight="@drawable/ic_local_offer_black_24dp"
+                style="?android:attr/borderlessButtonStyle"
+                android:text="2"
+                android:textColor="@color/primaryLight" />
 
         </LinearLayout>
 

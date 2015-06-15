@@ -1,13 +1,17 @@
 package ca.uwaterloo.mapapp.ui;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -30,6 +34,9 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
+import ca.uwaterloo.mapapp.data.DataManager;
+import ca.uwaterloo.mapapp.data.DatabaseHelper;
+import ca.uwaterloo.mapapp.data.objects.Note;
 import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
 import ca.uwaterloo.mapapp.logic.net.objects.Building;
 
@@ -50,8 +57,12 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
     protected TextView mCardBuildName;
     @InjectView(R.id.icard_buildcode)
     protected TextView mCardBuildCode;
+    @InjectView(R.id.icard_notes)
+    protected ListView mCardNotes;
     private Context context;
     private GoogleMap mMap;
+
+    private String currentBuilding = "";
 
 
     /**
@@ -98,7 +109,10 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         }
 
         // initialize map
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+        MapFragment mapFragment = MapFragment.newInstance();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.map_container, mapFragment);
+        fragmentTransaction.commit();
         mapFragment.getMapAsync(this);
 
         // setup Fab action
@@ -107,6 +121,9 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, NewNoteActivity.class);
+                if (!currentBuilding.isEmpty()) {
+                    intent.putExtra(NewNoteActivity.ARG_SELECTED_BUILD, currentBuilding);
+                }
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
             }
@@ -116,20 +133,14 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        destroyMap();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroy();
-        destroyMap();
-    }
-
-    @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(43.470622, -80.545))
+                .zoom(15)
+                .build();
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
         mMap.setIndoorEnabled(false);
         mMap.setBuildingsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
@@ -138,10 +149,8 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                mCardBuildName.setText(marker.getTitle());
-                mCardBuildCode.setText(marker.getSnippet());
-
-                showHideInfoCard(true);
+                populateInfoCard(marker);
+                mSlidingLayout.setPanelState(PanelState.COLLAPSED);
 
                 // zoom in and center the camera on the marker
                 CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -172,21 +181,53 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void destroyMap() {
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            FragmentManager fm = getFragmentManager();
-            fm.beginTransaction().remove(mapFragment).commit();
+    private void populateInfoCard(Marker marker) {
+        mCardBuildName.setText(marker.getTitle());
+        mCardBuildCode.setText(marker.getSnippet());
+        currentBuilding = marker.getSnippet();
+
+        // notes
+        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(getActivity());
+        DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
+        List<Note> notes = dataManager.find(Note.COLUMN_BUILDING_CODE, marker.getSnippet());
+        if (notes != null && notes.size() > 0) {
+            if (notes.size() > 2)   notes = notes.subList(0, 2);
+            mCardNotes.setAdapter(new ArrayAdapter<>(context,
+                    android.R.layout.simple_list_item_1, notes));
         }
     }
 
     /**
-     * Shows or hides the info card
+     * Shows or hides the info carde
+     * If in full view or anchored, then reduce to collapsed
+     * If collapsed and enabled false, then hide
+     * If enabled, then show collapsed
      *
      * @param enabled Whether to show the info card
      */
-    private void showHideInfoCard(boolean enabled) {
-        mSlidingLayout.setPanelState(enabled ? PanelState.COLLAPSED : PanelState.HIDDEN);
+    public boolean showHideInfoCard(boolean enabled) {
+        boolean handled = false;
+        switch (mSlidingLayout.getPanelState()) {
+            case EXPANDED:
+            case ANCHORED:
+                mSlidingLayout.setPanelState(PanelState.COLLAPSED);
+                handled = true;
+                break;
+            case COLLAPSED:
+                mSlidingLayout.setPanelState(enabled ? PanelState.COLLAPSED : PanelState.HIDDEN);
+                handled = !enabled;
+                break;
+            case HIDDEN:
+                mSlidingLayout.setPanelState(enabled ? PanelState.COLLAPSED : PanelState.HIDDEN);
+                handled = enabled;
+                break;
+        }
+
+        if (mSlidingLayout.getPanelState() == PanelState.HIDDEN) {
+            currentBuilding = "";
+        }
+
+        return handled;
     }
 
     /**

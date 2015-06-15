@@ -18,17 +18,10 @@
         sothree:umanoShadowHeight="4dp">
 
         <!-- Map -->
-        <fragment
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:map="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.MapFragment"
+        <FrameLayout
+            android:id="@+id/map_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            map:cameraTargetLat="43.470622"
-            map:cameraTargetLng="-80.545"
-            map:cameraZoom="15"
-            map:uiCompass="true" />
+            android:layout_height="match_parent" />
 
         <!-- Info Card Panel -->
         <LinearLayout
@@ -82,6 +75,7 @@
                 android:textSize="16sp" />
 
             <ListView
+                android:id="@+id/icard_events"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/temp_list" />
@@ -100,6 +94,7 @@
                 android:textSize="16sp" />
 
             <ListView
+                android:id="@+id/icard_notes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/temp_list" />

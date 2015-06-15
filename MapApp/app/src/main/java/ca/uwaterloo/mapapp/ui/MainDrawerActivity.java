@@ -91,7 +91,9 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
         Resources res = getResources();
 
         mainMapFragment = new MainMapFragment();
-        campusMapSection = newSection("Campus Map", mainMapFragment);
+        campusMapSection = newSection("Campus Map",
+                res.getDrawable(R.drawable.ic_map_black_24dp),
+                mainMapFragment);
         this.addSection(campusMapSection);
         this.addDivisor();
 
@@ -102,15 +104,21 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
         this.addSection(allEventsSection);
 
         allNotesFragment = new AllNotesFragment();
-        allNotesSection = newSection("All Notes", allNotesFragment);
+        allNotesSection = newSection("All Notes",
+                res.getDrawable(R.drawable.ic_description_black_24dp),
+                allNotesFragment);
         this.addSection(allNotesSection);
 
         allBuildingsFragment = new AllBuildingsFragment();
-        allBuildingsSection = newSection("All Buildings", allBuildingsFragment);
+        allBuildingsSection = newSection("All Buildings",
+                res.getDrawable(R.drawable.ic_store_black_24dp),
+                allBuildingsFragment);
         this.addSection(allBuildingsSection);
 
         allTagsFragment = new AllTagsFragment();
-        allTagsSections = newSection("All Tags", allTagsFragment);
+        allTagsSections = newSection("All Tags",
+                res.getDrawable(R.drawable.ic_local_offer_black_24dp),
+                allTagsFragment);
         this.addSection(allTagsSections);
 
         this.addBottomSection(newSection("Settings",
@@ -122,9 +130,11 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
 
     @Override
     public void onBackPressed() {
-        if (getCurrentSection().equals(campusMapSection)) {
-
-        } else {
+        boolean handled = false;
+        if (getCurrentSection().equals(mainMapFragment)) {
+            handled = ((MainMapFragment)mainMapFragment.getTargetFragment()).showHideInfoCard(false);
+        }
+        if (!handled) {
             super.onBackPressed();
         }
     }
