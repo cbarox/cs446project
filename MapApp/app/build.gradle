@@ -48,4 +48,6 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     // This is for google maps
     compile 'com.google.android.gms:play-services-maps:7.5.0'
+    // This is for material design dialogs
+    compile 'com.afollestad:material-dialogs:0.7.6.0'
 }

@@ -1,69 +1,53 @@
 package ca.uwaterloo.mapapp.ui;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
+import com.melnykov.fab.FloatingActionButton;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
+import ca.uwaterloo.mapapp.data.DataManager;
+import ca.uwaterloo.mapapp.data.DatabaseHelper;
+import ca.uwaterloo.mapapp.data.objects.Note;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AllNotesFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AllNotesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AllNotesFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    @InjectView(R.id.note_list)
+    protected ListView noteList;
+    @InjectView(R.id.fab_new_note)
+    protected FloatingActionButton fab;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AllNotesFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AllNotesFragment newInstance(String param1, String param2) {
-        AllNotesFragment fragment = new AllNotesFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public AllNotesFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    SimpleCursorAdapter mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_all_notes, container, false);
+        View view = inflater.inflate(R.layout.fragment_all_notes, container, false);
+        // This has to come after setContentView
+        ButterKnife.inject(this, view);
+
+        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(getActivity());
+        DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
+
+        List<Note> notes = dataManager.getAll();
+
+        noteList.setAdapter(new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, notes));
+
+        fab.attachToListView(noteList);
+
+        return view;
     }
 
 }

@@ -9,9 +9,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -25,6 +29,8 @@ import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
 import ca.uwaterloo.mapapp.logic.net.objects.Building;
 
 public class NewNoteActivity extends ActionBarActivity {
+
+    public static final String ARG_SELECTED_BUILD = "selected_building";
 
     /**
      * All the actions that are processed by the broadcast receiver
@@ -40,6 +46,15 @@ public class NewNoteActivity extends ActionBarActivity {
     protected EditText mTitle;
     @InjectView(R.id.note_desc)
     protected EditText mDescription;
+    @InjectView(R.id.btn_building)
+    protected Button mBuildingBtn;
+    @InjectView(R.id.btn_tags)
+    protected Button mTagsBtn;
+
+    private List<Building> buildingList;
+    private String[] buildingNames;
+    private int selectedIndex = 0;
+    private String selectedBuildCode = "";
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -71,7 +86,17 @@ public class NewNoteActivity extends ActionBarActivity {
     };
 
     private void handleGotBuildings(List<Building> buildings) {
-
+        buildingList = buildings;
+        buildingNames = new String[buildingList.size()+1];
+        buildingNames[0] = "No building";
+        int current = 1;
+        for (Building building : buildingList) {
+            buildingNames[current] = building.getBuildingName();
+            if (building.getBuildingCode().equals(selectedBuildCode)) {
+                selectedIndex = current;
+            }
+            current++;
+        }
     }
 
     @Override
@@ -98,6 +123,12 @@ public class NewNoteActivity extends ActionBarActivity {
         registerReceiver(broadcastReceiver, intentFilter);
 
         WaterlooApi.requestList(this, Building.class);
+
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            selectedBuildCode = b.getString(ARG_SELECTED_BUILD);
+            mBuildingBtn.setText(selectedBuildCode);
+        }
     }
 
     @Override
@@ -114,8 +145,6 @@ public class NewNoteActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        String message = "Cannot save empty note";
-
         String title = mTitle.getText().toString();
         String description = mDescription.getText().toString();
 
@@ -124,18 +153,42 @@ public class NewNoteActivity extends ActionBarActivity {
             note.setTitle(title);
             note.setDescription(description);
             // TODO get building code from dropdown
-            //note.setBuildingCode(buildingCode);
+            if (selectedIndex > 0) {
+                note.setBuildingCode(mBuildingBtn.getText().toString());
+            }
 
             // Insert note into database
             DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(this);
             DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
             dataManager.insert(note);
 
-            message = "Note saved";
+            Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show();
         }
 
         super.onBackPressed();
         overridePendingTransition(R.anim.nothing, R.anim.slide_down);
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void selectNewBuilding(View view) {
+        if (buildingList != null && buildingList.size() > 0) {
+            new MaterialDialog.Builder(this)
+                    .title("Choose building")
+                    .items(buildingNames)
+                    .itemsCallbackSingleChoice(selectedIndex,
+                            new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog materialDialog, View view, int which,
+                                                   CharSequence charSequence) {
+                            selectedIndex = which;
+                            if (selectedIndex > 0) {
+                                mBuildingBtn.setText(
+                                        buildingList.get(selectedIndex-1).getBuildingCode());
+                            } else {
+                                mBuildingBtn.setText(charSequence);
+                            }
+                            return true;
+                        }
+                    }).show();
+        }
     }
 }
