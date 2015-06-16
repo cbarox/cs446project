@@ -192,8 +192,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         List<Note> notes = dataManager.find(Note.COLUMN_BUILDING_CODE, marker.getSnippet());
         if (notes != null && notes.size() > 0) {
             if (notes.size() > 2)   notes = notes.subList(0, 2);
-            mCardNotes.setAdapter(new ArrayAdapter<>(context,
-                    android.R.layout.simple_list_item_1, notes));
+            mCardNotes.setAdapter(new NoteAdapter(context, notes));
         }
     }
 

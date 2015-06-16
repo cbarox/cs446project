@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -102,7 +101,7 @@ public class NewNoteActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_note);
+        setContentView(R.layout.activity_new_edit_note);
         ButterKnife.inject(this);
 
         setSupportActionBar(mToolbar);
