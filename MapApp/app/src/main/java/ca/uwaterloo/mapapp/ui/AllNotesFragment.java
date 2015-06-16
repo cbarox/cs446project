@@ -1,13 +1,12 @@
 package ca.uwaterloo.mapapp.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import com.melnykov.fab.FloatingActionButton;
 
@@ -27,8 +26,6 @@ public class AllNotesFragment extends Fragment {
     @InjectView(R.id.fab_new_note)
     protected FloatingActionButton fab;
 
-    SimpleCursorAdapter mAdapter;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -42,12 +39,18 @@ public class AllNotesFragment extends Fragment {
 
         List<Note> notes = dataManager.getAll();
 
-        noteList.setAdapter(new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1, notes));
-
+        noteList.setAdapter(new NoteAdapter(getActivity(), notes));
         fab.attachToListView(noteList);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), NewNoteActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
+            }
+        });
 
         return view;
     }
-
 }
