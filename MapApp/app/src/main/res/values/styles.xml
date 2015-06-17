@@ -16,6 +16,7 @@
         <item name="toolbarElevation">true</item>
         <item name="learningPattern">false</item>
         <item name="rippleBackport">true</item>
+        <item name="drawerType">@integer/DRAWERTYPE_IMAGE</item>
     </style>
 
 </resources>

@@ -57,8 +57,15 @@ public class Note {
         return buildingCode;
     }
 
-    public void setBuildingCode(String buildingCode) {
-        this.buildingCode = buildingCode;
+    public void setBuildingCode(String buildingCode) { this.buildingCode = buildingCode; }
+
+    public Note copy() {
+        Note newNote = new Note();
+        newNote.id = this.id;
+        newNote.title = this.title;
+        newNote.description = this.description;
+        newNote.buildingCode = this.buildingCode;
+        return newNote;
     }
 
     @Override
@@ -69,5 +76,18 @@ public class Note {
                 ", description='" + description + '\'' +
                 ", buildingCode='" + buildingCode + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) return false;
+        if (o.getClass() != Note.class) return false;
+
+        Note other = (Note)o;
+        if (id != other.id) return false;
+        if (other.buildingCode == null || !other.buildingCode.equals(buildingCode)) return false;
+        if (other.title == null        || !other.title.equals(title)) return false;
+        if (other.description == null  || !other.description.equals(description)) return false;
+        return true;
     }
 }

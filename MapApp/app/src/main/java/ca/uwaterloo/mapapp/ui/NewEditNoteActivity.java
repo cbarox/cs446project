@@ -7,8 +7,10 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -27,9 +29,13 @@ import ca.uwaterloo.mapapp.logic.Logger;
 import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
 import ca.uwaterloo.mapapp.logic.net.objects.Building;
 
-public class NewNoteActivity extends ActionBarActivity {
+public class NewEditNoteActivity extends ActionBarActivity {
 
     public static final String ARG_SELECTED_BUILD = "selected_building";
+    public static final String ARG_NOTE_ID = "note_id";
+
+    public static final String RESULT_NOTE_ID = "result_note_id";
+    public static final String RESULT_IS_UPDATE = "result_is_update";
 
     /**
      * All the actions that are processed by the broadcast receiver
@@ -54,6 +60,8 @@ public class NewNoteActivity extends ActionBarActivity {
     private String[] buildingNames;
     private int selectedIndex = 0;
     private String selectedBuildCode = "";
+
+    private Note mNote = null;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -127,6 +135,27 @@ public class NewNoteActivity extends ActionBarActivity {
         if (b != null) {
             selectedBuildCode = b.getString(ARG_SELECTED_BUILD);
             mBuildingBtn.setText(selectedBuildCode);
+
+            long noteId = b.getLong(ARG_NOTE_ID, -1);
+            if (noteId > 0) {
+                DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(this);
+                DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
+                mNote = dataManager.findById(noteId);
+            }
+        }
+
+        if (mNote != null) {
+            selectedBuildCode = mNote.getBuildingCode();
+            mBuildingBtn.setText(selectedBuildCode);
+
+            mTitle.setText(mNote.getTitle());
+            mDescription.setText(mNote.getDescription());
+        } else {
+            // give focus to title text
+            if (mTitle.requestFocus()) {
+                getWindow().setSoftInputMode(
+                        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
         }
     }
 
@@ -147,25 +176,80 @@ public class NewNoteActivity extends ActionBarActivity {
         String title = mTitle.getText().toString();
         String description = mDescription.getText().toString();
 
-        if (!title.isEmpty()) {
-            Note note = new Note();
-            note.setTitle(title);
-            note.setDescription(description);
-            // TODO get building code from dropdown
-            if (selectedIndex > 0) {
-                note.setBuildingCode(mBuildingBtn.getText().toString());
+        boolean confirmUpdate = mNote != null;
+
+        if (mNote == null) {
+            mNote = new Note();
+        }
+        final Note org = mNote.copy();
+
+        mNote.setTitle(title);
+        if (title.isEmpty() && !description.isEmpty()) {
+            if (description.length() > 15) {
+                mNote.setTitle(description.substring(0, 16) + "...");
+            } else {
+                mNote.setTitle(description);
             }
+        }
+        mNote.setDescription(description);
 
-            // Insert note into database
-            DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(this);
-            DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
-            dataManager.insert(note);
-
-            Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show();
+        if (selectedIndex > 0) {
+            mNote.setBuildingCode(mBuildingBtn.getText().toString());
+        } else {
+            mNote.setBuildingCode("");
         }
 
-        super.onBackPressed();
-        overridePendingTransition(R.anim.nothing, R.anim.slide_down);
+        // confirm update of existing note
+        if (confirmUpdate && !org.equals(mNote)) {
+            // TODO: add check if note is empty
+            new MaterialDialog.Builder(this)
+                    .content("Save or discard draft")
+                    .positiveText("SAVE")
+                    .negativeText("DISCARD")
+                    .neutralText("CANCEL")
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            updateInsertNote();
+                            NewEditNoteActivity.super.onBackPressed();
+                            overridePendingTransition(R.anim.nothing, R.anim.slide_down);
+                        }
+                        @Override
+                        public void onNegative(MaterialDialog dialog) {
+                            NewEditNoteActivity.super.onBackPressed();
+                            overridePendingTransition(R.anim.nothing, R.anim.slide_down);
+                        }
+
+                        @Override
+                        public void onNeutral(MaterialDialog dialog) {
+                            mNote = org;
+                        }
+                    }).show();
+
+        // no update required
+        } else if (org.equals(mNote)){
+            NewEditNoteActivity.super.onBackPressed();
+            overridePendingTransition(R.anim.nothing, R.anim.slide_down);
+
+        // new note
+        } else if (mNote != null && mNote.getTitle() != null && !mNote.getTitle().isEmpty()) {
+            updateInsertNote();
+            super.onBackPressed();
+            overridePendingTransition(R.anim.nothing, R.anim.slide_down);
+
+        // blank note on insert
+        } else {
+            super.onBackPressed();
+            overridePendingTransition(R.anim.nothing, R.anim.slide_down);
+        }
+    }
+
+    private void updateInsertNote() {
+        // Insert note into database
+        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(this);
+        DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
+        dataManager.insertOrUpdate(mNote);
+        Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show();
     }
 
     public void selectNewBuilding(View view) {
