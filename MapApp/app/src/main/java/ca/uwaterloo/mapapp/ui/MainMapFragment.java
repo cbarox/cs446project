@@ -48,6 +48,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
      * This has to be static so it isn't garbage collected when the activity is destroyed
      */
     private static List<Building> buildingsCache;
+
     @InjectView(R.id.info_card_layout)
     protected SlidingUpPanelLayout mSlidingLayout;
     // icard info
@@ -57,10 +58,12 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
     protected TextView mCardBuildCode;
     @InjectView(R.id.icard_notes)
     protected ListView mCardNotes;
+
     private Context context;
     private GoogleMap mMap;
-
     private String currentBuilding = "";
+
+    private boolean isMapReady = false;
 
 
     /**
@@ -72,7 +75,9 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
      */
     public void handleGotBuildings(List<Building> buildings) {
         buildingsCache = buildings;
-        addBuildingMarkers(buildingsCache);
+        if (isMapReady) {
+            addBuildingMarkers(buildingsCache);
+        }
     }
 
     /**
@@ -177,6 +182,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         if (buildingsCache != null) {
             addBuildingMarkers(buildingsCache);
         }
+        isMapReady = true;
     }
 
     private void populateInfoCard(Marker marker) {
