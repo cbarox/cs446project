@@ -88,6 +88,9 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
     @Override
     public void init(Bundle savedInstanceState) {
 
+        // setup drawer image
+        setDrawerHeaderImage(R.drawable.test_drawer_image);
+
         Resources res = getResources();
 
         mainMapFragment = new MainMapFragment();

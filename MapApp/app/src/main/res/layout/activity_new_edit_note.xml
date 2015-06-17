@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="ca.uwaterloo.mapapp.ui.NewNoteActivity">
+    tools:context="ca.uwaterloo.mapapp.ui.NewEditNoteActivity">
 
     <include
         android:id="@+id/tool_bar"
@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_store_black_24dp"
                 style="?android:attr/borderlessButtonStyle"
-                android:text="No location"
+                android:text="No building"
                 android:textColor="@color/primaryLight"
                 android:onClick="selectNewBuilding"/>
 

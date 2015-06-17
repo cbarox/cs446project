@@ -5,12 +5,10 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -120,9 +118,9 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, NewNoteActivity.class);
+                Intent intent = new Intent(context, NewEditNoteActivity.class);
                 if (!currentBuilding.isEmpty()) {
-                    intent.putExtra(NewNoteActivity.ARG_SELECTED_BUILD, currentBuilding);
+                    intent.putExtra(NewEditNoteActivity.ARG_SELECTED_BUILD, currentBuilding);
                 }
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
@@ -193,6 +191,15 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         if (notes != null && notes.size() > 0) {
             if (notes.size() > 2)   notes = notes.subList(0, 2);
             mCardNotes.setAdapter(new NoteAdapter(context, notes));
+            mCardNotes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent(getActivity(), NewEditNoteActivity.class);
+                    intent.putExtra(NewEditNoteActivity.ARG_NOTE_ID, id);
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
+                }
+            });
         }
     }
 

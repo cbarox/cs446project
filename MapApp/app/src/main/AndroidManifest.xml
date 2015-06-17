@@ -42,7 +42,7 @@
                 android:value="ca.uwaterloo.mapapp.ui.MainDrawerActivity" />
         </activity>
         <activity
-            android:name=".ui.NewNoteActivity"
+            android:name=".ui.NewEditNoteActivity"
             android:label="@string/title_activity_new_note">
         </activity>
     </application>
