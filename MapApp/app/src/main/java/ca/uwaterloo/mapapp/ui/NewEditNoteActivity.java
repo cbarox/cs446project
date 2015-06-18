@@ -133,20 +133,26 @@ public class NewEditNoteActivity extends ActionBarActivity {
 
         Bundle b = getIntent().getExtras();
         if (b != null) {
-            selectedBuildCode = b.getString(ARG_SELECTED_BUILD);
-            mBuildingBtn.setText(selectedBuildCode);
+
 
             long noteId = b.getLong(ARG_NOTE_ID, -1);
             if (noteId > 0) {
                 DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(this);
                 DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
                 mNote = dataManager.findById(noteId);
+            } else {
+                selectedBuildCode = b.getString(ARG_SELECTED_BUILD);
+                mBuildingBtn.setText(this.getString(R.string.note_no_building));
             }
         }
 
         if (mNote != null) {
             selectedBuildCode = mNote.getBuildingCode();
-            mBuildingBtn.setText(selectedBuildCode);
+            if (selectedBuildCode != null && !selectedBuildCode.isEmpty()) {
+                mBuildingBtn.setText(selectedBuildCode);
+            } else {
+                mBuildingBtn.setText(this.getString(R.string.note_no_building));
+            }
 
             mTitle.setText(mNote.getTitle());
             mDescription.setText(mNote.getDescription());
