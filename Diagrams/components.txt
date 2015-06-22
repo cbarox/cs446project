@@ -1,0 +1,37 @@
+@startuml
+
+node "Android App" {
+    node "UI Layer" {
+        (MainMapFragment)
+        (AllEventsFragment)
+        (AllBuildingsFragment)
+        (AllNotesFragment)
+        (AllTagsFragment)
+        (NewNoteFragment)
+    }
+    node "Logic Layer" {
+        (WaterlooApiService)
+        (WaterlooApi)
+        (DataManager)
+    }
+    node "Data Layer" {
+        (DatabaseHelper)
+        database "sqlite"   
+    }
+}
+
+cloud "Waterloo Open Data API" {
+    database "JSON"
+}
+JSON -right-> WaterlooApiService
+WaterlooApiService --> WaterlooApi
+sqlite --> DatabaseHelper
+DatabaseHelper <-left-> DataManager
+DataManager --> AllNotesFragment
+DataManager --> AllTagsFragment
+WaterlooApi --> AllBuildingsFragment
+WaterlooApi --> AllEventsFragment
+WaterlooApi --> MainMapFragment
+NewNoteFragment --> DataManager
+
+@enduml
