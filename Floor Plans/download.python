@@ -65,7 +65,7 @@ for building in buildings:
         break
     
 # Convert all our pdfs
-os.system("mogrify -format png *.pdf")
+os.system("mogrify -density 600 -sharpen 0x1.0 -trim -quality 100 -format png *.pdf")
 os.system("mv *.png ../png/")
 os.chdir("..")
 shutil.rmtree("download")
