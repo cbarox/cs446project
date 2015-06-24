@@ -34,8 +34,10 @@ public class NewEditNoteActivity extends ActionBarActivity {
     public static final String ARG_SELECTED_BUILD = "selected_building";
     public static final String ARG_NOTE_ID = "note_id";
 
+    public static final int REQUEST_INSERT = 101;
+    public static final int REQUEST_UPDATE = 102;
+
     public static final String RESULT_NOTE_ID = "result_note_id";
-    public static final String RESULT_IS_UPDATE = "result_is_update";
 
     /**
      * All the actions that are processed by the broadcast receiver
@@ -61,6 +63,7 @@ public class NewEditNoteActivity extends ActionBarActivity {
     private int selectedIndex = 0;
     private String selectedBuildCode = "";
 
+    private boolean isUpdate = false;
     private Note mNote = null;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -133,8 +136,6 @@ public class NewEditNoteActivity extends ActionBarActivity {
 
         Bundle b = getIntent().getExtras();
         if (b != null) {
-
-
             long noteId = b.getLong(ARG_NOTE_ID, -1);
             if (noteId > 0) {
                 DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(this);
@@ -147,6 +148,7 @@ public class NewEditNoteActivity extends ActionBarActivity {
         }
 
         if (mNote != null) {
+            isUpdate = true;
             selectedBuildCode = mNote.getBuildingCode();
             if (selectedBuildCode != null && !selectedBuildCode.isEmpty()) {
                 mBuildingBtn.setText(selectedBuildCode);
@@ -176,7 +178,26 @@ public class NewEditNoteActivity extends ActionBarActivity {
         return false;
     }
 
+    /**
+     * Returns the result (ID of the note) back to the previous activity
+     */
+    public void returnResult(boolean hasUpdatedInserted) {
+        if (hasUpdatedInserted) {
+            Intent data = new Intent();
+            data.putExtra(RESULT_NOTE_ID, mNote.getId());
+            setResult(RESULT_OK, data);
+        } else {
+            setResult(RESULT_CANCELED);
+        }
+        finish();
+        overridePendingTransition(R.anim.nothing, R.anim.slide_down);
+    }
 
+    /**
+     * Inserts/Updates a non-blank note and returns to the previous activity.<br>
+     * If the note already exists then it prompts the user to confirm the update, may not return<br>
+     * If the exists and is now empty, it will give it a new title (Untitled note).
+     */
     @Override
     public void onBackPressed() {
         String title = mTitle.getText().toString();
@@ -217,13 +238,11 @@ public class NewEditNoteActivity extends ActionBarActivity {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             updateInsertNote();
-                            NewEditNoteActivity.super.onBackPressed();
-                            overridePendingTransition(R.anim.nothing, R.anim.slide_down);
+                            returnResult(true);
                         }
                         @Override
                         public void onNegative(MaterialDialog dialog) {
-                            NewEditNoteActivity.super.onBackPressed();
-                            overridePendingTransition(R.anim.nothing, R.anim.slide_down);
+                            returnResult(false);
                         }
 
                         @Override
@@ -234,19 +253,16 @@ public class NewEditNoteActivity extends ActionBarActivity {
 
         // no update required
         } else if (org.equals(mNote)){
-            NewEditNoteActivity.super.onBackPressed();
-            overridePendingTransition(R.anim.nothing, R.anim.slide_down);
+            returnResult(false);
 
         // new note
         } else if (mNote != null && mNote.getTitle() != null && !mNote.getTitle().isEmpty()) {
             updateInsertNote();
-            super.onBackPressed();
-            overridePendingTransition(R.anim.nothing, R.anim.slide_down);
+            returnResult(true);
 
         // blank note on insert
         } else {
-            super.onBackPressed();
-            overridePendingTransition(R.anim.nothing, R.anim.slide_down);
+            returnResult(false);
         }
     }
 
@@ -257,6 +273,8 @@ public class NewEditNoteActivity extends ActionBarActivity {
         dataManager.insertOrUpdate(mNote);
         Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show();
     }
+
+
 
     public void selectNewBuilding(View view) {
         if (buildingList != null && buildingList.size() > 0) {

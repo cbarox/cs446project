@@ -1,8 +1,10 @@
 package ca.uwaterloo.mapapp.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,9 @@ public class AllNotesFragment extends Fragment {
     @InjectView(R.id.fab_new_note)
     protected FloatingActionButton fab;
 
+    private List<Note> mNotes;
+    private NoteAdapter mAdapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -38,15 +43,16 @@ public class AllNotesFragment extends Fragment {
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(getActivity());
         DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
 
-        List<Note> notes = dataManager.getAll();
+        mNotes = dataManager.getAll();
+        mAdapter = new NoteAdapter(getActivity(), mNotes);
 
-        noteList.setAdapter(new NoteAdapter(getActivity(), notes));
+        noteList.setAdapter(mAdapter);
         noteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), NewEditNoteActivity.class);
                 intent.putExtra(NewEditNoteActivity.ARG_NOTE_ID, id);
-                startActivity(intent);
+                startActivityForResult(intent, NewEditNoteActivity.REQUEST_UPDATE);
                 getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
             }
         });
@@ -56,11 +62,32 @@ public class AllNotesFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), NewEditNoteActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, NewEditNoteActivity.REQUEST_INSERT);
                 getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_CANCELED) return;
+
+        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(getActivity());
+        DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
+        Note note = dataManager.findById(data.getLongExtra(NewEditNoteActivity.RESULT_NOTE_ID, -1));
+
+        if (requestCode == NewEditNoteActivity.REQUEST_UPDATE) {
+            long noteId = data.getLongExtra(NewEditNoteActivity.RESULT_NOTE_ID, -1);
+            for (int i = 0; i < mNotes.size(); i++) {
+                if (mNotes.get(i).getId() == noteId) {
+                    mNotes.remove(i);
+                    break;
+                }
+            }
+        }
+        mNotes.add(0, note);
+        mAdapter.notifyDataSetChanged();
     }
 }
