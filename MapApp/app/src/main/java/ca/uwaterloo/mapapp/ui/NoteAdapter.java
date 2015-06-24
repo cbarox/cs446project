@@ -17,28 +17,28 @@ import ca.uwaterloo.mapapp.data.objects.Note;
  */
 public class NoteAdapter extends BaseAdapter {
     Context mContext;
-    Note[] notes;
+    List<Note> notes;
     private static LayoutInflater inflater = null;
 
     public NoteAdapter(Context context, List<Note> notes) {
         this.mContext = context;
-        this.notes = notes.toArray(new Note[0]);
+        this.notes = notes;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return notes.length;
+        return notes.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return notes[position];
+        return notes.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return notes[position].getId();
+        return notes.get(position).getId();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class NoteAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.list_item_note, null);
 
         TextView textView = (TextView)view.findViewById(R.id.title);
-        textView.setText(notes[position].getTitle());
+        textView.setText(notes.get(position).getTitle());
 
         return view;
     }

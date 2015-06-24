@@ -84,6 +84,11 @@ public class Note {
         if (o.getClass() != Note.class) return false;
 
         Note other = (Note)o;
+
+        if (other.buildingCode == null && buildingCode != null) return false;
+        if (other.title == null && title != null) return false;
+        if (other.description == null && description != null) return false;
+
         if (id != other.id) return false;
         if (other.buildingCode == null || !other.buildingCode.equals(buildingCode)) return false;
         if (other.title == null        || !other.title.equals(title)) return false;
