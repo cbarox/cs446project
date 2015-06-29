@@ -22,6 +22,11 @@ android {
     }
     productFlavors {
     }
+    compileOptions {
+        // this has be here to use separate modules in gradle
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
 }
 
 repositories {
@@ -31,6 +36,7 @@ repositories {
 dependencies {
     // We don't have any jars but they would go into the libs folder if we did
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':shared')
     // This is for making sure all devices
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.android.support:support-v4:+'
