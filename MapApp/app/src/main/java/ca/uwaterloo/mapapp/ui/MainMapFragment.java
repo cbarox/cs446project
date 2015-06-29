@@ -191,7 +191,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         currentBuilding = marker.getSnippet();
 
         // notes
-        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(getActivity());
+        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
         DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
         List<Note> notes = dataManager.find(Note.COLUMN_BUILDING_CODE, marker.getSnippet());
         if (notes != null && notes.size() > 0) {
