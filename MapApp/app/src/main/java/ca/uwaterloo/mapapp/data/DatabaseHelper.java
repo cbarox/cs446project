@@ -16,7 +16,7 @@ import ca.uwaterloo.mapapp.data.objects.Note;
 /**
  * Created by cjbarrac
  * 23/05/15
- * <p>
+ * <p/>
  * This class basically controls all the accesses to the database, and handles the creation and
  * upgrading of the database.
  */
@@ -33,16 +33,22 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     /**
-     * Lazily load the database helper
+     * Get an instance of the database helper
      *
-     * @param context An application context
      * @return A static instance of DatabaseHelper
      */
-    public static DatabaseHelper getDatabaseHelper(Context context) {
-        if (instance == null) {
-            instance = new DatabaseHelper(context);
-        }
+    public static DatabaseHelper getDatabaseHelper() {
         return instance;
+    }
+
+    /**
+     * Set the static instance of database helper to be used in the entire app
+     * Initialized in MainApplication after application context is created in onCreate
+     *
+     * @param databaseHelper An instance of DatabaseHelper
+     */
+    public static void setDatabaseHelper(DatabaseHelper databaseHelper) {
+        instance = databaseHelper;
     }
 
     @Override

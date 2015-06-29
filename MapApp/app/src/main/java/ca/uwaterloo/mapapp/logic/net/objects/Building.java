@@ -1,17 +1,38 @@
 package ca.uwaterloo.mapapp.logic.net.objects;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 import java.io.Serializable;
 
 /**
  * Created by cjbarrac
  * 23/05/15
  */
+@DatabaseTable(tableName = Building.TABLE)
 public class Building implements Serializable {
 
+    public static final String TABLE = "building";
+
+    public static final String COLUMN_BUILDING_ID = "building_id";
+    public static final String COLUMN_BUILDING_CODE = "building_code";
+    public static final String COLUMN_BUILDING_NAME = "building_name";
+    public static final String COLUMN_LATITUDE = "latitude";
+    public static final String COLUMN_LONGITUDE = "longitude";
+
+    @DatabaseField(columnName = COLUMN_BUILDING_ID)
     private String buildingId;
+
+    @DatabaseField(columnName = COLUMN_BUILDING_CODE)
     private String buildingCode;
+
+    @DatabaseField(columnName = COLUMN_BUILDING_NAME)
     private String buildingName;
+
+    @DatabaseField(columnName = COLUMN_LATITUDE)
     private double latitude;
+
+    @DatabaseField(columnName = COLUMN_LONGITUDE)
     private double longitude;
 
     public String getBuildingId() {

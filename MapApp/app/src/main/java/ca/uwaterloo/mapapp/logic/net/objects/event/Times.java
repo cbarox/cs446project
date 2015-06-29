@@ -1,39 +1,50 @@
 package ca.uwaterloo.mapapp.logic.net.objects.event;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
-import ca.uwaterloo.mapapp.logic.Logger;
+import java.io.Serializable;
 
 /**
  * Created by cjbarrac
  * 6/13/15
  */
-public class Times {
+@DatabaseTable(tableName = Times.TABLE)
+public class Times implements Serializable {
 
+    public static final String TABLE = "times";
+
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_START = "start";
+    public static final String COLUMN_END = "end";
+
+    @DatabaseField(columnName = COLUMN_ID, generatedId = true)
+    private long id;
+
+    @DatabaseField(columnName = COLUMN_START)
     private String start;
+
+    @DatabaseField(columnName = COLUMN_END)
     private String end;
 
-    public Date getStart() {
-        return getDate(start);
+    public long getId() {
+        return id;
     }
 
-    private Date getDate(String date) {
-        String[] split = date.split("\\+");
-        String timezone = split[1].replace(":", "");
-        String dateString = split[0] + "+" + timezone;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        try {
-            return dateFormat.parse(dateString);
-        } catch (ParseException e) {
-            Logger.error("Failed to parse date");
-        }
-        return null;
+    public String getStart() {
+        return start;
     }
 
-    public Date getEnd() {
-        return getDate(end);
+    public void setStart(String start) {
+        this.start = start;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
     }
 
 }

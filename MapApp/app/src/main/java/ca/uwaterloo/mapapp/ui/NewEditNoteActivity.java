@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
@@ -138,7 +137,7 @@ public class NewEditNoteActivity extends ActionBarActivity {
         if (b != null) {
             long noteId = b.getLong(ARG_NOTE_ID, -1);
             if (noteId > 0) {
-                DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(this);
+                DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
                 DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
                 mNote = dataManager.findById(noteId);
             } else {
@@ -208,7 +207,7 @@ public class NewEditNoteActivity extends ActionBarActivity {
         if (mNote == null) {
             mNote = new Note();
         }
-        final Note org = mNote.copy();
+        final Note org = mNote.getCopy();
 
         mNote.setTitle(title);
         if (title.isEmpty() && !description.isEmpty()) {
@@ -268,7 +267,7 @@ public class NewEditNoteActivity extends ActionBarActivity {
 
     private void updateInsertNote() {
         // Insert note into database
-        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(this);
+        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
         DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
         dataManager.insertOrUpdate(mNote);
         Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show();
