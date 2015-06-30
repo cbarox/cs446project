@@ -10,6 +10,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import ca.uwaterloo.mapapp.logic.Logger;
 
 /**
  * Created by cjbarrac
@@ -20,6 +25,19 @@ public class WaterlooApiJsonDeserializer<T> implements JsonDeserializer<T> {
     private static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
+
+    public static Date deserializeDate(String date) {
+        String[] split = date.split("\\+");
+        String timezone = split[1].replace(":", "");
+        String dateString = split[0] + "+" + timezone;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        try {
+            return dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            Logger.error("Failed to parse date");
+        }
+        return null;
+    }
 
     @Override
     public T deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

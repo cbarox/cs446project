@@ -1,10 +1,9 @@
 package ca.uwaterloo.mapapp.ui;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +39,7 @@ public class AllNotesFragment extends Fragment {
         // This has to come after setContentView
         ButterKnife.inject(this, view);
 
-        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(getActivity());
+        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
         DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
 
         mNotes = dataManager.getAll();
@@ -74,7 +73,7 @@ public class AllNotesFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_CANCELED) return;
 
-        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(getActivity());
+        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
         DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
         Note note = dataManager.findById(data.getLongExtra(NewEditNoteActivity.RESULT_NOTE_ID, -1));
 

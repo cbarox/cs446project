@@ -48,7 +48,7 @@ public class DataManager<T, ID> {
     }
 
     /**
-     * Delete object from the database 
+     * Delete object from the database
      *
      * @param object the object to delete
      */
@@ -64,34 +64,40 @@ public class DataManager<T, ID> {
     }
 
     /**
-     * Insert object into the database 
+     * Insert object into the database
      *
      * @param object the object to insert
+     * @return The new database ID of the object that was inserted, or null if insert failed
      */
-    public void insert(T object) {
+    public ID insert(T object) {
         try {
             long startTime = System.currentTimeMillis();
             dao.create(object);
             long duration = System.currentTimeMillis() - startTime;
             Logger.info("%s inserted into database in %dms", className, duration);
+            return dao.extractId(object);
         } catch (SQLException e) {
             Logger.error("Error inserting new %s in the database", e, className);
+            return null;
         }
     }
 
     /**
-     * Insert or update object in the database 
+     * Insert or update object in the database
      *
      * @param object the object to insert or update
+     * @return The database ID of the object that was inserted/updated, or null if insert/update failed
      */
-    public void insertOrUpdate(T object) {
+    public ID insertOrUpdate(T object) {
         try {
             long startTime = System.currentTimeMillis();
             dao.createOrUpdate(object);
             long duration = System.currentTimeMillis() - startTime;
             Logger.info("%s inserted/updated in database in %dms", className, duration);
+            return dao.extractId(object);
         } catch (SQLException e) {
             Logger.error("Error inserting/updating %s in the database", e, className);
+            return null;
         }
     }
 
@@ -191,7 +197,7 @@ public class DataManager<T, ID> {
     }
 
     /**
-     * Find object by Id 
+     * Find object by Id
      *
      * @param id the id of the object to find
      */
@@ -239,8 +245,9 @@ public class DataManager<T, ID> {
     }
 
     /**
-     * Retrive all objects
+     * Retrieve all objects
      *
+     * @return A list of objects from the database or null if the operation failed
      */
     public List<T> getAll() {
         List<T> objects = null;
