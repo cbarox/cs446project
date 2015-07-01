@@ -20,6 +20,7 @@ import ca.uwaterloo.mapapp.R;
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
 import ca.uwaterloo.mapapp.data.objects.Note;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
+import ca.uwaterloo.mapapp.ui.adapters.NoteAdapter;
 
 public class AllNotesFragment extends Fragment {
 
@@ -49,9 +50,9 @@ public class AllNotesFragment extends Fragment {
         noteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), NewEditNoteActivity.class);
+                Intent intent = new Intent(getActivity(), ViewNoteActivity.class);
                 intent.putExtra(NewEditNoteActivity.ARG_NOTE_ID, id);
-                startActivityForResult(intent, NewEditNoteActivity.REQUEST_UPDATE);
+                startActivityForResult(intent, ViewNoteActivity.REQUEST_UPDATE);
                 getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
             }
         });
@@ -77,7 +78,7 @@ public class AllNotesFragment extends Fragment {
         DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
         Note note = dataManager.findById(data.getLongExtra(NewEditNoteActivity.RESULT_NOTE_ID, -1));
 
-        if (requestCode == NewEditNoteActivity.REQUEST_UPDATE) {
+        if (requestCode == ViewNoteActivity.REQUEST_UPDATE) {
             long noteId = data.getLongExtra(NewEditNoteActivity.RESULT_NOTE_ID, -1);
             for (int i = 0; i < mNotes.size(); i++) {
                 if (mNotes.get(i).getId() == noteId) {
@@ -86,6 +87,7 @@ public class AllNotesFragment extends Fragment {
                 }
             }
         }
+        // on update/insert
         mNotes.add(0, note);
         mAdapter.notifyDataSetChanged();
     }

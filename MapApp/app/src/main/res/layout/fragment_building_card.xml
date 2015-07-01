@@ -1,0 +1,101 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Visible when collapsed -->
+    <LinearLayout
+        android:id="@+id/icard_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/sliding_up_panel_collapsed_height"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:id="@+id/icard_buildName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="@dimen/fab_width"
+            android:background="#00FFFFFF"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Institute for Quantum Nano Enginering"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/icard_buildcode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SLC"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <Button
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/abc_btn_check_to_on_mtrl_015"
+        android:text="Floor Plans" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="72dp"
+        android:text="All events"
+        android:textSize="@dimen/abc_text_size_large_material" />
+
+    <ListView
+        android:id="@+id/icard_events"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/temp_list"/>
+
+    <Button
+        android:id="@+id/icard_more_events"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MORE EVENTS"
+        style="?android:attr/borderlessButtonStyle"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="72dp"
+        android:textColor="@color/primary" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="72dp"
+        android:text="All notes"
+        android:textSize="@dimen/abc_text_size_large_material" />
+
+    <ListView
+        android:id="@+id/icard_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/temp_list" />
+
+    <Button
+        android:id="@+id/icard_more_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MORE NOTES"
+        style="?android:attr/borderlessButtonStyle"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="72dp"
+        android:textColor="@color/primary"/>
+
+
+</LinearLayout>

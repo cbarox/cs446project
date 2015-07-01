@@ -56,4 +56,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:7.5.0'
     // This is for material design dialogs
     compile 'com.afollestad:material-dialogs:0.7.6.0'
+    // This is for material design edit text views
+    compile 'com.rengwuxian.materialedittext:library:2.1.4'
 }
