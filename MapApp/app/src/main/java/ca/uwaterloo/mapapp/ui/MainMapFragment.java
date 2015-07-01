@@ -32,11 +32,11 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
-import ca.uwaterloo.mapapp.data.DataManager;
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
 import ca.uwaterloo.mapapp.data.objects.Note;
 import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
 import ca.uwaterloo.mapapp.logic.net.objects.Building;
+import ca.uwaterloo.mapapp.shared.data.DataManager;
 
 public class MainMapFragment extends Fragment implements OnMapReadyCallback {
 
@@ -191,7 +191,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         currentBuilding = marker.getSnippet();
 
         // notes
-        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper(getActivity());
+        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
         DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
         List<Note> notes = dataManager.find(Note.COLUMN_BUILDING_CODE, marker.getSnippet());
         if (notes != null && notes.size() > 0) {

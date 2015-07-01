@@ -59,7 +59,7 @@ public class Note {
 
     public void setBuildingCode(String buildingCode) { this.buildingCode = buildingCode; }
 
-    public Note copy() {
+    public Note getCopy() {
         Note newNote = new Note();
         newNote.id = this.id;
         newNote.title = this.title;
