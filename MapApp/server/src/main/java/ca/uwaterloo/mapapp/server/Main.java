@@ -44,7 +44,7 @@ public class Main {
                 ServerResponse serverResponse = new ServerResponse();
                 serverResponse.setStatus("success");
                 serverResponse.setId(0L);
-                return serverResponse;
+                return gson.toJson(serverResponse);
             }
         });
     }
