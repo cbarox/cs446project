@@ -21,12 +21,12 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
-import ca.uwaterloo.mapapp.data.DataManager;
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
 import ca.uwaterloo.mapapp.data.objects.Note;
 import ca.uwaterloo.mapapp.logic.Logger;
 import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
 import ca.uwaterloo.mapapp.logic.net.objects.Building;
+import ca.uwaterloo.mapapp.shared.data.DataManager;
 
 public class NewEditNoteActivity extends ActionBarActivity {
 
