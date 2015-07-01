@@ -1,16 +1,17 @@
-package ca.uwaterloo.mapapp.ui;
+package ca.uwaterloo.mapapp.ui.adapters;
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
+        import android.content.Context;
+        import android.view.LayoutInflater;
+        import android.view.View;
+        import android.view.ViewGroup;
+        import android.widget.BaseAdapter;
+        import android.widget.ImageView;
+        import android.widget.TextView;
 
-import java.util.List;
+        import java.util.List;
 
-import ca.uwaterloo.mapapp.R;
-import ca.uwaterloo.mapapp.data.objects.Note;
+        import ca.uwaterloo.mapapp.R;
+        import ca.uwaterloo.mapapp.data.objects.Note;
 
 /**
  * Created by Kev Kat on 2015-06-15.
@@ -47,8 +48,14 @@ public class NoteAdapter extends BaseAdapter {
         if (view == null)
             view = inflater.inflate(R.layout.list_item_note, null);
 
-        TextView textView = (TextView)view.findViewById(R.id.title);
-        textView.setText(notes.get(position).getTitle());
+        TextView titleView = (TextView)view.findViewById(R.id.item_title);
+        TextView descView = (TextView)view.findViewById(R.id.item_desc);
+        titleView.setText(notes.get(position).getTitle());
+        descView.setText(notes.get(position).getDescription());
+
+        ImageView circle = (ImageView)view.findViewById(R.id.item_circle);
+        circle.setColorFilter(mContext.getResources().getColor(R.color.primary));
+
 
         return view;
     }

@@ -129,6 +129,8 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
                 new Intent(this, SettingsActivity.class)));
 
         setBackPattern(MaterialNavigationDrawer.BACKPATTERN_BACK_TO_FIRST);
+
+        setDefaultSectionLoaded(2);
     }
 
     @Override

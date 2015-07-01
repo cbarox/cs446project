@@ -1,0 +1,51 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="ca.uwaterloo.mapapp.ui.NewEditNoteActivity">
+
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:id="@+id/note_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tool_bar"
+        android:paddingLeft="@dimen/note_text_margin_left"
+        android:paddingBottom="10dp"
+        android:layout_marginBottom="40dp"
+        android:text="The House Always Wins"
+        android:background="@color/primary"
+        android:textColor="#FFFFFF"
+        android:textSize="32sp" />
+
+    <com.melnykov.fab.FloatingActionButton
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/fab_edit_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/note_title"
+        android:layout_gravity="left"
+        android:layout_marginBottom="-20dp"
+        android:layout_marginLeft="16dp"
+        android:src="@drawable/ic_mode_edit_white_24dp"
+        fab:fab_colorNormal="@color/accent"
+        fab:fab_colorPressed="@color/primaryDark"
+        fab:fab_colorRipple="@color/accent"
+        fab:fab_type="mini" />
+
+    <ListView
+        android:id="@+id/note_info_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/note_title"
+        android:divider="@null"
+        android:dividerHeight="0dp"/>
+
+</RelativeLayout>
