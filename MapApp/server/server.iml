@@ -29,12 +29,15 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="shared" exported="" />
     <orderEntry type="library" exported="" name="spark-core-2.2" level="project" />
-    <orderEntry type="library" exported="" name="ormlite-jdbc-4.9" level="project" />
+    <orderEntry type="library" exported="" name="ormlite-jdbc-4.48" level="project" />
+    <orderEntry type="library" exported="" name="ormlite-core-4.48" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.3.1" level="project" />
+    <orderEntry type="library" exported="" name="mysql-connector-java-5.1.35" level="project" />
+    <orderEntry type="library" exported="" name="jsoup-1.8.2" level="project" />
     <orderEntry type="library" exported="" name="slf4j-api-1.7.7" level="project" />
     <orderEntry type="library" exported="" name="slf4j-simple-1.7.7" level="project" />
     <orderEntry type="library" exported="" name="jetty-server-9.0.2.v20130417" level="project" />
     <orderEntry type="library" exported="" name="jetty-webapp-9.0.2.v20130417" level="project" />
-    <orderEntry type="library" exported="" name="ormlite-core-4.9" level="project" />
     <orderEntry type="library" exported="" name="javax.servlet-3.0.0.v201112011016" level="project" />
     <orderEntry type="library" exported="" name="jetty-http-9.0.2.v20130417" level="project" />
     <orderEntry type="library" exported="" name="jetty-io-9.0.2.v20130417" level="project" />

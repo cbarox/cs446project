@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class Event implements Serializable {
 
     public static final String TABLE = "event";
-
+    public static final String COLUMN_BUILDING_CODE = "building_code";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_LINK = "link";
     public static final String COLUMN_TIMES = "times";
@@ -25,10 +25,13 @@ public class Event implements Serializable {
     private String link;
 
     @DatabaseField(columnName = COLUMN_TIMES)
-    private Times times;
+    private String times;
 
     @DatabaseField(columnName = COLUMN_TITLE)
     private String title;
+
+    @DatabaseField(columnName = COLUMN_BUILDING_CODE)
+    private String buildingCode;
 
     public int getId() {
         return id;
@@ -38,6 +41,8 @@ public class Event implements Serializable {
         this.id = id;
     }
 
+
+
     public String getLink() {
         return link;
     }
@@ -46,11 +51,19 @@ public class Event implements Serializable {
         this.link = link;
     }
 
-    public Times getTimes() {
+    public String getBuildingCode() {
+        return buildingCode;
+    }
+
+    public void setBuildingCode(String buildingCode) {
+        this.buildingCode = buildingCode;
+    }
+
+    public String getTimes() {
         return times;
     }
 
-    public void setTimes(Times times) {
+    public void setTimes(String times) {
         this.times = times;
     }
 

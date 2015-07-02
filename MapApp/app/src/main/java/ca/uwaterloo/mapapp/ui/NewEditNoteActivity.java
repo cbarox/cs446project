@@ -21,12 +21,12 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
-import ca.uwaterloo.mapapp.data.DataManager;
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
 import ca.uwaterloo.mapapp.data.objects.Note;
 import ca.uwaterloo.mapapp.logic.Logger;
 import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
 import ca.uwaterloo.mapapp.logic.net.objects.Building;
+import ca.uwaterloo.mapapp.shared.data.DataManager;
 
 public class NewEditNoteActivity extends ActionBarActivity {
 
@@ -50,12 +50,10 @@ public class NewEditNoteActivity extends ActionBarActivity {
 
     @InjectView(R.id.note_title)
     protected EditText mTitle;
-    @InjectView(R.id.note_desc)
+    @InjectView(R.id.note_description)
     protected EditText mDescription;
-    @InjectView(R.id.btn_building)
+    @InjectView(R.id.note_building)
     protected Button mBuildingBtn;
-    @InjectView(R.id.btn_tags)
-    protected Button mTagsBtn;
 
     private List<Building> buildingList;
     private String[] buildingNames;
@@ -142,7 +140,11 @@ public class NewEditNoteActivity extends ActionBarActivity {
                 mNote = dataManager.findById(noteId);
             } else {
                 selectedBuildCode = b.getString(ARG_SELECTED_BUILD);
-                mBuildingBtn.setText(this.getString(R.string.note_no_building));
+                if (selectedBuildCode.isEmpty()) {
+                    mBuildingBtn.setText(this.getString(R.string.note_no_building));
+                } else {
+                    mBuildingBtn.setText(selectedBuildCode);
+                }
             }
         }
 
@@ -272,8 +274,6 @@ public class NewEditNoteActivity extends ActionBarActivity {
         dataManager.insertOrUpdate(mNote);
         Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show();
     }
-
-
 
     public void selectNewBuilding(View view) {
         if (buildingList != null && buildingList.size() > 0) {

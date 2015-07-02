@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 import ca.uwaterloo.mapapp.data.objects.Note;
+import ca.uwaterloo.mapapp.shared.data.DataManager;
 
 /**
  * Created by cjbarrac

@@ -1,4 +1,4 @@
-package ca.uwaterloo.mapapp.data;
+package ca.uwaterloo.mapapp.shared.data;
 
 import com.j256.ormlite.dao.Dao;
 
@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import ca.uwaterloo.mapapp.logic.Logger;
-
 /**
  * Created by cjbarrac
  * 6/7/15
@@ -16,11 +14,9 @@ import ca.uwaterloo.mapapp.logic.Logger;
 public class DataManager<T, ID> {
 
     private Dao<T, ID> dao;
-    private String className;
 
     public DataManager(Dao<T, ID> dao) {
         this.dao = dao;
-        this.className = dao.getDataClass().getSimpleName();
     }
 
     /**
@@ -30,7 +26,6 @@ public class DataManager<T, ID> {
      */
     public void insertOrUpdateAll(final List<T> objects) {
         try {
-            long startTime = System.currentTimeMillis();
             dao.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
@@ -40,10 +35,8 @@ public class DataManager<T, ID> {
                     return null;
                 }
             });
-            long duration = System.currentTimeMillis() - startTime;
-            Logger.info("%d %ss inserted/updated in database in %dms", objects.size(), className, duration);
         } catch (Exception e) {
-            Logger.error("Error inserting new %ss in the database", e, className);
+
         }
     }
 
@@ -52,14 +45,12 @@ public class DataManager<T, ID> {
      *
      * @param object the object to delete
      */
-    public void delete(T object) {
+    public boolean delete(T object) {
         try {
-            long startTime = System.currentTimeMillis();
             dao.delete(object);
-            long duration = System.currentTimeMillis() - startTime;
-            Logger.info("%s deleted in database in %dms", className, duration);
+            return true;
         } catch (SQLException e) {
-            Logger.error("Error deleting %s from the database", e, className);
+            return false;
         }
     }
 
@@ -71,13 +62,9 @@ public class DataManager<T, ID> {
      */
     public ID insert(T object) {
         try {
-            long startTime = System.currentTimeMillis();
             dao.create(object);
-            long duration = System.currentTimeMillis() - startTime;
-            Logger.info("%s inserted into database in %dms", className, duration);
             return dao.extractId(object);
         } catch (SQLException e) {
-            Logger.error("Error inserting new %s in the database", e, className);
             return null;
         }
     }
@@ -90,13 +77,9 @@ public class DataManager<T, ID> {
      */
     public ID insertOrUpdate(T object) {
         try {
-            long startTime = System.currentTimeMillis();
             dao.createOrUpdate(object);
-            long duration = System.currentTimeMillis() - startTime;
-            Logger.info("%s inserted/updated in database in %dms", className, duration);
             return dao.extractId(object);
         } catch (SQLException e) {
-            Logger.error("Error inserting/updating %s in the database", e, className);
             return null;
         }
     }
@@ -119,7 +102,6 @@ public class DataManager<T, ID> {
                 }
             });
         } catch (Exception e) {
-            Logger.error("Error passively inserting %ss in the database", e, className);
         }
     }
 
@@ -131,7 +113,6 @@ public class DataManager<T, ID> {
      */
     public void passiveInsertAll(final List<T> objects) {
         try {
-            long startTime = System.currentTimeMillis();
             dao.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
@@ -141,10 +122,7 @@ public class DataManager<T, ID> {
                     return null;
                 }
             });
-            long duration = System.currentTimeMillis() - startTime;
-            Logger.info("%d %ss passively inserted into to database in %dms", objects.size(), className, duration);
         } catch (Exception e) {
-            Logger.error("Error passively inserting %ss in the database", e, className);
         }
     }
 
@@ -155,7 +133,6 @@ public class DataManager<T, ID> {
      */
     public void insertAll(final T[] objects) {
         try {
-            long startTime = System.currentTimeMillis();
             dao.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
@@ -165,10 +142,7 @@ public class DataManager<T, ID> {
                     return null;
                 }
             });
-            long duration = System.currentTimeMillis() - startTime;
-            Logger.info("%d %ss inserted into database in %dms", objects.length, className, duration);
         } catch (Exception e) {
-            Logger.error("Error inserting new %ss in the database", e, className);
         }
     }
 
@@ -179,7 +153,6 @@ public class DataManager<T, ID> {
      */
     public void insertAll(final List<T> objects) {
         try {
-            long startTime = System.currentTimeMillis();
             dao.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
@@ -189,10 +162,7 @@ public class DataManager<T, ID> {
                     return null;
                 }
             });
-            long duration = System.currentTimeMillis() - startTime;
-            Logger.info("%d %ss inserted into database in %dms", objects.size(), className, duration);
         } catch (Exception e) {
-            Logger.error("Error inserting new %ss into the database", e, className);
         }
     }
 
@@ -203,13 +173,8 @@ public class DataManager<T, ID> {
      */
     public T findById(ID id) {
         try {
-            long startTime = System.currentTimeMillis();
-            T object = dao.queryForId(id);
-            long duration = System.currentTimeMillis() - startTime;
-            Logger.info("%s found in database in %dms", className, duration);
-            return object;
+            return dao.queryForId(id);
         } catch (SQLException e) {
-            Logger.error("Error finding %s by id in the database", e, className);
         }
         return null;
     }
@@ -217,12 +182,8 @@ public class DataManager<T, ID> {
     public List<T> find(String columnName, Object value) {
         List<T> objects = new ArrayList<>();
         try {
-            long startTime = System.currentTimeMillis();
             objects = dao.queryForEq(columnName, value);
-            long duration = System.currentTimeMillis() - startTime;
-            Logger.info("%d %ss found in database in %dms", objects.size(), className, duration);
         } catch (SQLException e) {
-            Logger.error("Error finding %s in the database", e, className);
         }
         return objects;
     }
@@ -230,12 +191,8 @@ public class DataManager<T, ID> {
     public T findFirst(String columnName, Object value) throws NullPointerException {
         List<T> objects = new ArrayList<>();
         try {
-            long startTime = System.currentTimeMillis();
             objects = dao.queryForEq(columnName, value);
-            long duration = System.currentTimeMillis() - startTime;
-            Logger.info("%d %ss found in database in %dms", objects.size(), className, duration);
         } catch (SQLException e) {
-            Logger.error("Error finding %s in the database", e, className);
         }
         if (objects.size() == 0) {
             return null;
@@ -252,24 +209,16 @@ public class DataManager<T, ID> {
     public List<T> getAll() {
         List<T> objects = null;
         try {
-            long startTime = System.currentTimeMillis();
             objects = dao.queryForAll();
-            long duration = System.currentTimeMillis() - startTime;
-            Logger.info("%d %ss retrieved from database in %dms", objects.size(), className, duration);
         } catch (SQLException e) {
-            Logger.error("Error getting all %ss from the database", e, className);
         }
         return objects;
     }
 
     public void update(T object) {
         try {
-            long startTime = System.currentTimeMillis();
             dao.update(object);
-            long duration = System.currentTimeMillis() - startTime;
-            Logger.info("%s updated in database in %dms", className, duration);
         } catch (SQLException e) {
-            Logger.error("Error updating %s in the database", e, className);
         }
     }
 

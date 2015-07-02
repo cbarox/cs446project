@@ -1,5 +1,6 @@
 package ca.uwaterloo.mapapp.ui;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -8,9 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,9 +30,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
-import ca.uwaterloo.mapapp.data.DataManager;
-import ca.uwaterloo.mapapp.data.DatabaseHelper;
-import ca.uwaterloo.mapapp.data.objects.Note;
 import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
 import ca.uwaterloo.mapapp.logic.net.objects.Building;
 
@@ -50,20 +45,14 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
     private static List<Building> buildingsCache;
 
     @InjectView(R.id.info_card_layout)
-    protected SlidingUpPanelLayout mSlidingLayout;
-    // icard info
-    @InjectView(R.id.icard_buildName)
-    protected TextView mCardBuildName;
-    @InjectView(R.id.icard_buildcode)
-    protected TextView mCardBuildCode;
-    @InjectView(R.id.icard_notes)
-    protected ListView mCardNotes;
+    protected SlidingUpPanelLayout mSlidingUpPanelLayout;
 
     private Context context;
     private GoogleMap mMap;
     private String currentBuilding = "";
-
     private boolean isMapReady = false;
+
+    private BuildingCardFragment cardFragment;
 
 
     /**
@@ -113,9 +102,6 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
 
         // initialize map
         MapFragment mapFragment = MapFragment.newInstance();
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.map_container, mapFragment);
-        fragmentTransaction.commit();
         mapFragment.getMapAsync(this);
 
         // setup Fab action
@@ -127,12 +113,32 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
                 if (!currentBuilding.isEmpty()) {
                     intent.putExtra(NewEditNoteActivity.ARG_SELECTED_BUILD, currentBuilding);
                 }
-                startActivity(intent);
+                startActivityForResult(intent, NewEditNoteActivity.REQUEST_INSERT);
                 getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
             }
         });
 
+        // initialize info card
+        cardFragment = BuildingCardFragment.newInstance();
+        cardFragment.setFab(fab);
+        mSlidingUpPanelLayout.setPanelSlideListener(cardFragment);
+
+        // add fragments to view
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.map_container, mapFragment);
+        fragmentTransaction.add(R.id.building_card_container, cardFragment);
+        fragmentTransaction.commit();
+
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_CANCELED) return;
+
+        if (requestCode == NewEditNoteActivity.REQUEST_INSERT && !currentBuilding.isEmpty()) {
+            cardFragment.updateNoteList();
+        }
     }
 
     @Override
@@ -153,7 +159,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
             public boolean onMarkerClick(Marker marker) {
 
                 populateInfoCard(marker);
-                mSlidingLayout.setPanelState(PanelState.COLLAPSED);
+                mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
 
                 // zoom in and center the camera on the marker
                 CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -186,27 +192,12 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void populateInfoCard(Marker marker) {
-        mCardBuildName.setText(marker.getTitle());
-        mCardBuildCode.setText(marker.getSnippet());
-        currentBuilding = marker.getSnippet();
+        Building temp = new Building();
+        temp.setBuildingCode(marker.getSnippet());
+        temp.setBuildingName(marker.getTitle());
 
-        // notes
-        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
-        DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
-        List<Note> notes = dataManager.find(Note.COLUMN_BUILDING_CODE, marker.getSnippet());
-        if (notes != null && notes.size() > 0) {
-            if (notes.size() > 2)   notes = notes.subList(0, 2);
-            mCardNotes.setAdapter(new NoteAdapter(context, notes));
-            mCardNotes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(getActivity(), NewEditNoteActivity.class);
-                    intent.putExtra(NewEditNoteActivity.ARG_NOTE_ID, id);
-                    startActivity(intent);
-                    getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
-                }
-            });
-        }
+        cardFragment.populateCard(temp);
+        currentBuilding = marker.getSnippet();
     }
 
     /**
@@ -219,23 +210,23 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
      */
     public boolean showHideInfoCard(boolean enabled) {
         boolean handled = false;
-        switch (mSlidingLayout.getPanelState()) {
+        switch (mSlidingUpPanelLayout.getPanelState()) {
             case EXPANDED:
             case ANCHORED:
-                mSlidingLayout.setPanelState(PanelState.COLLAPSED);
+                mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
                 handled = true;
                 break;
             case COLLAPSED:
-                mSlidingLayout.setPanelState(enabled ? PanelState.COLLAPSED : PanelState.HIDDEN);
+                mSlidingUpPanelLayout.setPanelState(enabled ? PanelState.COLLAPSED : PanelState.HIDDEN);
                 handled = !enabled;
                 break;
             case HIDDEN:
-                mSlidingLayout.setPanelState(enabled ? PanelState.COLLAPSED : PanelState.HIDDEN);
+                mSlidingUpPanelLayout.setPanelState(enabled ? PanelState.COLLAPSED : PanelState.HIDDEN);
                 handled = enabled;
                 break;
         }
 
-        if (mSlidingLayout.getPanelState() == PanelState.HIDDEN) {
+        if (mSlidingUpPanelLayout.getPanelState() == PanelState.HIDDEN) {
             currentBuilding = "";
         }
 

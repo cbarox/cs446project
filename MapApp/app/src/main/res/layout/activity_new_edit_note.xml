@@ -9,76 +9,55 @@
         android:id="@+id/tool_bar"
         layout="@layout/tool_bar" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:orientation="vertical"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp">
+        android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/note_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Title"
-            android:inputType="textCapWords"
-            android:textColor="#FFFFFF"
-            android:textColorHint="@color/primaryLight"
-            android:textSize="48sp"
-            android:scrollHorizontally="false"/>
+            android:minHeight="44dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:paddingLeft="5dp"
-            android:gravity="center_vertical">
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/note_title"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/ic_store_black_24dp" />
 
-            <!-- building -->
-            <Button
-                android:id="@+id/btn_building"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_store_black_24dp"
-                style="?android:attr/borderlessButtonStyle"
-                android:text="@string/note_no_building"
-                android:textColor="@color/primaryLight"
-                android:onClick="selectNewBuilding"/>
+        <Button
+            android:id="@+id/note_building"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/note_title"
+            android:layout_marginLeft="@dimen/note_text_margin_left"
+            android:gravity="left"
+            android:text="PHYSICS"
+            android:onClick="selectNewBuilding"/>
 
-            <!-- filler -->
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/icon"
+            android:layout_alignTop="@+id/note_description"
+            android:src="@drawable/ic_subject_black_24dp" />
 
-            <!-- Tags -->
-            <Button
-                android:id="@+id/btn_tags"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|right"
-                android:gravity="right|center_vertical"
-                android:drawableRight="@drawable/ic_local_offer_black_24dp"
-                style="?android:attr/borderlessButtonStyle"
-                android:text="2"
-                android:textColor="@color/primaryLight" />
+        <EditText
+            android:id="@id/note_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/note_building"
+            android:layout_alignRight="@id/note_building"
+            android:layout_below="@id/note_building"
+            android:text="line 1\nline 2\nline 3" />
 
-        </LinearLayout>
-
-    </LinearLayout>
-
-
-
-    <EditText
-        android:id="@+id/note_desc"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="top"
-        android:hint="Description"
-        android:inputType="textCapSentences"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp" />
-
+    </RelativeLayout>
 
 </LinearLayout>

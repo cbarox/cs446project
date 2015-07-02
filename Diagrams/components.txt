@@ -1,37 +1,76 @@
 @startuml
 
-node "Android App" {
-    node "UI Layer" {
-        (MainMapFragment)
-        (AllEventsFragment)
-        (AllBuildingsFragment)
-        (AllNotesFragment)
-        (AllTagsFragment)
-        (NewNoteFragment)
-    }
-    node "Logic Layer" {
-        (WaterlooApiService)
-        (WaterlooApi)
-        (DataManager)
-    }
-    node "Data Layer" {
-        (DatabaseHelper)
-        database "sqlite"   
+cloud "UWaterloo Public Data" {
+   database "uWaterlooOpenApiDB"
+   (eventWebsites)
+}
+
+cloud "Backend Server" {
+   node "Server Database Layer" {
+      database "floorDB"
+      database "eventDB"
+      database "noteDB"
+      (databaseHelper)
+   }
+   node "File Storage" {
+     database floorMaps
+   }
+   node "Server Logic Layer" {
+        (floormapProcessor)
+        (JsoupApiService)
+        (notePublisher)
+        (noteFetcher)
+        (eventFetcher)
     }
 }
 
-cloud "Waterloo Open Data API" {
-    database "JSON"
+node "Android App" {
+   node "Application Sqlite Database" {
+       database "privateNotes"
+       database "buildings"
+   }
+   node "Application Logic Layer" {
+      (dataManager)
+      (waterlooApiService)
+   }
+   node "Application UI Layer" {
+      (NewNoteFragment)
+      (AllNotesFragment)
+      (eventFragment)
+      (buildingFragment)
+      (MainMapFragment)
+      (tagsFragment)
+   }
 }
-JSON -right-> WaterlooApiService
-WaterlooApiService --> WaterlooApi
-sqlite --> DatabaseHelper
-DatabaseHelper <-left-> DataManager
-DataManager --> AllNotesFragment
-DataManager --> AllTagsFragment
-WaterlooApi --> AllBuildingsFragment
-WaterlooApi --> AllEventsFragment
-WaterlooApi --> MainMapFragment
-NewNoteFragment --> DataManager
+
+floorDB <--> databaseHelper : classroom coordinates
+eventDB <--> databaseHelper
+noteDB <--> databaseHelper
+
+JsoupApiService -up-> databaseHelper
+floormapProcessor <-up- floorMaps
+floormapProcessor -up-> databaseHelper
+notePublisher -up-> databaseHelper
+noteFetcher <-up- databaseHelper
+eventFetcher <-up- databaseHelper
+
+dataManager <-up-> privateNotes : R/W
+dataManager <-up-> buildings : R/W
+waterlooApiService <-up- uWaterlooOpenApiDB
+JsoupApiService <-up- eventWebsites
+
+
+dataManager -up-> notePublisher
+dataManager <-up- noteFetcher
+dataManager <-up- eventFetcher
+
+AllNotesFragment <-up- dataManager
+NewNoteFragment -up-> dataManager
+eventFragment <-up- dataManager
+buildingFragment <-up-> dataManager
+buildingFragment <-up- waterlooApiService
+MainMapFragment <-up- waterlooApiService
+tagsFragment <-up-> dataManager
+
 
 @enduml
