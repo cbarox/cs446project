@@ -10,11 +10,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
+import android.widget.ListView;
 
+import butterknife.ButterKnife;
 import ca.uwaterloo.mapapp.R;
+import ca.uwaterloo.mapapp.data.DatabaseHelper;
 import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
 import ca.uwaterloo.mapapp.logic.net.objects.event.Event;
-
+import butterknife.InjectView;
+import ca.uwaterloo.mapapp.shared.data.DataManager;
+import ca.uwaterloo.mapapp.ui.adapters.EventAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,6 +39,11 @@ public class AllEventsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private TextView textView;
+    @InjectView(R.id.event_list)
+    protected ListView noteList;
+
+    private List<Event> mEvents;
+    private EventAdapter mAdapter;
 
     public AllEventsFragment() {
         // Required empty public constructor
@@ -73,10 +83,19 @@ public class AllEventsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        View inflate = inflater.inflate(R.layout.fragment_all_events, container, false);
-        textView = (TextView) inflate.findViewById(R.id.hello);
-        return inflate;
+        View view = inflater.inflate(R.layout.fragment_all_events, container, false);
+
+        // This has to come after setContentView
+        ButterKnife.inject(this, view);
+        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
+        DataManager<Event, Long> dataManager = databaseHelper.getDataManager(Event.class);
+
+        mEvents = dataManager.getAll();
+        mAdapter = new EventAdapter(getActivity(), mEvents);
+
+        return view;
     }
 
     public void handleGotEvents(List<Event> events) {

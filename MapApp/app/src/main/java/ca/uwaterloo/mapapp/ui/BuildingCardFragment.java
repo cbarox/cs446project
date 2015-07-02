@@ -29,9 +29,11 @@ import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
 import ca.uwaterloo.mapapp.data.objects.Note;
+import ca.uwaterloo.mapapp.logic.net.objects.event.Event;
 import ca.uwaterloo.mapapp.logic.net.objects.Building;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.ui.adapters.NoteAdapter;
+import ca.uwaterloo.mapapp.ui.adapters.EventAdapter;
 
 public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayout.PanelSlideListener{
 
@@ -51,9 +53,13 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
     @InjectView(R.id.icard_more_notes)
     protected Button mMoreNotes;
 
+
     private FloatingActionButton mFab;
 
     private Building mBuilding;
+
+    private List<Event> mEvents;
+    private EventAdapter mEventAdapter;
 
     private List<Note> mNotes;
     private NoteAdapter mNoteAdapter;
@@ -122,8 +128,28 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
         updateNoteList();
     }
 
+
     // TODO: implement
     public void updateEventList() {
+
+        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
+        DataManager<Event, Long> dataManager = databaseHelper.getDataManager(Event.class);
+
+        mEvents = dataManager.find(Event.COLUMN_BUILDING_CODE, mBuilding.getBuildingCode());
+
+        if (mEvents.size() > 5) {
+            mEvents = mEvents.subList(0, 5);
+            mMoreEvents.setVisibility(View.VISIBLE);
+        } else {
+            mMoreEvents.setVisibility(View.INVISIBLE);
+        }
+
+        // TODO: implement empty list
+
+
+
+        mEventAdapter = new EventAdapter(getActivity(), mEvents);
+        mEventList.setAdapter(mEventAdapter);
 
     }
 
