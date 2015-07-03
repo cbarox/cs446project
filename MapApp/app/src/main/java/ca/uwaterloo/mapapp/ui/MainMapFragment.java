@@ -100,7 +100,8 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         if (buildingsCache == null) {
             final Context context = this.getActivity();
             WaterlooApi.requestList(context, Building.class);
-            FloorplanApi.requestList(context, FloorPlanDatabase.class);
+            FloorplanApi.requestFloorplanList(context);
+            FloorplanApi.requestRoomList(context, "001DWE_01FLR");
         }
 
         // initialize map

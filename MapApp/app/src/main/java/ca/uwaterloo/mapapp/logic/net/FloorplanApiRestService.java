@@ -6,8 +6,10 @@ import java.util.List;
 import ca.uwaterloo.mapapp.logic.net.objects.Building;
 import ca.uwaterloo.mapapp.logic.net.objects.Floor;
 import ca.uwaterloo.mapapp.logic.net.objects.FloorPlanDatabase;
+import ca.uwaterloo.mapapp.logic.net.objects.Room;
 import ca.uwaterloo.mapapp.logic.net.objects.event.Event;
 import retrofit.http.GET;
+import retrofit.http.Path;
 
 /**
  * Created by brwarner
@@ -18,4 +20,7 @@ public interface FloorplanApiRestService {
 
     @GET("/database.json")
     List<FloorPlanDatabase> getFloorPlanDatabases();
+
+    @GET("/png/{floorplan}.json")
+    List<Room> getRooms(@Path("floorplan") String floorplan);
 }

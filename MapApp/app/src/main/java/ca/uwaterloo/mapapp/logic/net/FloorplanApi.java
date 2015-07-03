@@ -25,6 +25,7 @@ import retrofit.converter.GsonConverter;
 public class FloorplanApi {
     public static final String INTENT_PREFIX = "ca.uwaterloo.mapapp.logic.net.WaterlooApi.";
     public static final String ACTION_GOT_FLOORS = INTENT_PREFIX + "ACTION_GOT_FLOORS";
+    public static final String ACTION_GOT_ROOMS = INTENT_PREFIX + "ACTION_GOT_ROOMS";
     public static final String EXTRA_LIST = INTENT_PREFIX + "EXTRA_LIST";
     public static final String EXTRA_CLASS = INTENT_PREFIX + "EXTRA_CLASS";
 
@@ -40,10 +41,10 @@ public class FloorplanApi {
 
     private static HashMap<String, List> localCacheMap = new HashMap<>();
 
-    public static void requestList(final Context context, final Class clazz) {
-        final String className = clazz.getSimpleName();
-        if (localCacheMap.containsKey(className)) {
-            broadcastGotList(context, localCacheMap.get(className), clazz);
+    public static void requestFloorplanList(final Context context) {
+        final String key = "floorplans";
+        if (localCacheMap.containsKey(key)) {
+            broadcastGotList(context, localCacheMap.get(key), ACTION_GOT_FLOORS);
             return;
         }
         new Thread(new Runnable() {
@@ -51,29 +52,47 @@ public class FloorplanApi {
             public void run() {
                 final long startTime = System.currentTimeMillis();
                 try {
-                    final List result = invokeApiMethodFromClassName(className);
-                    localCacheMap.put(className, result);
+                    final List result = service.getFloorPlanDatabases();
+                    localCacheMap.put(key, result);
                     final long duration = System.currentTimeMillis() - startTime;
-                    Logger.info("Got list of %ss from API in %dms", className, duration);
+                    Logger.info("Got floor plan list from database in %dms", duration);
                     Logger.info("Found %d buildings", result.size());
-                    broadcastGotList(context, result, clazz);
+                    broadcastGotList(context, result, ACTION_GOT_FLOORS);
                 } catch (Exception e) {
-                    Logger.error("Failed to get list of %ss from API", e, className);
+                    Logger.error("Failed to get floor plan list from database", e);
                 }
 
             }
         }).start();
     }
 
-    private static List invokeApiMethodFromClassName(String className) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        String format = String.format("get%ss", className);
-        Method method = service.getClass().getMethod(format);
-        return (List) method.invoke(service);
+    public static void requestRoomList(final Context context, final String floor) {
+        final String key = String.format("rooms%s", floor);
+        if (localCacheMap.containsKey(key)) {
+            broadcastGotList(context, localCacheMap.get(key), ACTION_GOT_ROOMS);
+            return;
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final long startTime = System.currentTimeMillis();
+                try {
+                    final List result = service.getRooms(floor);
+                    localCacheMap.put(key, result);
+                    final long duration = System.currentTimeMillis() - startTime;
+                    Logger.info("Got room list for %s from database in %dms", floor, duration);
+                    Logger.info("Found %d rooms", result.size());
+                    broadcastGotList(context, result, ACTION_GOT_ROOMS);
+                } catch (Exception e) {
+                    Logger.error("Failed to get room list from database for floor %s", e, floor);
+                }
+
+            }
+        }).start();
     }
 
-    private static void broadcastGotList(Context context, List list, Class clazz) {
-        Intent buildingsIntent = new Intent(ACTION_GOT_FLOORS);
-        buildingsIntent.putExtra(EXTRA_CLASS, clazz.getSimpleName());
+    private static void broadcastGotList(Context context, List list, final String intent) {
+        Intent buildingsIntent = new Intent(intent);
         buildingsIntent.putExtra(EXTRA_LIST, new ArrayList<>(list));
         context.sendBroadcast(buildingsIntent);
     }
