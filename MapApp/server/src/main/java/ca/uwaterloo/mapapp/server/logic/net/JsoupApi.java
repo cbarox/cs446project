@@ -4,8 +4,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import javafx.util.Callback;
-
 /**
  * Created by Hyunwook on 2015-06-14.
  */
