@@ -30,8 +30,10 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
+import ca.uwaterloo.mapapp.logic.net.FloorplanApi;
 import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
 import ca.uwaterloo.mapapp.logic.net.objects.Building;
+import ca.uwaterloo.mapapp.logic.net.objects.FloorPlanDatabase;
 
 public class MainMapFragment extends Fragment implements OnMapReadyCallback {
 
@@ -98,6 +100,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         if (buildingsCache == null) {
             final Context context = this.getActivity();
             WaterlooApi.requestList(context, Building.class);
+            FloorplanApi.requestList(context, FloorPlanDatabase.class);
         }
 
         // initialize map
