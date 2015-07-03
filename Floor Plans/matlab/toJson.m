@@ -1,5 +1,5 @@
 function json=toJson(bboxes, rooms)
-    json = '[ ';
+    json = '{"meta":{"status": 200, "message":"Request successful"},"data":[ ';
     len = size(rooms);
     len = len(2);
     for n = 1:len
@@ -11,5 +11,5 @@ function json=toJson(bboxes, rooms)
         json = sprintf('%s{"mid":[%f,%f], "number":"%s"},', json, midx, midy, roomn);
     end
     json = json(1:length(json) - 1);
-    json = sprintf('%s ]', json);
+    json = sprintf('%s ]}', json);
 end
