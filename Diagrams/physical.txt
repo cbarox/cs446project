@@ -1,0 +1,15 @@
+@startuml
+rectangle "Android Phone" as phone
+cloud "DigitalOcean Server" as server
+cloud "Waterloo Open Data API Server" as watapi
+cloud "Waterloo Event Website" as eventsite
+rectangle "Floor Plan Processor" as fpserver
+
+server <-down- watapi : REST API
+server <-right- eventsite : HTTP GET
+server <-up-> phone : REST API
+server <-left- fpserver : Git
+
+note right of server : Located in New York City
+
+@enduml
