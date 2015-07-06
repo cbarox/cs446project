@@ -1,24 +1,21 @@
 package ca.uwaterloo.mapapp.ui;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import java.util.List;
 import android.widget.ListView;
 
+import java.util.List;
+
 import butterknife.ButterKnife;
+import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
-import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
-import ca.uwaterloo.mapapp.logic.net.objects.event.Event;
-import butterknife.InjectView;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
+import ca.uwaterloo.mapapp.shared.objects.event.Event;
 import ca.uwaterloo.mapapp.ui.adapters.EventAdapter;
 
 /**
@@ -34,14 +31,11 @@ public class AllEventsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    @InjectView(R.id.event_list)
+    protected ListView noteList;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private TextView textView;
-    @InjectView(R.id.event_list)
-    protected ListView noteList;
-
     private List<Event> mEvents;
     private EventAdapter mAdapter;
 
@@ -75,9 +69,6 @@ public class AllEventsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-        Context context = getActivity();
-        WaterlooApi.requestList(context, Event.class);
     }
 
     @Override
@@ -90,21 +81,13 @@ public class AllEventsFragment extends Fragment {
         // This has to come after setContentView
         ButterKnife.inject(this, view);
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
-        DataManager<Event, Long> dataManager = databaseHelper.getDataManager(Event.class);
+        DataManager dataManager = databaseHelper.getDataManager(Event.class);
 
         mEvents = dataManager.getAll();
         mAdapter = new EventAdapter(getActivity(), mEvents);
+        noteList.setAdapter(mAdapter);
 
         return view;
-    }
-
-    public void handleGotEvents(List<Event> events) {
-        // Handle the events from API here
-        String hello = "";
-        for (Event event : events) {
-            hello += event.getTitle() + "\n";
-        }
-        textView.setText(hello);
     }
 
     /**

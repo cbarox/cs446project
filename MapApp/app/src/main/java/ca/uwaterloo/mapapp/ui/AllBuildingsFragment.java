@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import ca.uwaterloo.mapapp.R;
-import ca.uwaterloo.mapapp.logic.net.objects.Building;
+import ca.uwaterloo.mapapp.shared.objects.building.Building;
 
 /**
  * A simple {@link Fragment} subclass.

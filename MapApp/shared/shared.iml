@@ -28,6 +28,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="ormlite-core-4.48" level="project" />
+    <orderEntry type="library" exported="" name="retrofit-1.9.0" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.3.1" level="project" />
     <orderEntry type="library" exported="" name="shared.shared" level="project" />
   </component>
 </module>

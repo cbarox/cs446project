@@ -49,7 +49,7 @@ public class Main {
         });
     }
 
-    private static DataManager getDataManager(Class clazz) {
+    public static DataManager getDataManager(Class clazz) {
         if (dataManagers.containsKey(clazz)) {
             return dataManagers.get(clazz);
         }

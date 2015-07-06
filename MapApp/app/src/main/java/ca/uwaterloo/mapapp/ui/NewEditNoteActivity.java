@@ -1,9 +1,6 @@
 package ca.uwaterloo.mapapp.ui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,11 +19,11 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
-import ca.uwaterloo.mapapp.data.objects.Note;
-import ca.uwaterloo.mapapp.logic.Logger;
-import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
-import ca.uwaterloo.mapapp.logic.net.objects.Building;
+import ca.uwaterloo.mapapp.objects.Note;
+import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
+import ca.uwaterloo.mapapp.shared.net.WaterlooApi;
+import ca.uwaterloo.mapapp.shared.objects.building.Building;
 
 public class NewEditNoteActivity extends ActionBarActivity {
 
@@ -37,13 +34,6 @@ public class NewEditNoteActivity extends ActionBarActivity {
     public static final int REQUEST_UPDATE = 102;
 
     public static final String RESULT_NOTE_ID = "result_note_id";
-
-    /**
-     * All the actions that are processed by the broadcast receiver
-     */
-    private static final String[] receiverActions = {
-            WaterlooApi.ACTION_GOT_LIST
-    };
 
     @InjectView(R.id.tool_bar)
     protected Toolbar mToolbar;
@@ -62,35 +52,6 @@ public class NewEditNoteActivity extends ActionBarActivity {
 
     private boolean isUpdate = false;
     private Note mNote = null;
-
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            Bundle extras = intent.getExtras();
-            switch (action) {
-                case WaterlooApi.ACTION_GOT_LIST: {
-                    if (extras == null) {
-                        Logger.error("No extras supplied from intent %s", WaterlooApi.ACTION_GOT_LIST);
-                        return;
-                    }
-                    List list = (List) extras.get(WaterlooApi.EXTRA_LIST);
-                    if (list == null) {
-                        Logger.error("Couldn't get list from intent extras");
-                        return;
-                    }
-                    String className = extras.getString(WaterlooApi.EXTRA_CLASS);
-                    if (className == null) {
-                        Logger.error("Couldn't get class name from intent extras");
-                        return;
-                    }
-                    if (className.equals("Building")) {
-                        handleGotBuildings(list);
-                    }
-                }
-            }
-        }
-    };
 
     private void handleGotBuildings(List<Building> buildings) {
         buildingList = buildings;
@@ -122,14 +83,14 @@ public class NewEditNoteActivity extends ActionBarActivity {
             }
         });
 
-        // Register the broadcast receiver
-        IntentFilter intentFilter = new IntentFilter();
-        for (String action : receiverActions) {
-            intentFilter.addAction(action);
-        }
-        registerReceiver(broadcastReceiver, intentFilter);
-
-        WaterlooApi.requestList(this, Building.class);
+        ICallback buildingCallback = new ICallback() {
+            @Override
+            public void call(Object param) {
+                List<Building> buildingList = (List<Building>) param;
+                handleGotBuildings(buildingList);
+            }
+        };
+        WaterlooApi.requestList(buildingCallback, Building.class);
 
         Bundle b = getIntent().getExtras();
         if (b != null) {
@@ -166,12 +127,6 @@ public class NewEditNoteActivity extends ActionBarActivity {
                         WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(broadcastReceiver);
     }
 
     @Override

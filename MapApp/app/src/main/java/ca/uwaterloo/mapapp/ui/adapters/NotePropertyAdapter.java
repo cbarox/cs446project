@@ -9,16 +9,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import ca.uwaterloo.mapapp.R;
-import ca.uwaterloo.mapapp.data.objects.Note;
+import ca.uwaterloo.mapapp.objects.Note;
 
 /**
  * Created by Kev on 2015-06-29.
  */
 public class NotePropertyAdapter extends BaseAdapter {
+    protected static LayoutInflater inflater = null;
     protected Context mContext;
     protected Note mNote;
-
-    protected static LayoutInflater inflater = null;
 
     public NotePropertyAdapter(Context context, Note note) {
         this.mContext = context;

@@ -30,10 +30,9 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
-import ca.uwaterloo.mapapp.logic.net.FloorplanApi;
-import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
-import ca.uwaterloo.mapapp.logic.net.objects.Building;
-import ca.uwaterloo.mapapp.logic.net.objects.FloorPlanDatabase;
+import ca.uwaterloo.mapapp.shared.ICallback;
+import ca.uwaterloo.mapapp.shared.net.WaterlooApi;
+import ca.uwaterloo.mapapp.shared.objects.building.Building;
 
 public class MainMapFragment extends Fragment implements OnMapReadyCallback {
 
@@ -48,14 +47,11 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
 
     @InjectView(R.id.info_card_layout)
     protected SlidingUpPanelLayout mSlidingUpPanelLayout;
-
     private Context context;
     private GoogleMap mMap;
     private String currentBuilding = "";
     private boolean isMapReady = false;
-
     private BuildingCardFragment cardFragment;
-
 
     /**
      * On startup, MainApplication will ask the Waterloo API for a list of buildings, but it takes a while.
@@ -78,6 +74,9 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
      */
     private void addBuildingMarkers(List<Building> buildings) {
         for (Building building : buildings) {
+            if (building.getLatitude() == null || building.getLongitude() == null) {
+                continue;
+            }
             LatLng buildingLocation = new LatLng(building.getLatitude(), building.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(buildingLocation)
@@ -99,9 +98,21 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         // Check if we need to get the buildings from the database/API or if we can just use the local cache
         if (buildingsCache == null) {
             final Context context = this.getActivity();
-            WaterlooApi.requestList(context, Building.class);
-            FloorplanApi.requestFloorplanList(context);
-            FloorplanApi.requestRoomList(context, "001DWE_01FLR");
+            ICallback gotBuildingsCallback = new ICallback() {
+                @Override
+                public void call(final Object param) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            List<Building> buildingList = (List<Building>) param;
+                            handleGotBuildings(buildingList);
+                        }
+                    });
+                }
+            };
+            WaterlooApi.requestList(gotBuildingsCallback, Building.class);
+            /*FloorplanApi.requestFloorplanList(context);
+            FloorplanApi.requestRoomList(context, "001DWE_01FLR");*/
         }
 
         // initialize map
@@ -109,7 +120,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
 
         // setup Fab action
-        FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.fab_new_note);
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab_new_note);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
