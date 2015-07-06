@@ -1,4 +1,4 @@
-package ca.uwaterloo.mapapp.logic.net;
+package ca.uwaterloo.mapapp.shared.net;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -14,7 +14,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import ca.uwaterloo.mapapp.logic.Logger;
 
 /**
  * Created by cjbarrac
@@ -34,7 +33,6 @@ public class WaterlooApiJsonDeserializer<T> implements JsonDeserializer<T> {
         try {
             return dateFormat.parse(dateString);
         } catch (ParseException e) {
-            Logger.error("Failed to parse date");
         }
         return null;
     }

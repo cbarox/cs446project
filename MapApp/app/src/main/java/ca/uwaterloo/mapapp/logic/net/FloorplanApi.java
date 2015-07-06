@@ -7,14 +7,12 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import ca.uwaterloo.mapapp.logic.Logger;
-import ca.uwaterloo.mapapp.logic.net.objects.FloorPlanDatabase;
+import ca.uwaterloo.mapapp.logic.net.serialization.FloorplanApiJsonDeserializer;
+import ca.uwaterloo.mapapp.logic.net.services.IFloorPlanRestService;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 
@@ -34,10 +32,10 @@ public class FloorplanApi {
             .registerTypeAdapter(List.class, new FloorplanApiJsonDeserializer<List>())
             .create();
     private static RestAdapter restAdapter = new RestAdapter.Builder()
-            .setEndpoint(FloorplanApiRestService.API_ENDPOINT)
+            .setEndpoint(IFloorPlanRestService.API_ENDPOINT)
             .setConverter(new GsonConverter(gson))
             .build();
-    private static FloorplanApiRestService service = restAdapter.create(FloorplanApiRestService.class);
+    private static IFloorPlanRestService service = restAdapter.create(IFloorPlanRestService.class);
 
     private static HashMap<String, List> localCacheMap = new HashMap<>();
 
@@ -50,16 +48,11 @@ public class FloorplanApi {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final long startTime = System.currentTimeMillis();
                 try {
                     final List result = service.getFloorPlanDatabases();
                     localCacheMap.put(key, result);
-                    final long duration = System.currentTimeMillis() - startTime;
-                    Logger.info("Got floor plan list from database in %dms", duration);
-                    Logger.info("Found %d buildings", result.size());
                     broadcastGotList(context, result, ACTION_GOT_FLOORS);
                 } catch (Exception e) {
-                    Logger.error("Failed to get floor plan list from database", e);
                 }
 
             }
@@ -75,16 +68,11 @@ public class FloorplanApi {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final long startTime = System.currentTimeMillis();
                 try {
                     final List result = service.getRooms(floor);
                     localCacheMap.put(key, result);
-                    final long duration = System.currentTimeMillis() - startTime;
-                    Logger.info("Got room list for %s from database in %dms", floor, duration);
-                    Logger.info("Found %d rooms", result.size());
                     broadcastGotList(context, result, ACTION_GOT_ROOMS);
                 } catch (Exception e) {
-                    Logger.error("Failed to get room list from database for floor %s", e, floor);
                 }
 
             }

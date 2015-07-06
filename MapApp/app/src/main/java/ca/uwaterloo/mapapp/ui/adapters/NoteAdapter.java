@@ -1,25 +1,25 @@
 package ca.uwaterloo.mapapp.ui.adapters;
 
-        import android.content.Context;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.BaseAdapter;
-        import android.widget.ImageView;
-        import android.widget.TextView;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-        import java.util.List;
+import java.util.List;
 
-        import ca.uwaterloo.mapapp.R;
-        import ca.uwaterloo.mapapp.data.objects.Note;
+import ca.uwaterloo.mapapp.R;
+import ca.uwaterloo.mapapp.objects.Note;
 
 /**
  * Created by Kev Kat on 2015-06-15.
  */
 public class NoteAdapter extends BaseAdapter {
+    private static LayoutInflater inflater = null;
     Context mContext;
     List<Note> notes;
-    private static LayoutInflater inflater = null;
 
     public NoteAdapter(Context context, List<Note> notes) {
         this.mContext = context;

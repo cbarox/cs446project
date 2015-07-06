@@ -1,4 +1,4 @@
-package ca.uwaterloo.mapapp.logic.net.objects.course;
+package ca.uwaterloo.mapapp.objects.course;
 
 /**
  * Created by Hyunwook on 2015-06-13.

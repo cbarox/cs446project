@@ -1,28 +1,22 @@
 package ca.uwaterloo.mapapp.ui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
 
 import java.util.List;
 
 import ca.uwaterloo.mapapp.R;
-import ca.uwaterloo.mapapp.logic.Logger;
-import ca.uwaterloo.mapapp.logic.net.WaterlooApi;
+import ca.uwaterloo.mapapp.data.DatabaseHelper;
+import ca.uwaterloo.mapapp.shared.ICallback;
+import ca.uwaterloo.mapapp.shared.data.DataManager;
+import ca.uwaterloo.mapapp.shared.net.WaterlooApi;
+import ca.uwaterloo.mapapp.shared.objects.building.Building;
+import ca.uwaterloo.mapapp.shared.objects.event.Event;
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
 import it.neokree.materialnavigationdrawer.elements.MaterialSection;
 
 public class MainDrawerActivity extends MaterialNavigationDrawer {
-
-    /**
-     * All the actions that are processed by the broadcast receiver
-     */
-    private static final String[] receiverActions = {
-            WaterlooApi.ACTION_GOT_LIST
-    };
 
     private MaterialSection campusMapSection;
     private MaterialSection allEventsSection;
@@ -36,57 +30,53 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
     private AllBuildingsFragment allBuildingsFragment;
     private AllTagsFragment allTagsFragment;
 
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            Bundle extras = intent.getExtras();
-            switch (action) {
-                case WaterlooApi.ACTION_GOT_LIST: {
-                    if (extras == null) {
-                        Logger.error("No extras supplied from intent %s", WaterlooApi.ACTION_GOT_LIST);
-                        return;
-                    }
-                    List list = (List) extras.get(WaterlooApi.EXTRA_LIST);
-                    if (list == null) {
-                        Logger.error("Couldn't get list from intent extras");
-                        return;
-                    }
-                    String className = extras.getString(WaterlooApi.EXTRA_CLASS);
-                    if (className == null) {
-                        Logger.error("Couldn't get class name from intent extras");
-                        return;
-                    }
-                    if (className.equals("Building")) {
-                        mainMapFragment.handleGotBuildings(list);
-                        allBuildingsFragment.handleGotBuildings(list);
-                    } else if (className.equals("Event")) {
-                        allEventsFragment.handleGotEvents(list);
-                    }
-                }
+    /**
+     * Refreshes all the data for the application
+     * This takes a long time to run
+     * TODO check if we even need to refresh based on time or something
+     * TODO add a progress dialog for this
+     */
+    private void refreshData() {
+
+        final DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
+
+        // Cache buildings
+        ICallback buildingsCallback = new ICallback() {
+            @Override
+            public void call(Object param) {
+                DataManager<Building, String> buildingsDataManager = databaseHelper.getDataManager(Building.class);
+                List<Building> buildings = (List<Building>) param;
+                buildingsDataManager.insertOrUpdateAll(buildings);
             }
-        }
-    };
+        };
+        WaterlooApi.requestList(buildingsCallback, Building.class);
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // Register the broadcast receiver
-        IntentFilter intentFilter = new IntentFilter();
-        for (String action : receiverActions) {
-            intentFilter.addAction(action);
-        }
-        registerReceiver(broadcastReceiver, intentFilter);
-    }
+        // Cache events
+        ICallback eventsCallback = new ICallback() {
+            @Override
+            public void call(Object param) {
+                DataManager<Event, Integer> eventDataManager = databaseHelper.getDataManager(Event.class);
+                List<Event> events = (List<Event>) param;
+                eventDataManager.insertOrUpdateAll(events);
+            }
+        };
+        WaterlooApi.requestList(eventsCallback, Event.class);
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(broadcastReceiver);
+        // TODO implement this
+        // Cache event locations
+        ICallback eventLocationsCallback = new ICallback() {
+            @Override
+            public void call(Object param) {
+
+            }
+        };
+        // TODO add rest service for our server to request from
     }
 
     @Override
     public void init(Bundle savedInstanceState) {
+
+        refreshData();
 
         // setup drawer image
         setDrawerHeaderImage(R.drawable.test_drawer_image);
@@ -130,14 +120,14 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
 
         setBackPattern(MaterialNavigationDrawer.BACKPATTERN_BACK_TO_FIRST);
 
-        setDefaultSectionLoaded(2);
+        setDefaultSectionLoaded(0);
     }
 
     @Override
     public void onBackPressed() {
         boolean handled = false;
         if (getCurrentSection().equals(mainMapFragment)) {
-            handled = ((MainMapFragment)mainMapFragment.getTargetFragment()).showHideInfoCard(false);
+            handled = ((MainMapFragment) mainMapFragment.getTargetFragment()).showHideInfoCard(false);
         }
         if (!handled) {
             super.onBackPressed();

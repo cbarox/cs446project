@@ -1,4 +1,4 @@
-package ca.uwaterloo.mapapp.logic.net.objects.event;
+package ca.uwaterloo.mapapp.shared.objects.event;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -9,8 +9,8 @@ import java.io.Serializable;
  * Created by cjbarrac
  * 6/13/15
  */
-@DatabaseTable(tableName = Times.TABLE)
-public class Times implements Serializable {
+@DatabaseTable(tableName = EventTimes.TABLE)
+public class EventTimes implements Serializable {
 
     public static final String TABLE = "times";
 

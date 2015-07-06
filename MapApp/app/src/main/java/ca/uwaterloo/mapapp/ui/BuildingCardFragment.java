@@ -28,12 +28,12 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
-import ca.uwaterloo.mapapp.data.objects.Note;
-import ca.uwaterloo.mapapp.logic.net.objects.event.Event;
-import ca.uwaterloo.mapapp.logic.net.objects.Building;
+import ca.uwaterloo.mapapp.objects.Note;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
-import ca.uwaterloo.mapapp.ui.adapters.NoteAdapter;
+import ca.uwaterloo.mapapp.shared.objects.building.Building;
+import ca.uwaterloo.mapapp.shared.objects.event.Event;
 import ca.uwaterloo.mapapp.ui.adapters.EventAdapter;
+import ca.uwaterloo.mapapp.ui.adapters.NoteAdapter;
 
 public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayout.PanelSlideListener{
 
@@ -135,7 +135,7 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
         DataManager<Event, Long> dataManager = databaseHelper.getDataManager(Event.class);
 
-        mEvents = dataManager.find(Event.COLUMN_BUILDING_CODE, mBuilding.getBuildingCode());
+        mEvents = dataManager.find(Event.COLUMN_LOCATION, mBuilding.getBuildingCode());
 
         if (mEvents.size() > 5) {
             mEvents = mEvents.subList(0, 5);

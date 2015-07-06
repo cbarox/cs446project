@@ -1,4 +1,4 @@
-package ca.uwaterloo.mapapp.logic.net;
+package ca.uwaterloo.mapapp.logic.net.serialization;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -10,11 +10,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import ca.uwaterloo.mapapp.logic.Logger;
 
 /**
  * Created by brwarner

@@ -1,25 +1,25 @@
 package ca.uwaterloo.mapapp.ui.adapters;
 
-        import android.content.Context;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.BaseAdapter;
-        import android.widget.ImageView;
-        import android.widget.TextView;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-        import java.util.List;
+import java.util.List;
 
-        import ca.uwaterloo.mapapp.R;
-        import ca.uwaterloo.mapapp.logic.net.objects.event.Event;
+import ca.uwaterloo.mapapp.R;
+import ca.uwaterloo.mapapp.shared.objects.event.Event;
 
 /**
  * Created by Kev Kat on 2015-06-15.
  */
 public class EventAdapter extends BaseAdapter {
+    private static LayoutInflater inflater = null;
     Context mContext;
     List<Event> events;
-    private static LayoutInflater inflater = null;
 
     public EventAdapter(Context context, List<Event> events) {
         this.mContext = context;

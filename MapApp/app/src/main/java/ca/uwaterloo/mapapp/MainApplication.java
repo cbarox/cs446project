@@ -1,9 +1,9 @@
 package ca.uwaterloo.mapapp;
 
 import android.app.Application;
+import android.util.Log;
 
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
-import ca.uwaterloo.mapapp.logic.Logger;
 
 /**
  * Created by cjbarrac
@@ -11,19 +11,24 @@ import ca.uwaterloo.mapapp.logic.Logger;
  */
 public class MainApplication extends Application {
 
+    public static final boolean DEBUG = true;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
-        // Initialize the static database helper instance
-        DatabaseHelper databaseHelper = new DatabaseHelper(this);
-        DatabaseHelper.setDatabaseHelper(databaseHelper);
+        DatabaseHelper.setDatabaseHelper(new DatabaseHelper(this));
+
+        if (DEBUG) {
+            return;
+        }
 
         // Make sure the app doesn't crash, just log failures
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable exception) {
-                Logger.error("Caught an unhandled exception", exception);
+                String msg = String.format("Caught unhandled exception\n%s", exception.toString());
+                Log.e("Whats nUW", msg);
             }
         });
     }

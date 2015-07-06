@@ -2,6 +2,7 @@ package ca.uwaterloo.mapapp.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
@@ -11,8 +12,10 @@ import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import ca.uwaterloo.mapapp.data.objects.Note;
+import ca.uwaterloo.mapapp.objects.Note;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
+import ca.uwaterloo.mapapp.shared.objects.building.Building;
+import ca.uwaterloo.mapapp.shared.objects.event.Event;
 
 /**
  * Created by cjbarrac
@@ -55,9 +58,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
-            TableUtils.createTable(connectionSource, Note.class);
+            TableUtils.createTableIfNotExists(connectionSource, Building.class);
+            TableUtils.createTableIfNotExists(connectionSource, Event.class);
+            TableUtils.createTableIfNotExists(connectionSource, Note.class);
         } catch (SQLException e) {
-            e.printStackTrace();
+            Log.e("Whats nUW", "Error creating tables:\n" + e.toString());
         }
     }
 
