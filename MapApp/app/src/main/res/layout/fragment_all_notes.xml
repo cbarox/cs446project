@@ -9,6 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <TextView
+        android:id="@+id/empty_list_state"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="No notes :("/>
+
+
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/fab_new_note"
         android:layout_width="wrap_content"

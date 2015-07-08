@@ -34,68 +34,100 @@
 
     </LinearLayout>
 
-    <Button
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/abc_btn_check_to_on_mtrl_015"
-        android:text="Floor Plans" />
-
-    <View
+    <ScrollView
+        android:id="@+id/icard_content_scroll"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider" />
+        android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="72dp"
-        android:text="All events"
-        android:textSize="@dimen/abc_text_size_large_material" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/icard_events"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/temp_list"/>
+            <Button
+                android:id="@+id/icard_floor_plan_btn"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/abc_btn_check_to_on_mtrl_015"
+                android:text="Floor Plans" />
 
-    <Button
-        android:id="@+id/icard_more_events"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="MORE EVENTS"
-        style="?android:attr/borderlessButtonStyle"
-        android:gravity="left|center_vertical"
-        android:paddingLeft="72dp"
-        android:textColor="@color/primary" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="72dp"
+                android:text="All events"
+                android:textSize="@dimen/abc_text_size_large_material" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="72dp"
-        android:text="All notes"
-        android:textSize="@dimen/abc_text_size_large_material" />
+            <ListView
+                android:id="@+id/icard_events"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/temp_list" />
 
-    <ListView
-        android:id="@+id/icard_notes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/temp_list" />
+            <TextView
+                android:id="@+id/empty_events_list_state"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginLeft="72dp"
+                android:gravity="left|center_vertical"
+                android:text="@string/empty_list_events"
+                android:visibility="gone" />
 
-    <Button
-        android:id="@+id/icard_more_notes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="MORE NOTES"
-        style="?android:attr/borderlessButtonStyle"
-        android:gravity="left|center_vertical"
-        android:paddingLeft="72dp"
-        android:textColor="@color/primary"/>
+            <Button
+                android:id="@+id/icard_more_events"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="72dp"
+                android:text="MORE EVENTS"
+                android:textColor="@color/primary" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="72dp"
+                android:text="All notes"
+                android:textSize="@dimen/abc_text_size_large_material" />
+
+            <ListView
+                android:id="@+id/icard_notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/temp_list" />
+
+            <TextView
+                android:id="@+id/empty_note_list_state"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginLeft="72dp"
+                android:gravity="left|center_vertical"
+                android:text="@string/empty_list_note"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/icard_more_notes"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="72dp"
+                android:text="MORE NOTES"
+                android:textColor="@color/primary" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

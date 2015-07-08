@@ -12,11 +12,16 @@ import android.widget.TextView;
 
 import com.melnykov.fab.FloatingActionButton;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
 import ca.uwaterloo.mapapp.objects.Note;
+import ca.uwaterloo.mapapp.objects.NoteTag;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.ui.adapters.NotePropertyAdapter;
 
@@ -115,6 +120,17 @@ public class ViewNoteActivity extends ActionBarActivity {
         mNote = dataManager.findById(noteId);
 
         mTitle.setText(mNote.getTitle());
-        mProperties.setAdapter(new NotePropertyAdapter(this, mNote));
+
+        DataManager<NoteTag, Long> dm2 = databaseHelper.getDataManager(NoteTag.class);
+
+        List<NoteTag> tags = dm2.find(NoteTag.COLUMN_NOTE, mNote);
+        Collections.sort(tags, new Comparator<NoteTag>() {
+            @Override
+            public int compare(NoteTag lhs, NoteTag rhs) {
+                return lhs.getTag().getTitle().compareTo(rhs.getTag().getTitle());
+            }
+        });
+
+        mProperties.setAdapter(new NotePropertyAdapter(this, mNote, tags));
     }
 }

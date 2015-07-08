@@ -58,4 +58,6 @@ dependencies {
     compile 'com.afollestad:material-dialogs:0.7.6.0'
     // This is for material design edit text views
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
+    // This is for ImageView gestures and image scaleing
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.1.4'
 }

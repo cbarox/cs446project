@@ -1,68 +1,90 @@
 package ca.uwaterloo.mapapp.ui;
 
-import android.app.Activity;
-import android.net.Uri;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.melnykov.fab.FloatingActionButton;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
+import ca.uwaterloo.mapapp.data.DatabaseHelper;
+import ca.uwaterloo.mapapp.objects.Tag;
+import ca.uwaterloo.mapapp.shared.data.DataManager;
+import ca.uwaterloo.mapapp.ui.adapters.TagAdapter;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AllTagsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AllTagsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AllTagsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    @InjectView(R.id.tag_list)
+    protected ListView tagList;
+    @InjectView(R.id.fab_new_tag)
+    protected FloatingActionButton fab;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AllTagsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AllTagsFragment newInstance(String param1, String param2) {
-        AllTagsFragment fragment = new AllTagsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public AllTagsFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private List<Tag> mTags;
+    private TagAdapter mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_all_tags, container, false);
+        View view = inflater.inflate(R.layout.fragment_all_tags, container, false);
+        ButterKnife.inject(this, view);
+
+        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
+        DataManager<Tag, Long> dataManager = databaseHelper.getDataManager(Tag.class);
+
+        mTags = dataManager.getAll(Tag.COLUMN_TITLE, true);
+        mAdapter = new TagAdapter(getActivity(), mTags);
+
+        tagList.setAdapter(mAdapter);
+        // set on item click listener
+        tagList.setEmptyView(view.findViewById(R.id.empty_list_state));
+
+        fab.attachToListView(tagList);
+        // on click listener
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(getActivity())
+                        .title("New Tag")
+                        .inputType(InputType.TYPE_CLASS_TEXT)
+                        .positiveText("Add")
+                        .input("Tag name", "", new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                addTag(input.toString());
+                            }
+                        }).show();
+            }
+        });
+
+        return view;
+    }
+
+    private void addTag(String tagTitle) {
+        Tag newTag = new Tag();
+        newTag.setTitle(tagTitle);
+
+        DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
+        DataManager<Tag, Long> dataManager = databaseHelper.getDataManager(Tag.class);
+
+        dataManager.insert(newTag);
+
+        int insert = 0;
+        for (insert = 0; insert < mTags.size(); insert++) {
+            // newTag is before mTags(insert)
+            if (tagTitle.compareTo(mTags.get(insert).getTitle()) < 0)
+                break;
+        }
+        mTags.add(insert, newTag);
+        mAdapter.notifyDataSetChanged();
     }
 }
