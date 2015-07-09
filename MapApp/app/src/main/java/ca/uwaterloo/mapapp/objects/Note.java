@@ -3,6 +3,8 @@ package ca.uwaterloo.mapapp.objects;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.Date;
+
 /**
  * Created by cjbarrac
  * 23/05/15
@@ -20,6 +22,8 @@ public class Note {
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_DESCRIPTION = "description";
     public static final String COLUMN_BUILDING_CODE = "building_code";
+    public static final String COLUMN_DATE_CREATED = "date_created";
+    public static final String COLUMN_LAST_MODIFIED = "last_modified";
 
     @DatabaseField(columnName = COLUMN_ID, generatedId = true)
     private long id;
@@ -32,6 +36,12 @@ public class Note {
 
     @DatabaseField(columnName = COLUMN_BUILDING_CODE)
     private String buildingCode;
+
+    @DatabaseField(columnName = COLUMN_DATE_CREATED)
+    private Date dateCreated;
+
+    @DatabaseField(columnName = COLUMN_LAST_MODIFIED)
+    private Date lastModified;
 
     public long getId() {
         return id;
@@ -58,6 +68,22 @@ public class Note {
     }
 
     public void setBuildingCode(String buildingCode) { this.buildingCode = buildingCode; }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
 
     public Note getCopy() {
         Note newNote = new Note();

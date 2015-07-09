@@ -8,15 +8,17 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.melnykov.fab.FloatingActionButton;
@@ -37,13 +39,19 @@ import ca.uwaterloo.mapapp.ui.adapters.NoteAdapter;
 
 public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayout.PanelSlideListener{
 
+    private static final int MAX_VIEW_AMOUNT = 5;
+
     @InjectView(R.id.icard_top)
     protected LinearLayout mCardTop;
-
     @InjectView(R.id.icard_buildName)
     protected TextView mBuildingName;
     @InjectView(R.id.icard_buildcode)
     protected TextView mBuildingCode;
+
+    @InjectView(R.id.icard_content_scroll)
+    protected ScrollView mScrollContent;
+    @InjectView(R.id.icard_floor_plan_btn)
+    protected Button mFloorPlanBtn;
     @InjectView(R.id.icard_events)
     protected ListView mEventList;
     @InjectView(R.id.icard_more_events)
@@ -67,6 +75,8 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
     private int mPriCurrentColor;
     private int mSecCurrentColor;
 
+    private boolean isScrollEnabled = false;
+
     public static BuildingCardFragment newInstance() {
         return new BuildingCardFragment();
     }
@@ -85,6 +95,10 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
         View view = inflater.inflate(R.layout.fragment_building_card, container, false);
         ButterKnife.inject(this, view);
 
+        // empty states
+        mEventList.setEmptyView(view.findViewById(R.id.empty_events_list_state));
+        mNoteList.setEmptyView(view.findViewById(R.id.empty_note_list_state));
+
         mNoteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -92,6 +106,21 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
                 intent.putExtra(ViewNoteActivity.ARG_NOTE_ID, id);
                 startActivityForResult(intent, NewEditNoteActivity.REQUEST_UPDATE);
                 getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
+            }
+        });
+
+        mFloorPlanBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), FloorPlanActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        mScrollContent.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return !isScrollEnabled;
             }
         });
 
@@ -128,7 +157,6 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
         updateNoteList();
     }
 
-
     // TODO: implement
     public void updateEventList() {
 
@@ -137,38 +165,34 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
 
         mEvents = dataManager.find(Event.COLUMN_LOCATION, mBuilding.getBuildingCode());
 
-        if (mEvents.size() > 5) {
-            mEvents = mEvents.subList(0, 5);
+        if (mEvents.size() > MAX_VIEW_AMOUNT) {
+            mEvents = mEvents.subList(0, MAX_VIEW_AMOUNT);
             mMoreEvents.setVisibility(View.VISIBLE);
         } else {
             mMoreEvents.setVisibility(View.INVISIBLE);
         }
 
-        // TODO: implement empty list
-
-
-
         mEventAdapter = new EventAdapter(getActivity(), mEvents);
         mEventList.setAdapter(mEventAdapter);
-
+        setListViewHeightBasedOnChildren(mEventList);
     }
 
     public void updateNoteList() {
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
         DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
-        mNotes = dataManager.find(Note.COLUMN_BUILDING_CODE, mBuilding.getBuildingCode());
+        mNotes = dataManager.find(Note.COLUMN_BUILDING_CODE, mBuilding.getBuildingCode(),
+                Note.COLUMN_LAST_MODIFIED, false);
 
-        if (mNotes.size() > 5) {
-            mNotes = mNotes.subList(0, 5);
+        if (mNotes.size() > MAX_VIEW_AMOUNT) {
+            mNotes = mNotes.subList(0, MAX_VIEW_AMOUNT);
             mMoreNotes.setVisibility(View.VISIBLE);
         } else {
             mMoreNotes.setVisibility(View.INVISIBLE);
         }
 
-        // TODO: implement empty list
-
         mNoteAdapter = new NoteAdapter(getActivity(), mNotes);
         mNoteList.setAdapter(mNoteAdapter);
+        setListViewHeightBasedOnChildren(mNoteList);
     }
 
     public void setFab(FloatingActionButton fab) {
@@ -187,15 +211,37 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
         }
     }
 
+    /**** Method for Setting the Height of the ListView dynamically.
+     **** Hack to fix the issue of not showing all the items of the ListView
+     **** when placed inside a ScrollView  ****/
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
+
     // PANEL SLIDE LISTENER METHODS
     @Override
-    public void onPanelCollapsed(View view) {
-        Log.d("TEST", "COLLAPSED");
-    }
+    public void onPanelCollapsed(View view) {    }
 
     @Override
     public void onPanelSlide(View view, float v) {
-//        Log.d("TEST", "SLIDE - "+v);
         int priColorFrom = mPriCurrentColor;
         int priColorTo;
         boolean isExpanded = v > 0;
@@ -241,10 +287,14 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
     }
 
     @Override
-    public void onPanelExpanded(View view) {    }
+    public void onPanelExpanded(View view) {
+        isScrollEnabled = true;
+    }
 
     @Override
-    public void onPanelAnchored(View view) {    }
+    public void onPanelAnchored(View view) {
+        isScrollEnabled = false;
+    }
 
     @Override
     public void onPanelHidden(View view) {    }

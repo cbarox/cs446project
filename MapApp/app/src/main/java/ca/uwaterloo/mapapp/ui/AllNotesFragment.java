@@ -43,7 +43,7 @@ public class AllNotesFragment extends Fragment {
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
         DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
 
-        mNotes = dataManager.getAll();
+        mNotes = dataManager.getAll(Note.COLUMN_LAST_MODIFIED, false);
         mAdapter = new NoteAdapter(getActivity(), mNotes);
 
         noteList.setAdapter(mAdapter);
@@ -56,8 +56,9 @@ public class AllNotesFragment extends Fragment {
                 getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
             }
         });
-        fab.attachToListView(noteList);
+        noteList.setEmptyView(view.findViewById(R.id.empty_list_state));
 
+        fab.attachToListView(noteList);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

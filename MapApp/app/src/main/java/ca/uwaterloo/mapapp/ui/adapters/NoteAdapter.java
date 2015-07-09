@@ -56,7 +56,6 @@ public class NoteAdapter extends BaseAdapter {
         ImageView circle = (ImageView)view.findViewById(R.id.item_circle);
         circle.setColorFilter(mContext.getResources().getColor(R.color.primary));
 
-
         return view;
     }
 }

@@ -1,6 +1,7 @@
 package ca.uwaterloo.mapapp.shared.data;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.QueryBuilder;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,6 +53,20 @@ public class DataManager<T, ID> {
         } catch (SQLException e) {
             return false;
         }
+    }
+
+    /**
+     * Delete all objects from the database
+     * @param objects
+     * @return
+     */
+    public boolean deleteAll(final List<T> objects) {
+        try {
+            dao.delete(objects);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -188,6 +203,17 @@ public class DataManager<T, ID> {
         return objects;
     }
 
+    public List<T> find(String columnName, Object value, String sortColumn, boolean isAsc) {
+        List<T> objects = null;
+        try {
+            QueryBuilder<T, ID> qb = dao.queryBuilder();
+            qb.setWhere(qb.where().eq(columnName, value));
+            qb.orderBy(sortColumn, isAsc);
+            objects = qb.query();
+        } catch (SQLException e) {}
+        return objects;
+    }
+
     public T findFirst(String columnName, Object value) throws NullPointerException {
         List<T> objects = new ArrayList<>();
         try {
@@ -212,6 +238,16 @@ public class DataManager<T, ID> {
             objects = dao.queryForAll();
         } catch (SQLException e) {
         }
+        return objects;
+    }
+
+    public List<T> getAll(String sortColumn, boolean isAsc) {
+        List<T> objects = null;
+        try {
+            QueryBuilder<T, ID> qb = dao.queryBuilder();
+            qb.orderBy(sortColumn, isAsc);
+            objects = qb.query();
+        } catch (SQLException e) {}
         return objects;
     }
 

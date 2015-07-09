@@ -12,6 +12,8 @@ import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import ca.uwaterloo.mapapp.objects.NoteTag;
+import ca.uwaterloo.mapapp.objects.Tag;
 import ca.uwaterloo.mapapp.objects.Note;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.objects.building.Building;
@@ -61,6 +63,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTableIfNotExists(connectionSource, Building.class);
             TableUtils.createTableIfNotExists(connectionSource, Event.class);
             TableUtils.createTableIfNotExists(connectionSource, Note.class);
+            TableUtils.createTable(connectionSource, Tag.class);
+            TableUtils.createTable(connectionSource, NoteTag.class);
         } catch (SQLException e) {
             Log.e("Whats nUW", "Error creating tables:\n" + e.toString());
         }

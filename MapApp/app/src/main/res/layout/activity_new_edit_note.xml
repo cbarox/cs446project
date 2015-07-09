@@ -7,7 +7,7 @@
 
     <include
         android:id="@+id/tool_bar"
-        layout="@layout/tool_bar" />
+        layout="@layout/tool_bar_primary" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -57,6 +57,25 @@
             android:layout_alignRight="@id/note_building"
             android:layout_below="@id/note_building"
             android:text="line 1\nline 2\nline 3" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/icon"
+            android:layout_alignTop="@+id/note_tags"
+            android:src="@drawable/ic_announcement_black_24dp"/>
+
+        <Button
+            android:id="@+id/note_tags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/note_building"
+            android:layout_alignRight="@id/note_building"
+            android:layout_below="@id/note_description"
+            android:text="@string/note_no_tags"
+            android:gravity="left"
+            style="?android:attr/borderlessButtonStyle"
+            android:onClick="selectTags"/>
 
     </RelativeLayout>
 

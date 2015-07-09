@@ -49,6 +49,10 @@
             android:name=".ui.ViewNoteActivity"
             android:label="@string/title_activity_view_note" >
         </activity>
+        <activity
+            android:name=".ui.FloorPlanActivity"
+            android:label="@string/title_activity_floor_plan" >
+        </activity>
     </application>
 
 </manifest>
