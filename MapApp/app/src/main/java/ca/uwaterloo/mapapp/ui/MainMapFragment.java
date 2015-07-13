@@ -110,7 +110,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
                     });
                 }
             };
-            WaterlooApi.requestList(gotBuildingsCallback, Building.class);
+            WaterlooApi.requestBuildings(gotBuildingsCallback);
             /*FloorplanApi.requestFloorplanList(context);
             FloorplanApi.requestRoomList(context, "001DWE_01FLR");*/
         }

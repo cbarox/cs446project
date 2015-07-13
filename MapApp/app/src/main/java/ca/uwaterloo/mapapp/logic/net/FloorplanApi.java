@@ -13,6 +13,8 @@ import java.util.List;
 
 import ca.uwaterloo.mapapp.logic.net.serialization.FloorplanApiJsonDeserializer;
 import ca.uwaterloo.mapapp.logic.net.services.IFloorPlanRestService;
+import ca.uwaterloo.mapapp.shared.ICallback;
+import ca.uwaterloo.mapapp.shared.IRequestor;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 
@@ -21,12 +23,6 @@ import retrofit.converter.GsonConverter;
  * 6/11/15
  */
 public class FloorplanApi {
-    public static final String INTENT_PREFIX = "ca.uwaterloo.mapapp.logic.net.WaterlooApi.";
-    public static final String ACTION_GOT_FLOORS = INTENT_PREFIX + "ACTION_GOT_FLOORS";
-    public static final String ACTION_GOT_ROOMS = INTENT_PREFIX + "ACTION_GOT_ROOMS";
-    public static final String EXTRA_LIST = INTENT_PREFIX + "EXTRA_LIST";
-    public static final String EXTRA_CLASS = INTENT_PREFIX + "EXTRA_CLASS";
-
     private static Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(List.class, new FloorplanApiJsonDeserializer<List>())
@@ -37,52 +33,45 @@ public class FloorplanApi {
             .build();
     private static IFloorPlanRestService service = restAdapter.create(IFloorPlanRestService.class);
 
-    private static HashMap<String, List> localCacheMap = new HashMap<>();
+    private static HashMap<String, Object> localCacheMap = new HashMap<>();
 
-    public static void requestFloorplanList(final Context context) {
-        final String key = "floorplans";
-        if (localCacheMap.containsKey(key)) {
-            broadcastGotList(context, localCacheMap.get(key), ACTION_GOT_FLOORS);
+    public static void requestFloorplanList(final ICallback callback) {
+        requestData("Floorplans", callback, new IRequestor() {
+            @Override
+            public Object request() {
+                return service.getFloorPlanDatabases();
+            }
+        });
+    }
+
+    public static void requestRoomList(final ICallback callback, final String floor) {
+        requestData(String.format("Room%s", floor), callback, new IRequestor() {
+            @Override
+            public Object request() {
+                return service.getRooms(floor);
+            }
+        });
+    }
+
+    private static void requestData(final String cacheKey, final ICallback callback, final IRequestor requestor)
+    {
+        if(localCacheMap.containsKey(cacheKey)) {
+            callback.call(localCacheMap.get(cacheKey));
             return;
         }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    final List result = service.getFloorPlanDatabases();
-                    localCacheMap.put(key, result);
-                    broadcastGotList(context, result, ACTION_GOT_FLOORS);
+                    Object result = requestor.request();
+                    localCacheMap.put(cacheKey, result);
+                    callback.call(result);
                 } catch (Exception e) {
+                    System.err.println(e.toString());
                 }
 
             }
         }).start();
     }
-
-    public static void requestRoomList(final Context context, final String floor) {
-        final String key = String.format("rooms%s", floor);
-        if (localCacheMap.containsKey(key)) {
-            broadcastGotList(context, localCacheMap.get(key), ACTION_GOT_ROOMS);
-            return;
-        }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final List result = service.getRooms(floor);
-                    localCacheMap.put(key, result);
-                    broadcastGotList(context, result, ACTION_GOT_ROOMS);
-                } catch (Exception e) {
-                }
-
-            }
-        }).start();
-    }
-
-    private static void broadcastGotList(Context context, List list, final String intent) {
-        Intent buildingsIntent = new Intent(intent);
-        buildingsIntent.putExtra(EXTRA_LIST, new ArrayList<>(list));
-        context.sendBroadcast(buildingsIntent);
-    }
-
 }

@@ -34,10 +34,10 @@ public class EventLocationUpdater extends TimerTask {
                         }
                     }
                 };
-                WaterlooApi.requestList(eventsCallback, Event.class);
+                WaterlooApi.requestEvents(eventsCallback);
             }
         };
-        WaterlooApi.requestList(buildingsCallback, Building.class);
+        WaterlooApi.requestBuildings(buildingsCallback);
     }
 
     public void processEvent(final Event event, final List<Building> buildingList) {
