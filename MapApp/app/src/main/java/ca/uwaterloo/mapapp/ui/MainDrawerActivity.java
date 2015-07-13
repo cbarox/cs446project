@@ -49,7 +49,7 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
                 buildingsDataManager.insertOrUpdateAll(buildings);
             }
         };
-        WaterlooApi.requestList(buildingsCallback, Building.class);
+        WaterlooApi.requestBuildings(buildingsCallback);
 
         // Cache events
         ICallback eventsCallback = new ICallback() {
@@ -60,7 +60,7 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
                 eventDataManager.insertOrUpdateAll(events);
             }
         };
-        WaterlooApi.requestList(eventsCallback, Event.class);
+        WaterlooApi.requestEvents(eventsCallback);
 
         // TODO implement this
         // Cache event locations

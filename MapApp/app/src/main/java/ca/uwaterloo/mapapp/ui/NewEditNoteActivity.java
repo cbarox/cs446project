@@ -104,7 +104,7 @@ public class NewEditNoteActivity extends ActionBarActivity {
                 handleGotBuildings(buildingList);
             }
         };
-        WaterlooApi.requestList(buildingCallback, Building.class);
+        WaterlooApi.requestBuildings(buildingCallback);
 
         Bundle b = getIntent().getExtras();
         if (b != null) {

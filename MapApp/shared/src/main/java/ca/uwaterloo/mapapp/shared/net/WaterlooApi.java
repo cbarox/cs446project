@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import ca.uwaterloo.mapapp.shared.ICallback;
+import ca.uwaterloo.mapapp.shared.IRequestor;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 
@@ -28,12 +29,30 @@ public class WaterlooApi {
             .build();
     private static IWaterlooApiRestService service = restAdapter.create(IWaterlooApiRestService.class);
 
-    private static HashMap<String, List> localCacheMap = new HashMap<>();
+    private static HashMap<String, Object> localCacheMap = new HashMap<>();
 
-    public static void requestList(final ICallback callback, final Class clazz) {
-        final String className = clazz.getSimpleName();
-        if (localCacheMap.containsKey(className)) {
-            callback.call(localCacheMap.get(className));
+    public static void requestBuildings(final ICallback callback) {
+        requestData("Building", callback, new IRequestor() {
+            @Override
+            public Object request() {
+                return service.getBuildings();
+            }
+        });
+    }
+
+    public static void requestEvents(final ICallback callback) {
+        requestData("Event", callback, new IRequestor() {
+            @Override
+            public Object request() {
+                return service.getEvents();
+            }
+        });
+    }
+
+    private static void requestData(final String cacheKey, final ICallback callback, final IRequestor requestor)
+    {
+        if(localCacheMap.containsKey(cacheKey)) {
+            callback.call(localCacheMap.get(cacheKey));
             return;
         }
 
@@ -41,8 +60,8 @@ public class WaterlooApi {
             @Override
             public void run() {
                 try {
-                    List result = invokeApiMethodFromClassName(className);
-                    localCacheMap.put(className, result);
+                    Object result = requestor.request();
+                    localCacheMap.put(cacheKey, result);
                     callback.call(result);
                 } catch (Exception e) {
                     System.err.println(e.toString());
@@ -51,11 +70,4 @@ public class WaterlooApi {
             }
         }).start();
     }
-
-    private static List invokeApiMethodFromClassName(String className) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        String format = String.format("get%ss", className);
-        Method method = service.getClass().getMethod(format);
-        return (List) method.invoke(service);
-    }
-
 }
