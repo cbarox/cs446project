@@ -101,6 +101,8 @@ public class Note {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", buildingCode='" + buildingCode + '\'' +
+                ", dateCreated='" + dateCreated.toString() + '\'' +
+                ", lastModified='" + lastModified.toString() + '\'' +
                 '}';
     }
 

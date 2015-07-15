@@ -1,0 +1,64 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ca.uwaterloo.mapapp.ui.ViewEventActivity">
+
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/tool_bar_primary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"/>
+
+    <TextView
+        android:id="@+id/event_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:paddingBottom="8dp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/tool_bar"
+        android:background="@color/primary"
+        android:paddingLeft="@dimen/note_text_margin_left"
+        android:text="The House Always Wins"
+        android:textColor="#FFFFFF"
+        android:textSize="32sp" />
+
+    <ImageView
+        android:id="@+id/event_location_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/event_title"
+        android:layout_marginLeft="16dp"
+        android:src="@drawable/ic_location_on_black_24dp" />
+
+    <TextView
+        android:id="@+id/event_location_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/event_title"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="@dimen/note_text_margin_left"
+        android:text="LOCATION"
+        android:textSize="16sp"/>
+
+    <Button
+        android:id="@+id/event_link_btn"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_alignLeft="@id/event_location_icon"
+        android:layout_alignRight="@id/event_location_txt"
+        android:layout_below="@id/event_location_txt"
+        android:drawableLeft="@drawable/ic_link_black_24dp"
+        android:drawablePadding="17dp"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="0dp"
+        android:text="Website" />
+
+</RelativeLayout>
