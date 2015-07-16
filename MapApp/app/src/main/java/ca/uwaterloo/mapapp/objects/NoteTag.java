@@ -40,7 +40,7 @@ public class NoteTag {
     public String toString() {
         return "NoteTag{" +
                 "note='" + note.toString() + '\'' +
-                "tag='" + tag.toString() + '\'' +
+                ", tag='" + tag.toString() + '\'' +
                 "}";
     }
 }

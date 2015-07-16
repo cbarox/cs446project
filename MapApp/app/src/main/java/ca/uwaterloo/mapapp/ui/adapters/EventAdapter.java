@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -48,13 +47,15 @@ public class EventAdapter extends BaseAdapter {
         if (view == null)
             view = inflater.inflate(R.layout.list_item_event, null);
 
-        TextView titleView = (TextView)view.findViewById(R.id.item_title);
-        TextView descView = (TextView)view.findViewById(R.id.item_desc);
-        titleView.setText(events.get(position).getTitle());
-        descView.setText("");
+        Event event = events.get(position);
 
-        ImageView circle = (ImageView)view.findViewById(R.id.item_circle);
-        circle.setColorFilter(mContext.getResources().getColor(R.color.primary));
+        TextView titleView = (TextView)view.findViewById(R.id.item_title);
+        TextView locView = (TextView)view.findViewById(R.id.item_location);
+        titleView.setText(event.getTitle());
+        if (event.getLocation() == null || !event.getLocation().isEmpty())
+            locView.setText("UW");
+        else
+            locView.setText(event.getLocation());
 
         return view;
     }

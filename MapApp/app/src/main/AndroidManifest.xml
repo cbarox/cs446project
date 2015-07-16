@@ -53,6 +53,10 @@
             android:name=".ui.FloorPlanActivity"
             android:label="@string/title_activity_floor_plan" >
         </activity>
+        <activity
+            android:name=".ui.ViewEventActivity"
+            android:label="@string/title_activity_view_event" >
+        </activity>
     </application>
 
 </manifest>

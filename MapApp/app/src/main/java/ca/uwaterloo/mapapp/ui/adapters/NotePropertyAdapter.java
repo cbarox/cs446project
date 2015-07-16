@@ -22,11 +22,16 @@ import ca.uwaterloo.mapapp.objects.NoteTag;
 public class NotePropertyAdapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
     private Context mContext;
-    private List<Pair<Integer, String>> properties;
+    protected List<Pair<Integer, String>> properties;
 
-    public NotePropertyAdapter(Context context, Note note, List<NoteTag> tags) {
+    protected NotePropertyAdapter(Context context) {
         this.mContext = context;
         properties = new ArrayList<>();
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    public NotePropertyAdapter(Context context, Note note, List<NoteTag> tags) {
+        this(context);
 
         if (!note.getBuildingCode().isEmpty()) {
             Pair<Integer, String> row = new Pair<>(R.drawable.ic_store_black_24dp, note.getBuildingCode());
@@ -47,8 +52,6 @@ public class NotePropertyAdapter extends BaseAdapter {
             Pair<Integer, String> row = new Pair<>(R.drawable.ic_announcement_black_24dp, values);
             properties.add(row);
         }
-
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
