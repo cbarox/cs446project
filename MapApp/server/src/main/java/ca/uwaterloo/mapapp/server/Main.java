@@ -9,6 +9,10 @@ import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import ca.uwaterloo.mapapp.server.logic.net.IGetSetDeleteRoute;
+import ca.uwaterloo.mapapp.server.logic.net.ImageRoute;
+import ca.uwaterloo.mapapp.server.logic.net.NoteRoute;
+import ca.uwaterloo.mapapp.server.logic.net.RankingRoute;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.net.ServerResponse;
 import spark.Request;
@@ -22,7 +26,6 @@ public class Main {
     public static final String DATABASE_URL = "jdbc:mysql://localhost/whatsnuw";
     public static final String DATABASE_USERNAME = "root";
     public static final String DATABASE_PASSWORD = "whatsnuw";
-    private static Gson gson = new Gson();
     private static HashMap<Class, DataManager> dataManagers = new HashMap<>();
     private static ConnectionSource connectionSource;
 
@@ -37,14 +40,29 @@ public class Main {
             return;
         }
 
-        // insert or update a note
-        post("/eventnote", new Route() {
+        postGetSetDelete("note", new NoteRoute());
+        postGetSetDelete("image", new ImageRoute());
+        postGetSetDelete("ranking", new RankingRoute());
+    }
+
+    private static void postGetSetDelete(String type, final IGetSetDeleteRoute route)
+    {
+        post("/get" + type, new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
-                ServerResponse serverResponse = new ServerResponse();
-                serverResponse.setStatus("success");
-                serverResponse.setId(0L);
-                return gson.toJson(serverResponse);
+                return route.get(request, response);
+            }
+        });
+        post("/set" + type, new Route() {
+            @Override
+            public Object handle(Request request, Response response) throws Exception {
+                return route.set(request, response);
+            }
+        });
+        post("/delete" + type, new Route() {
+            @Override
+            public Object handle(Request request, Response response) throws Exception {
+                return route.delete(request, response);
             }
         });
     }
