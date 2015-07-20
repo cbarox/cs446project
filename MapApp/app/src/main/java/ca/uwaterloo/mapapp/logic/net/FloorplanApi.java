@@ -2,17 +2,28 @@ package ca.uwaterloo.mapapp.logic.net;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import ca.uwaterloo.mapapp.logic.net.serialization.FloorplanApiJsonDeserializer;
 import ca.uwaterloo.mapapp.logic.net.services.IFloorPlanRestService;
+import ca.uwaterloo.mapapp.objects.floorplan.FloorPlanDatabase;
 import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.IRequestor;
 import retrofit.RestAdapter;
@@ -34,6 +45,8 @@ public class FloorplanApi {
     private static IFloorPlanRestService service = restAdapter.create(IFloorPlanRestService.class);
 
     private static HashMap<String, Object> localCacheMap = new HashMap<>();
+
+    private static final String FloorplanURI = "http://104.236.77.229:8000/png/";
 
     public static void requestFloorplanList(final ICallback callback) {
         requestData("Floorplans", callback, new IRequestor() {
@@ -73,5 +86,70 @@ public class FloorplanApi {
 
             }
         }).start();
+    }
+
+    public static void requestFloorplanImage(final String floor, final Context context, final ICallback callback) {
+        try {
+            final URL floorplanURL = new URL(FloorplanURI + floor + ".png");
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String absoluteDownloadPath = DownloadFile(floorplanURL, floor, context);
+                        System.out.println(String.format("Downloaded floorplan image to %s", absoluteDownloadPath));
+                        callback.call(absoluteDownloadPath);
+                    } catch (Exception e) {
+                        System.err.println(e.toString());
+                    }
+                }
+            }).start();
+        } catch (MalformedURLException e) {
+            System.err.println(e.toString());
+        }
+    }
+
+    private static String DownloadFile(URL floorplanURL, String saveAsFilename, Context context) throws IOException {
+        // Get where the file should be downloaded to the cache
+        File cacheDir = getCacheFolder(context);
+        File cacheFile = new File(cacheDir, saveAsFilename + ".png");
+
+        // If it is already there, just return
+        if(cacheFile.exists())
+            return cacheFile.getAbsolutePath();
+
+        // Open an http stream source and a file stream destination
+        URLConnection connection = floorplanURL.openConnection();
+        InputStream inputStream = new BufferedInputStream(floorplanURL.openStream(), 10240);
+        FileOutputStream outputStream = new FileOutputStream(cacheFile);
+
+        // Copy the file
+        byte buffer[] = new byte[1024];
+        int dataSize = 0;
+        while((dataSize = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, dataSize);
+        }
+
+        // Close streams
+        inputStream.close();
+        outputStream.close();
+        return cacheFile.getAbsolutePath();
+    }
+
+    private static File getCacheFolder(Context context)
+    {
+        File cacheDir = null;
+        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            cacheDir = new File(Environment.getExternalStorageDirectory(), "whatsnuwcache");
+            if(!cacheDir.isDirectory()) {
+                cacheDir.mkdirs();
+            }
+        }
+
+        if(!cacheDir.isDirectory()) {
+            cacheDir = context.getCacheDir();
+        }
+
+        return cacheDir;
     }
 }
