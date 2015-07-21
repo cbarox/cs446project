@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="88dp"
+    android:paddingLeft="72dp"
+    android:background="@color/accent">
+
+    <TextView
+        android:id="@+id/header_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24dp"
+        android:text="QNC Notes"
+        android:textColor="#FFFF"/>
+
+    <TextView
+        android:id="@+id/header_note_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5 Notes"
+        android:textColor="@color/primaryLight"/>
+
+</LinearLayout>

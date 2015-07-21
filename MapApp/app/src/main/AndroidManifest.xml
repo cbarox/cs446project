@@ -57,6 +57,10 @@
             android:name=".ui.ViewEventActivity"
             android:label="@string/title_activity_view_event" >
         </activity>
+        <activity
+            android:name=".ui.FilteredNoteListActivity"
+            android:label="@string/title_activity_filtered_note_list" >
+        </activity>
     </application>
 
 </manifest>

@@ -49,7 +49,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
     protected SlidingUpPanelLayout mSlidingUpPanelLayout;
     private Context context;
     private GoogleMap mMap;
-    private String currentBuilding = "";
+    private Building currentBuilding;
     private boolean isMapReady = false;
     private BuildingCardFragment cardFragment;
 
@@ -125,8 +125,8 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, NewEditNoteActivity.class);
-                if (!currentBuilding.isEmpty()) {
-                    intent.putExtra(NewEditNoteActivity.ARG_SELECTED_BUILD, currentBuilding);
+                if (currentBuilding != null) {
+                    intent.putExtra(NewEditNoteActivity.ARG_SELECTED_BUILD, currentBuilding.getBuildingCode());
                 }
                 startActivityForResult(intent, NewEditNoteActivity.REQUEST_INSERT);
                 getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
@@ -134,7 +134,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         });
 
         // initialize info card
-        cardFragment = BuildingCardFragment.newInstance();
+        cardFragment = BuildingCardFragment.newInstance(currentBuilding);
         cardFragment.setFab(fab);
         mSlidingUpPanelLayout.setPanelSlideListener(cardFragment);
 
@@ -151,7 +151,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_CANCELED) return;
 
-        if (requestCode == NewEditNoteActivity.REQUEST_INSERT && !currentBuilding.isEmpty()) {
+        if (requestCode == NewEditNoteActivity.REQUEST_INSERT && currentBuilding != null) {
             cardFragment.updateNoteList();
         }
     }
@@ -212,7 +212,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         temp.setBuildingName(marker.getTitle());
 
         cardFragment.populateCard(temp);
-        currentBuilding = marker.getSnippet();
+        currentBuilding = temp;
     }
 
     /**
@@ -242,7 +242,7 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
         }
 
         if (mSlidingUpPanelLayout.getPanelState() == PanelState.HIDDEN) {
-            currentBuilding = "";
+            currentBuilding = null;
         }
 
         return handled;

@@ -47,10 +47,14 @@
             <Button
                 android:id="@+id/icard_floor_plan_btn"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/abc_btn_check_to_on_mtrl_015"
-                android:text="Floor Plans" />
+                android:drawableLeft="@drawable/ic_layers_black_24dp"
+                android:text="Floor Plans"
+                android:drawablePadding="17dp"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="16dp"
+                android:textColor="@color/primary" />
 
             <View
                 android:layout_width="match_parent"
