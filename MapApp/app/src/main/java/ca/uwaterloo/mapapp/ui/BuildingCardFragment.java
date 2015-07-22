@@ -77,8 +77,10 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
 
     private boolean isScrollEnabled = false;
 
-    public static BuildingCardFragment newInstance() {
-        return new BuildingCardFragment();
+    public static BuildingCardFragment newInstance(Building building) {
+        BuildingCardFragment buildingCardFragment = new BuildingCardFragment();
+        buildingCardFragment.mBuilding = building;
+        return buildingCardFragment;
     }
 
     @Override
@@ -117,12 +119,26 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
             }
         });
 
+        mMoreNotes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), FilteredNoteListActivity.class);
+                intent.putExtra(FilteredNoteListActivity.ARG_FILTER_TYPE, FilteredNoteListActivity.FILTER_BUILDING);
+                intent.putExtra(FilteredNoteListActivity.ARG_FILTER_VALUE_STRING, mBuilding.getBuildingCode());
+                startActivity(intent);
+            }
+        });
+
         mScrollContent.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return !isScrollEnabled;
             }
         });
+
+        if (mBuilding != null) {
+            populateCard(mBuilding);
+        }
 
         return view;
     }

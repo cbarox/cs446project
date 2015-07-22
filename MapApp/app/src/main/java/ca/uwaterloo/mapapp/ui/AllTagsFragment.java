@@ -1,11 +1,13 @@
 package ca.uwaterloo.mapapp.ui;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -47,6 +49,17 @@ public class AllTagsFragment extends Fragment {
         tagList.setAdapter(mAdapter);
         // set on item click listener
         tagList.setEmptyView(view.findViewById(R.id.empty_list_state));
+
+        tagList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), FilteredNoteListActivity.class);
+                intent.putExtra(FilteredNoteListActivity.ARG_FILTER_TYPE, FilteredNoteListActivity.FILTER_TAGS);
+                intent.putExtra(FilteredNoteListActivity.ARG_FILTER_VALUE_ID, id);
+                startActivity(intent);
+                //getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
+            }
+        });
 
         fab.attachToListView(tagList);
         // on click listener

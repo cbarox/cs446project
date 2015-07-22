@@ -2,6 +2,7 @@ package ca.uwaterloo.mapapp.shared.data;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -220,6 +221,27 @@ public class DataManager<T, ID> {
             objects = dao.queryForEq(columnName, value);
         } catch (SQLException e) {
         }
+        if (objects.size() == 0) {
+            return null;
+        } else {
+            return objects.get(0);
+        }
+    }
+
+    public T findFirst(String[] columnNames, Object[] values) throws NullPointerException {
+        List<T> objects = new ArrayList<>();
+        try {
+            QueryBuilder<T, ID> qb = dao.queryBuilder();
+            Where<T, ID> where = qb.where();
+            for (int i = 0; i < columnNames.length; i++) {
+                where.eq(columnNames[i], values[i]);
+                if (i != columnNames.length-1) {
+                    where.and();
+                }
+            }
+            qb.setWhere(where);
+            objects = qb.query();
+        } catch (SQLException e) {}
         if (objects.size() == 0) {
             return null;
         } else {

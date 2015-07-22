@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -52,9 +51,6 @@ public class NoteAdapter extends BaseAdapter {
         TextView descView = (TextView)view.findViewById(R.id.item_desc);
         titleView.setText(notes.get(position).getTitle());
         descView.setText(notes.get(position).getDescription());
-
-        ImageView circle = (ImageView)view.findViewById(R.id.item_circle);
-        circle.setColorFilter(mContext.getResources().getColor(R.color.primary));
 
         return view;
     }

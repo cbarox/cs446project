@@ -24,4 +24,5 @@
     <string name="title_activity_view_note">ViewNoteActivity</string>
     <string name="title_activity_floor_plan">FloorPlanActivity</string>
     <string name="title_activity_view_event">ViewEventActivity</string>
+    <string name="title_activity_filtered_note_list">FilteredNoteListActivity</string>
 </resources>

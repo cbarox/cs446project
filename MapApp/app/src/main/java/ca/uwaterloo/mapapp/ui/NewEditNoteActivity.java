@@ -36,6 +36,7 @@ public class NewEditNoteActivity extends ActionBarActivity {
 
     public static final String ARG_SELECTED_BUILD = "selected_building";
     public static final String ARG_NOTE_ID = "note_id";
+    public static final String ARG_TAG_ID = "tag_id";
 
     public static final int REQUEST_INSERT = 101;
     public static final int REQUEST_UPDATE = 102;
@@ -108,19 +109,7 @@ public class NewEditNoteActivity extends ActionBarActivity {
 
         Bundle b = getIntent().getExtras();
         if (b != null) {
-            long noteId = b.getLong(ARG_NOTE_ID, -1);
-            if (noteId > 0) {
-                DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
-                DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
-                mNote = dataManager.findById(noteId);
-            } else {
-                selectedBuildCode = b.getString(ARG_SELECTED_BUILD);
-                if (selectedBuildCode.isEmpty()) {
-                    mBuildingBtn.setText(this.getString(R.string.note_no_building));
-                } else {
-                    mBuildingBtn.setText(selectedBuildCode);
-                }
-            }
+            initExtras(b);
         }
 
         if (mNote != null) {
@@ -144,6 +133,17 @@ public class NewEditNoteActivity extends ActionBarActivity {
             if (mTitle.requestFocus()) {
                 getWindow().setSoftInputMode(
                         WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+        }
+
+        if (!selectedBuildCode.isEmpty() && !buildingList.isEmpty()) {
+            int current = 0;
+            for (Building building : buildingList) {
+                if (building.getBuildingCode().equals(selectedBuildCode)) {
+                    selectedBuildingIndex = current;
+                    break;
+                }
+                current++;
             }
         }
 
@@ -331,6 +331,31 @@ public class NewEditNoteActivity extends ActionBarActivity {
         }
     }
 
+    private void initExtras(Bundle b) {
+        long noteId = b.getLong(ARG_NOTE_ID, -1);
+        if (noteId > 0) {
+            DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
+            DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
+            mNote = dataManager.findById(noteId);
+        } else {
+            selectedBuildCode = b.getString(ARG_SELECTED_BUILD, "");
+            if (selectedBuildCode.isEmpty()) {
+                mBuildingBtn.setText(this.getString(R.string.note_no_building));
+            } else {
+                mBuildingBtn.setText(selectedBuildCode);
+            }
+            long tagId = b.getLong(ARG_TAG_ID, -1);
+            if (tagId > 0) {
+                Tag tmp = new Tag();
+                tmp.setId(tagId);
+                NoteTag noteTag = new NoteTag();
+                noteTag.setTag(tmp);
+                orgTagList = new ArrayList<>(1);
+                orgTagList.add(noteTag);
+            }
+        }
+    }
+
     private void initTags() {
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
         DataManager<Tag, Long> dataManager = databaseHelper.getDataManager(Tag.class);
@@ -349,6 +374,9 @@ public class NewEditNoteActivity extends ActionBarActivity {
                 }
             });
 
+            selectedTagPos = new Integer[orgTagList.size()];
+
+        } else if (orgTagList != null) {
             selectedTagPos = new Integer[orgTagList.size()];
 
         } else {

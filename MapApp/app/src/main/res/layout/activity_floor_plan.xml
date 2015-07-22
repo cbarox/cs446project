@@ -26,6 +26,6 @@
 
     <include
         android:id="@+id/tool_bar"
-        layout="@layout/tool_bar_dark"/>
+        layout="@layout/tool_bar_dark_grey"/>
 
 </RelativeLayout>
