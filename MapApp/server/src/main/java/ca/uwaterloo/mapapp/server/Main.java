@@ -47,7 +47,7 @@ public class Main {
 
     private static void postGetSetDelete(String type, final IGetSetDeleteRoute route)
     {
-        post("/get" + type, new Route() {
+        post("/get" + type + "/:event", new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
                 return route.get(request, response);
@@ -59,7 +59,7 @@ public class Main {
                 return route.set(request, response);
             }
         });
-        post("/delete" + type, new Route() {
+        post("/delete" + type + "/:id", new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
                 return route.delete(request, response);
