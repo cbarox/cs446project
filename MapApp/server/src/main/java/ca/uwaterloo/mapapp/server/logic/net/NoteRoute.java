@@ -2,7 +2,11 @@ package ca.uwaterloo.mapapp.server.logic.net;
 
 import com.google.gson.Gson;
 
+import ca.uwaterloo.mapapp.data.DatabaseHelper;
 import ca.uwaterloo.mapapp.shared.net.ServerResponse;
+import ca.uwaterloo.mapapp.shared.data.DataManager;
+import ca.uwaterloo.mapapp.shared.objects.EventNote;
+import java.util.List;
 import spark.Request;
 import spark.Response;
 
