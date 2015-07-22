@@ -14,25 +14,36 @@ public class NoteRoute implements IGetSetDeleteRoute {
 
     @Override
     public Object get(Request request, Response response) throws Exception {
-        ServerResponse serverResponse = new ServerResponse();
-        serverResponse.setStatus("success");
-        serverResponse.setId(0L);
-        return gson.toJson(serverResponse);
+        final DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
+        
+        DataManager<EventNote, String> notesDataManager = databaseHelper.getDataManager(EventNote.class);
+        List<EventNote> notes = notesDataManager.find(EventNote.COLUMN_EVENT_ID, Integer.parseInt(request.params(":event")));
+        
+        return gson.toJson(notes)); 
     }
 
     @Override
     public Object set(Request request, Response response) throws Exception {
-        ServerResponse serverResponse = new ServerResponse();
-        serverResponse.setStatus("success");
-        serverResponse.setId(0L);
-        return gson.toJson(serverResponse);
+        final DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
+        
+        List<EventNote> notes = gson.fromJson(request.body(), List<EventNote>.class);
+        DataManager<EventNote, String> notesDataManager = databaseHelper.getDataManager(EventNote.class);
+        notesDataManager.insertOrUpdateAll(notes);
+        
+        return "success";
     }
 
     @Override
     public Object delete(Request request, Response response) throws Exception {
-        ServerResponse serverResponse = new ServerResponse();
-        serverResponse.setStatus("success");
-        serverResponse.setId(0L);
-        return gson.toJson(serverResponse);
+        final DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
+        
+        EventNote note = new EventNote();
+        note.setId(Integer.parseInt(request.params(":id")));
+        
+        DataManager<EventNote, String> notesDataManager = databaseHelper.getDataManager(EventNote.class);
+        if( !notesDataManager.delete(note) )
+            return "fail";
+            
+        return "success";
     }
 }
