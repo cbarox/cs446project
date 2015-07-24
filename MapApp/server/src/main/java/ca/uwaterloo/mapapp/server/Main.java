@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -15,6 +16,9 @@ import ca.uwaterloo.mapapp.server.logic.net.NoteRoute;
 import ca.uwaterloo.mapapp.server.logic.net.RankingRoute;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.net.ServerResponse;
+import ca.uwaterloo.mapapp.shared.objects.event.EventImage;
+import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
+import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -33,7 +37,9 @@ public class Main {
         // Initialize the database
         try {
             connectionSource = new JdbcConnectionSource(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
-            //TableUtils.createTableIfNotExists(connectionSource, Note.class);
+            TableUtils.createTableIfNotExists(connectionSource, EventNote.class);
+            TableUtils.createTableIfNotExists(connectionSource, EventRanking.class);
+            //TableUtils.createTableIfNotExists(connectionSource, EventImage.class);
         } catch (SQLException e) {
             System.err.println("Unable to create connection to the database");
             e.printStackTrace();
