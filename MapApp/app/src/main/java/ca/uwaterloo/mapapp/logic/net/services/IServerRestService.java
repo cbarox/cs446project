@@ -5,9 +5,13 @@ import ca.uwaterloo.mapapp.shared.objects.event.Event;
 import ca.uwaterloo.mapapp.shared.objects.event.EventImage;
 import ca.uwaterloo.mapapp.shared.objects.event.EventLocation;
 import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
+import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 import ca.uwaterloo.mapapp.shared.objects.event.EventTimes;
 
+import retrofit.http.Body;
 import retrofit.http.GET;
+import retrofit.http.POST;
+import retrofit.http.Path;
 
 /**
  * Created by cjbarrac
@@ -29,6 +33,21 @@ public interface IServerRestService {
     @GET("/event_times")
     List<EventTimes> getEventTimes();
    
-    @GET("/events_notes")
-    List<EventNote> getEventNotes();
+    @GET("/note/get/{id}")
+    List<EventNote> getEventNotes(@Path("id") Long eventId);
+
+    @POST("/note/set")
+    void setEventNote(@Body EventNote note);
+
+    @POST("/note/delete/{id}")
+    void deleteEventNote(@Path("id") Long eventNoteId);
+
+    @GET("/ranking/get/{id}")
+    EventRanking getEventRanking(@Path("id") Long eventId);
+
+    @POST("/ranking/set")
+    void setEventRanking(@Body EventRanking ranking);
+
+    @POST("/ranking/delete/{id}")
+    void deleteEventRanking(@Path("id") Long rankingId);
 }

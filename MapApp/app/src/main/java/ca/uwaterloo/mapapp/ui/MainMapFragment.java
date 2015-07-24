@@ -30,6 +30,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
+import ca.uwaterloo.mapapp.logic.net.FloorplanApi;
 import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.net.WaterlooApi;
 import ca.uwaterloo.mapapp.shared.objects.building.Building;
@@ -113,6 +114,12 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
             WaterlooApi.requestBuildings(gotBuildingsCallback);
             /*FloorplanApi.requestFloorplanList(context);
             FloorplanApi.requestRoomList(context, "001DWE_01FLR");*/
+            FloorplanApi.requestFloorplanImage("001DWE_01FLR", context, new ICallback() {
+                @Override
+                public void call(Object param) {
+                    /* todo */
+                }
+            });
         }
 
         // initialize map

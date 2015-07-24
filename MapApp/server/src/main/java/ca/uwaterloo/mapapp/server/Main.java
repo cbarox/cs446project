@@ -23,6 +23,7 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import static spark.Spark.get;
 import static spark.Spark.post;
 
 public class Main {
@@ -53,19 +54,19 @@ public class Main {
 
     private static void postGetSetDelete(String type, final IGetSetDeleteRoute route)
     {
-        post("/get" + type + "/:event", new Route() {
+        get(String.format("/%s/get/:event", type), new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
                 return route.get(request, response);
             }
         });
-        post("/set" + type, new Route() {
+        post(String.format("/%s/set", type), new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
                 return route.set(request, response);
             }
         });
-        post("/delete" + type + "/:id", new Route() {
+        post(String.format("/%s/delete/:id", type), new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
                 return route.delete(request, response);
