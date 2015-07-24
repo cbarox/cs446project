@@ -117,35 +117,6 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
             WaterlooApi.requestBuildings(gotBuildingsCallback);
             /*FloorplanApi.requestFloorplanList(context);
             FloorplanApi.requestRoomList(context, "001DWE_01FLR");*/
-            FloorplanApi.requestFloorplanImage("001DWE_01FLR", context, new ICallback() {
-                @Override
-                public void call(Object param) {
-                    /* todo */
-                }
-            });
-
-            EventRanking rank = new EventRanking();
-            rank.setId(5l);
-            rank.setEventId(10);
-            rank.setRanking(5);
-            ServerRestApi.addOrSetEventRanking(new ICallback() {
-                @Override
-                public void call(Object param) {
-
-                }
-            }, rank);
-
-            EventNote n = new EventNote();
-            n.setId(5l);
-            n.setEventId(10);
-            n.setTitle("test");
-            n.setDescription("Hello world!");
-            ServerRestApi.addOrSetEventNote(new ICallback() {
-                @Override
-                public void call(Object param) {
-
-                }
-            }, n);
         }
 
         // initialize map
