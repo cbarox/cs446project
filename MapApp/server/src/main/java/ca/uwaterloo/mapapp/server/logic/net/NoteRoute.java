@@ -28,9 +28,9 @@ public class NoteRoute implements IGetSetDeleteRoute {
 
     @Override
     public Object set(Request request, Response response) throws Exception {
-        EventNote[] notes = gson.fromJson(request.body(), EventNote[].class);
+        EventNote note = gson.fromJson(request.body(), EventNote.class);
         DataManager<EventNote, String> notesDataManager = Main.getDataManager(EventNote.class);
-        notesDataManager.insertOrUpdateAll(Arrays.asList(notes));
+        notesDataManager.insertOrUpdate(note);
         
         response.status(200);
         return "";

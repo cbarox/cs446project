@@ -25,7 +25,10 @@ import ca.uwaterloo.mapapp.logic.net.serialization.ServerApiJsonDeserializer;
 import ca.uwaterloo.mapapp.logic.net.services.IServerRestService;
 import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.IRequestor;
+import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
+import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 import retrofit.RestAdapter;
+import retrofit.client.Response;
 import retrofit.converter.GsonConverter;
 
 
@@ -76,11 +79,55 @@ public class ServerRestApi {
             }
         });
     }
-    public static void requestEventNotes(final ICallback callback) {
+    public static void requestEventNotes(final ICallback callback, final Long eventId) {
         requestData("EventNotes", callback, new IRequestor() {
             @Override
             public Object request() {
-                return service.getEventNotes();
+                return service.getEventNotes(eventId);
+            }
+        });
+    }
+    public static void requestEventRanking(final ICallback callback, final Long eventId) {
+        requestData("EventRanking", callback, new IRequestor() {
+            @Override
+            public Object request() {
+                return service.getEventRanking(eventId);
+            }
+        });
+    }
+    public static void addOrSetEventNote(final ICallback callback, final EventNote note) {
+        sendData(callback, new IRequestor() {
+            @Override
+            public Object request() {
+                Response result =service.setEventNote(note);
+                return result.getStatus() == 200;
+            }
+        });
+    }
+    public static void addOrSetEventRanking(final ICallback callback, final EventRanking ranking) {
+        sendData(callback, new IRequestor() {
+            @Override
+            public Object request() {
+                Response result =service.setEventRanking(ranking);
+                return result.getStatus() == 200;
+            }
+        });
+    }
+    public static void deleteEventNote(final ICallback callback, final EventNote note) {
+        sendData(callback, new IRequestor() {
+            @Override
+            public Object request() {
+                Response result = service.deleteEventNote(note.getId());
+                return result.getStatus() == 200;
+            }
+        });
+    }
+    public static void deleteEventRanking(final ICallback callback, final EventRanking ranking) {
+        sendData(callback, new IRequestor() {
+            @Override
+            public Object request() {
+                Response result = service.deleteEventRanking(ranking.getId());
+                return result.getStatus() == 200;
             }
         });
     }
@@ -99,6 +146,22 @@ public class ServerRestApi {
                     Object result = requestor.request();
                     localCacheMap.put(cacheKey, result);
                     callback.call(result);
+                } catch (Exception e) {
+                    System.err.println(e.toString());
+                }
+
+            }
+        }).start();
+    }
+
+    private static void sendData(final ICallback callback, final IRequestor requestor)
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    requestor.request();
+                    callback.call(null);
                 } catch (Exception e) {
                     System.err.println(e.toString());
                 }

@@ -8,6 +8,7 @@ import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
 import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 import ca.uwaterloo.mapapp.shared.objects.event.EventTimes;
 
+import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
@@ -19,7 +20,7 @@ import retrofit.http.Path;
  */
 public interface IServerRestService {
 
-    String API_ENDPOINT = "104.236.77.229:4567 "; /* our server */
+    String API_ENDPOINT = "http://104.236.77.229:4567"; /* our server */
 
     @GET("/events")
     List<Event> getEvents();
@@ -37,17 +38,17 @@ public interface IServerRestService {
     List<EventNote> getEventNotes(@Path("id") Long eventId);
 
     @POST("/note/set")
-    void setEventNote(@Body EventNote note);
+    Response setEventNote(@Body EventNote note);
 
     @POST("/note/delete/{id}")
-    void deleteEventNote(@Path("id") Long eventNoteId);
+    Response deleteEventNote(@Path("id") Long eventNoteId);
 
     @GET("/ranking/get/{id}")
     EventRanking getEventRanking(@Path("id") Long eventId);
 
     @POST("/ranking/set")
-    void setEventRanking(@Body EventRanking ranking);
+    Response setEventRanking(@Body EventRanking ranking);
 
     @POST("/ranking/delete/{id}")
-    void deleteEventRanking(@Path("id") Long rankingId);
+    Response deleteEventRanking(@Path("id") Long rankingId);
 }

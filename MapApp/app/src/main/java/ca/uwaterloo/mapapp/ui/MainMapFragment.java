@@ -31,9 +31,12 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
 import ca.uwaterloo.mapapp.logic.net.FloorplanApi;
+import ca.uwaterloo.mapapp.logic.net.ServerRestApi;
 import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.net.WaterlooApi;
 import ca.uwaterloo.mapapp.shared.objects.building.Building;
+import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
+import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 
 public class MainMapFragment extends Fragment implements OnMapReadyCallback {
 
@@ -120,6 +123,29 @@ public class MainMapFragment extends Fragment implements OnMapReadyCallback {
                     /* todo */
                 }
             });
+
+            EventRanking rank = new EventRanking();
+            rank.setId(5l);
+            rank.setEventId(10);
+            rank.setRanking(5);
+            ServerRestApi.addOrSetEventRanking(new ICallback() {
+                @Override
+                public void call(Object param) {
+
+                }
+            }, rank);
+
+            EventNote n = new EventNote();
+            n.setId(5l);
+            n.setEventId(10);
+            n.setTitle("test");
+            n.setDescription("Hello world!");
+            ServerRestApi.addOrSetEventNote(new ICallback() {
+                @Override
+                public void call(Object param) {
+
+                }
+            }, n);
         }
 
         // initialize map

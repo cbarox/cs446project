@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class EventNote implements Serializable {
     public static final String TABLE = "eventnotes";
     public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_EVENT_ID = "event_id";
+    public static final String COLUMN_EVENT_ID = "eventId";
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_DESCRIPTION = "description";
     public static final String COLUMN_DATE_CREATED = "date_created";
