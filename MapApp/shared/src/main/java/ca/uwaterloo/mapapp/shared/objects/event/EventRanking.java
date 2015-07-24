@@ -26,29 +26,29 @@ public class EventRanking implements Serializable {
 
     @DatabaseField(columnName = COLUMN_EVENT_ID)
     private Integer eventId;
-    
-    public Integer getEventId() {
-        return eventId;
-    }
-    
-    public void setEventId(Integer eventId) {
-        this.eventId = eventId;
-    }
-    
-    public Integer getRanking() {
-        return ranking;
-    }
-    
-    public void setRanking(Integer ranking) {
-        this.ranking = ranking;
-    }
-    
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Integer getRanking() {
+        return ranking;
+    }
+
+    public void setRanking(Integer ranking) {
+        this.ranking = ranking;
+    }
+
+    public Integer getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(Integer eventId) {
+        this.eventId = eventId;
     }
 
     @Override

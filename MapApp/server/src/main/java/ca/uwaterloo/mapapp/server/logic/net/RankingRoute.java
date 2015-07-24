@@ -32,6 +32,8 @@ public class RankingRoute implements IGetSetDeleteRoute {
             return "Failed to insert object";
         }
 
+        System.out.println(ranking.toString());
+
         response.status(200);
         return "";
     }
