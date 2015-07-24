@@ -1,6 +1,8 @@
 package ca.uwaterloo.mapapp.server.logic.net;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import ca.uwaterloo.mapapp.server.Main;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
@@ -12,7 +14,7 @@ import spark.Response;
  * Created by brwarner2 on 20/07/2015.
  */
 public class RankingRoute implements IGetSetDeleteRoute {
-    private static Gson gson = new Gson();
+    private static Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
     @Override
     public Object get(Request request, Response response) throws Exception {
@@ -26,13 +28,13 @@ public class RankingRoute implements IGetSetDeleteRoute {
     @Override
     public Object set(Request request, Response response) throws Exception {
         EventRanking ranking = gson.fromJson(request.body(), EventRanking.class);
+        System.out.println(ranking.toString());
+
         DataManager<EventRanking, String> rankingsDataManager = Main.getDataManager(EventRanking.class);
         if( rankingsDataManager.insertOrUpdate(ranking) == null ) {
             response.status(500);
             return "Failed to insert object";
         }
-
-        System.out.println(ranking.toString());
 
         response.status(200);
         return "";

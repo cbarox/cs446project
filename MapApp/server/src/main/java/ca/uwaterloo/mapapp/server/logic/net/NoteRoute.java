@@ -1,6 +1,8 @@
 package ca.uwaterloo.mapapp.server.logic.net;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import ca.uwaterloo.mapapp.server.Main;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
@@ -15,7 +17,7 @@ import spark.Response;
  * Created by brwarner2 on 20/07/2015.
  */
 public class NoteRoute implements IGetSetDeleteRoute {
-    private static Gson gson = new Gson();
+    private static Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
     @Override
     public Object get(Request request, Response response) throws Exception {

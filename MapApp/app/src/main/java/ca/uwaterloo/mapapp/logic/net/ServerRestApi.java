@@ -108,7 +108,8 @@ public class ServerRestApi {
         sendData(callback, new IRequestor() {
             @Override
             public Object request() {
-                Response result =service.setEventRanking(ranking);
+                System.out.println(gson.toJson(ranking, EventRanking.class));
+                Response result = service.setEventRanking(ranking);
                 return result.getStatus() == 200;
             }
         });
