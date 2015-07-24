@@ -43,11 +43,20 @@ public class EventRanking implements Serializable {
         this.ranking = ranking;
     }
     
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "EventRanking{" +
+                "id=" + id +
+                ", ranking=" + ranking +
+                ", eventId=" + eventId +
+                '}';
     }
 }

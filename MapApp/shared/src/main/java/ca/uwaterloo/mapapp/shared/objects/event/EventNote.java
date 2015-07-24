@@ -38,4 +38,64 @@ public class EventNote implements Serializable {
 
     @DatabaseField(columnName = COLUMN_LAST_MODIFIED)
     private String lastModified;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(Integer eventId) {
+        this.eventId = eventId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public String getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    @Override
+    public String toString() {
+        return "EventNote{" +
+                "id=" + id +
+                ", eventId=" + eventId +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", dateCreated='" + dateCreated + '\'' +
+                ", lastModified='" + lastModified + '\'' +
+                '}';
+    }
 }

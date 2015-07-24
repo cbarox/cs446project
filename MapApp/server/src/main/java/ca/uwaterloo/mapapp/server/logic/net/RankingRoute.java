@@ -2,11 +2,9 @@ package ca.uwaterloo.mapapp.server.logic.net;
 
 import com.google.gson.Gson;
 
-import ca.uwaterloo.mapapp.data.DatabaseHelper;
-import ca.uwaterloo.mapapp.shared.net.ServerResponse;
+import ca.uwaterloo.mapapp.server.Main;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
-import ca.uwaterloo.mapapp.shared.objects.EventRanking;
-import java.util.List;
+import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 import spark.Request;
 import spark.Response;
 
@@ -18,37 +16,38 @@ public class RankingRoute implements IGetSetDeleteRoute {
 
     @Override
     public Object get(Request request, Response response) throws Exception {
-        final DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
-        
-        DataManager<EventRanking, String> rankingsDataManager = databaseHelper.getDataManager(EventRanking.class);
+        DataManager<EventRanking, String> rankingsDataManager = Main.getDataManager(EventRanking.class);
         EventRanking ranking = rankingsDataManager.findFirst(EventRanking.COLUMN_EVENT_ID, Integer.parseInt(request.params(":event")));
-        
-        return gson.toJson(ranking)); 
+
+        response.status(200);
+        return gson.toJson(ranking);
     }
 
     @Override
     public Object set(Request request, Response response) throws Exception {
-        final DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
-        
         EventRanking ranking = gson.fromJson(request.body(), EventRanking.class);
-        DataManager<EventRanking, String> rankingsDataManager = databaseHelper.getDataManager(EventRanking.class);
-        if( rankingsDataManager.insertOrUpdate(ranking) == null )
-            return "fail";
-        
-        return "success";
+        DataManager<EventRanking, String> rankingsDataManager = Main.getDataManager(EventRanking.class);
+        if( rankingsDataManager.insertOrUpdate(ranking) == null ) {
+            response.status(500);
+            return "Failed to insert object";
+        }
+
+        response.status(200);
+        return "";
     }
 
     @Override
     public Object delete(Request request, Response response) throws Exception {
-        final DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
-        
         EventRanking ranking = new EventRanking();
-        ranking.setId(Integer.parseInt(request.params(":id")));
+        ranking.setId(Long.parseLong(request.params(":id")));
         
-        DataManager<EventRanking, String> rankingsDataManager = databaseHelper.getDataManager(EventRanking.class);
-        if( !rankingsDataManager.delete(ranking) )
-            return "fail";
+        DataManager<EventRanking, String> rankingsDataManager = Main.getDataManager(EventRanking.class);
+        if( !rankingsDataManager.delete(ranking) ) {
+            response.status(500);
+            return "Failed to delete object";
+        }
             
-        return "success";
+        response.status(200);
+        return "";
     }
 }
