@@ -17,10 +17,10 @@
         android:id="@+id/note_property_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_marginRight="16dp"
+        android:layout_alignTop="@id/note_property_icon"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="@dimen/note_text_margin_left"
-        android:text="line 1\nline 2\nline 3"/>
+        android:text="line 1"/>
 
 </RelativeLayout>

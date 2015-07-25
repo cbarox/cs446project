@@ -50,11 +50,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_layers_black_24dp"
-                android:text="Floor Plans"
-                android:drawablePadding="17dp"
+                android:text="See floor plans"
+                android:drawablePadding="@dimen/button_inner_padding_left"
                 android:gravity="left|center_vertical"
-                android:paddingLeft="16dp"
-                android:textColor="@color/primary" />
+                android:paddingLeft="16dp" />
 
             <View
                 android:layout_width="match_parent"
@@ -64,7 +63,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="72dp"
+                android:paddingLeft="@dimen/note_text_margin_left"
                 android:text="All events"
                 android:textSize="@dimen/abc_text_size_large_material" />
 
@@ -78,7 +77,7 @@
                 android:id="@+id/empty_events_list_state"
                 android:layout_width="match_parent"
                 android:layout_height="44dp"
-                android:layout_marginLeft="72dp"
+                android:layout_marginLeft="@dimen/note_text_margin_left"
                 android:gravity="left|center_vertical"
                 android:text="@string/empty_list_events"
                 android:visibility="gone" />
@@ -89,7 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left|center_vertical"
-                android:paddingLeft="72dp"
+                android:paddingLeft="@dimen/note_text_margin_left"
                 android:text="MORE EVENTS"
                 android:textColor="@color/primary" />
 
@@ -126,7 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left|center_vertical"
-                android:paddingLeft="72dp"
+                android:paddingLeft="@dimen/note_text_margin_left"
                 android:text="MORE NOTES"
                 android:textColor="@color/primary" />
 
