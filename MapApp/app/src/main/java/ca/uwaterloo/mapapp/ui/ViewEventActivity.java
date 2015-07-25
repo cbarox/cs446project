@@ -5,11 +5,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -17,6 +21,9 @@ import ca.uwaterloo.mapapp.R;
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
+import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
+import ca.uwaterloo.mapapp.ui.adapters.EventNoteAdapter;
+import ca.uwaterloo.mapapp.util.ListViewUtil;
 
 public class ViewEventActivity extends ActionBarActivity {
     public static final String ARG_EVENT_ID = "ARG_EVENT_ID";
@@ -25,14 +32,19 @@ public class ViewEventActivity extends ActionBarActivity {
     protected Toolbar mToolbar;
     @InjectView(R.id.event_title)
     protected TextView title;
-    @InjectView(R.id.event_location_icon)
-    protected ImageView locIcon;
     @InjectView(R.id.event_location_txt)
     protected TextView location;
     @InjectView(R.id.event_link_btn)
     protected Button link;
+    @InjectView(R.id.event_notes_list)
+    protected ListView mNoteList;
+    @InjectView(R.id.event_more_notes)
+    protected Button moreNotes;
 
     private Event mEvent;
+
+    private List<EventNote> mEventNotes;
+    private EventNoteAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +65,8 @@ public class ViewEventActivity extends ActionBarActivity {
         Bundle b = getIntent().getExtras();
         long eventId = b.getLong(ARG_EVENT_ID, -1);
         setEvent(eventId);
+
+        mNoteList.setEmptyView(findViewById(R.id.empty_list_state));
     }
 
     @Override
@@ -69,7 +83,7 @@ public class ViewEventActivity extends ActionBarActivity {
         DataManager<Event, Long> dataManager = databaseHelper.getDataManager(Event.class);
 
         mEvent = dataManager.findFirst(Event.COLUMN_ID, eventId);
-        title.setText(mEvent.getTitle());
+        title.setText(Html.fromHtml(mEvent.getTitle()));
 
         if (mEvent.getLocation() != null && !mEvent.getLocation().isEmpty()) {
             location.setText(mEvent.getLocation());
@@ -95,5 +109,23 @@ public class ViewEventActivity extends ActionBarActivity {
         } else {
             link.setVisibility(View.INVISIBLE);
         }
+
+        loadEventNotes();
+    }
+
+    private void loadEventNotes() {
+        /*DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
+        DataManager<EventNote, Long> dataManager = databaseHelper.getDataManager(EventNote.class);
+        mEventNotes = dataManager.find(EventNote.COLUMN_EVENT_ID, mEvent.getId()); */
+        mEventNotes = new ArrayList<>(0);
+
+        mAdapter = new EventNoteAdapter(this, mEventNotes);
+        mNoteList.setAdapter(mAdapter);
+        ListViewUtil.setListViewHeightBasedOnChildren(mNoteList);
+
+        if (mEventNotes.isEmpty())
+            moreNotes.setVisibility(View.INVISIBLE);
+        else
+            moreNotes.setVisibility(View.VISIBLE);
     }
 }

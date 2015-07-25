@@ -6,5 +6,7 @@
     <dimen name="sliding_up_panel_collapsed_height">68dp</dimen>
     <dimen name="fab_width">56dp</dimen>
 
-    <dimen name="note_text_margin_left">56dp</dimen>
+    <dimen name="note_text_margin_left">72dp</dimen>
+    <dimen name="fake_list_margin_bottom">20dp</dimen>
+    <dimen name="button_inner_padding_left">30dp</dimen>
 </resources>

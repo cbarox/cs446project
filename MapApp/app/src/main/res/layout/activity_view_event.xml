@@ -9,56 +9,274 @@
         layout="@layout/tool_bar_primary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"/>
-
-    <TextView
-        android:id="@+id/event_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:paddingBottom="8dp"
-        android:layout_marginBottom="10dp"
-        android:layout_below="@id/tool_bar"
-        android:background="@color/primary"
-        android:paddingLeft="@dimen/note_text_margin_left"
-        android:text="The House Always Wins"
-        android:textColor="#FFFFFF"
-        android:textSize="32sp" />
-
-    <ImageView
-        android:id="@+id/event_location_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/event_title"
-        android:layout_marginLeft="16dp"
-        android:src="@drawable/ic_location_on_black_24dp" />
-
-    <TextView
-        android:id="@+id/event_location_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/event_title"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="@dimen/note_text_margin_left"
-        android:text="LOCATION"
-        android:textSize="16sp"/>
+        android:layout_alignParentTop="true" />
 
-    <Button
-        android:id="@+id/event_link_btn"
-        style="?android:attr/borderlessButtonStyle"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tool_bar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:id="@+id/event_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="10dp"
+                android:background="@color/primary"
+                android:paddingBottom="8dp"
+                android:paddingLeft="@dimen/note_text_margin_left"
+                android:text="The House Always Wins"
+                android:textColor="#FFFFFF"
+                android:textSize="32sp" />
+
+            <ImageView
+                android:id="@+id/event_location_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/event_location_txt"
+                android:layout_below="@id/event_title"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/ic_location_on_black_24dp" />
+
+            <TextView
+                android:id="@id/event_location_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/event_title"
+                android:layout_marginBottom="@dimen/fake_list_margin_bottom"
+                android:layout_marginLeft="@dimen/note_text_margin_left"
+                android:layout_marginTop="5dp"
+                android:text="LOCATION"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/event_time_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/event_location_icon"
+                android:layout_below="@id/event_location_txt"
+                android:src="@drawable/ic_access_time_black_24dp" />
+
+            <TextView
+                android:id="@+id/event_time_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/event_location_txt"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/event_location_txt"
+                android:layout_marginBottom="@dimen/fake_list_margin_bottom"
+                android:text="Monday January 32 6:00 - 13:00"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/event_link_btn"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_alignLeft="@id/event_location_icon"
+                android:layout_alignRight="@id/event_location_txt"
+                android:layout_below="@id/event_time_txt"
+                android:layout_marginBottom="@dimen/fake_list_margin_bottom"
+                android:drawableLeft="@drawable/ic_link_black_24dp"
+                android:drawablePadding="@dimen/button_inner_padding_left"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="0dp"
+                android:text="Go to website" />
+
+            <LinearLayout
+                android:id="@+id/event_pictures_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/event_link_btn"
+                android:orientation="vertical">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/test_drawer_image"
+                    android:gravity="left|bottom"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="5dp"
+                    android:text="12 photos"
+                    android:textColor="#FFF" />
+
+                <Button
+                    android:id="@+id/add_picture"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="16dp"
+                    android:drawableLeft="@drawable/ic_photo_camera_black_24dp"
+                    android:drawablePadding="@dimen/button_inner_padding_left"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="0dp"
+                    android:text="Add photos" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/event_rating_summary_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/event_pictures_container"
+                android:layout_marginTop="@dimen/fake_list_margin_bottom"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/event_sum_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="@dimen/note_text_margin_left"
+                    android:text="Review Summary"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/event_sum_avg_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/event_sum_title"
+                    android:layout_marginLeft="16dp"
+                    android:text="3.6"
+                    android:textSize="32sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/event_sum_avg_txt"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@id/event_sum_avg_txt"
+                    android:orientation="vertical">
+
+                    <RatingBar
+                        android:id="@+id/event_sum_avg_bar"
+                        style="?android:attr/ratingBarStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:rating="3.6" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/event_sum_total"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1337"
+                            android:textSize="12sp" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/ic_person_black_24dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/event_your_rating_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/event_rating_summary_container"
+                android:layout_marginLeft="@dimen/note_text_margin_left"
+                android:text="Your Review"
+                android:textSize="22sp" />
+
+            <RatingBar
+                android:id="@+id/event_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/event_your_rating_txt"
+                android:layout_centerInParent="true"
+                android:numStars="5" />
+
+            <TextView
+                android:id="@+id/event_event_note_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/event_rating"
+                android:layout_alignLeft="@id/event_your_rating_txt"
+                android:text="All notes"
+                android:textSize="22sp"/>
+
+            <ListView
+                android:id="@+id/event_notes_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/event_event_note_title"/>
+
+            <TextView
+                android:id="@+id/empty_list_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/event_event_note_title"
+                android:gravity="center"
+                android:visibility="gone"
+                android:text="No notes :("/>
+
+            <Button
+                android:id="@+id/event_more_notes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/event_notes_list"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="@dimen/note_text_margin_left"
+                android:gravity="left|center_vertical"
+                android:text="MORE NOTES"
+                android:textColor="@color/primary"
+                style="?android:attr/borderlessButtonStyle"/>
+
+            <!-- DIVIDERS -->
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/event_pictures_container" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/event_rating" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <com.melnykov.fab.FloatingActionButton
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/fab_new_note"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_alignLeft="@id/event_location_icon"
-        android:layout_alignRight="@id/event_location_txt"
-        android:layout_below="@id/event_location_txt"
-        android:drawableLeft="@drawable/ic_link_black_24dp"
-        android:drawablePadding="17dp"
-        android:gravity="left|center_vertical"
-        android:paddingLeft="0dp"
-        android:text="Website" />
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_add_black_24dp"
+        fab:fab_colorNormal="@color/primary"
+        fab:fab_colorPressed="@color/primaryDark"
+        fab:fab_colorRipple="@color/accent"
+        android:tint="#FFF"/>
 
 </RelativeLayout>
