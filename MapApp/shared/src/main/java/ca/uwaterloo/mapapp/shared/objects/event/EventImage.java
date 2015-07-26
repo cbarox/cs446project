@@ -17,6 +17,9 @@ public class EventImage implements Serializable {
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_BASE64 = "base64";
     public static final String COLUMN_EVENT_ID = "event_id";
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     @DatabaseField(columnName = COLUMN_ID, generatedId = true)
     private Long id;
