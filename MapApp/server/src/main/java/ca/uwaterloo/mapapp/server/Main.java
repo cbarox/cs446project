@@ -75,7 +75,8 @@ public class Main {
                 final DataManager dataManager = getDataManager(Event.class);
                 final List events = dataManager.getAll();
                 Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-                return gson.toJson(events);
+                response.body(gson.toJson(events));
+                return response;
             }
         });
     }
