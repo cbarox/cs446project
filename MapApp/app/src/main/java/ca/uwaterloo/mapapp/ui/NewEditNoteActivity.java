@@ -52,6 +52,8 @@ public class NewEditNoteActivity extends ActionBarActivity {
     protected EditText mDescription;
     @InjectView(R.id.note_building)
     protected Button mBuildingBtn;
+    @InjectView(R.id.note_room_number)
+    protected EditText mRoomNumber;
     @InjectView(R.id.note_tags)
     protected Button mTagsBtn;
 
@@ -117,8 +119,11 @@ public class NewEditNoteActivity extends ActionBarActivity {
             selectedBuildCode = mNote.getBuildingCode();
             if (selectedBuildCode != null && !selectedBuildCode.isEmpty()) {
                 mBuildingBtn.setText(selectedBuildCode);
+                mRoomNumber.setVisibility(View.VISIBLE);
+                mRoomNumber.setText(mNote.getRoomNumber());
             } else {
                 mBuildingBtn.setText(getString(R.string.note_no_building));
+                mRoomNumber.setVisibility(View.GONE);
             }
 
             mTitle.setText(mNote.getTitle());
@@ -127,6 +132,7 @@ public class NewEditNoteActivity extends ActionBarActivity {
             mDescription.setText("");
             if (selectedBuildCode.isEmpty()) {
                 mBuildingBtn.setText(getString(R.string.note_no_building));
+                mRoomNumber.setVisibility(View.GONE);
             }
 
             // give focus to title text
@@ -199,8 +205,15 @@ public class NewEditNoteActivity extends ActionBarActivity {
 
         if (selectedBuildingIndex > 0) {
             mNote.setBuildingCode(mBuildingBtn.getText().toString());
+            String roomNumber = mRoomNumber.getText().toString();
+            if (!roomNumber.isEmpty()) {
+                mNote.setRoomNumber(roomNumber);
+            } else {
+                mNote.setRoomNumber("");
+            }
         } else {
             mNote.setBuildingCode("");
+            mNote.setRoomNumber("");
         }
 
         // confirm update of existing note
@@ -289,8 +302,10 @@ public class NewEditNoteActivity extends ActionBarActivity {
                                     if (selectedBuildingIndex > 0) {
                                         mBuildingBtn.setText(
                                                 buildingList.get(selectedBuildingIndex - 1).getBuildingCode());
+                                        mRoomNumber.setVisibility(View.VISIBLE);
                                     } else {
                                         mBuildingBtn.setText(charSequence);
+                                        mRoomNumber.setVisibility(View.GONE);
                                     }
                                     return true;
                                 }
@@ -327,7 +342,7 @@ public class NewEditNoteActivity extends ActionBarActivity {
                     .positiveText("Choose")
                     .show();
         } else {
-
+            Toast.makeText(this, "No tags available", Toast.LENGTH_SHORT).show();
         }
     }
 

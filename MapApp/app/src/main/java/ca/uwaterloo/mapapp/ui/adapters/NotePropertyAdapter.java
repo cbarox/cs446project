@@ -34,7 +34,10 @@ public class NotePropertyAdapter extends BaseAdapter {
         this(context);
 
         if (!note.getBuildingCode().isEmpty()) {
-            Pair<Integer, String> row = new Pair<>(R.drawable.ic_store_black_24dp, note.getBuildingCode());
+            String location = note.getBuildingCode();
+            if (!note.getRoomNumber().isEmpty())
+                location += " " + note.getRoomNumber();
+            Pair<Integer, String> row = new Pair<>(R.drawable.ic_store_black_24dp, location);
             properties.add(row);
         }
         if (!note.getDescription().isEmpty()) {

@@ -113,6 +113,7 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), FloorPlanActivity.class);
+                intent.putExtra(FloorPlanActivity.ARG_BUILDING_CODE, mBuilding.getBuildingCode());
                 startActivity(intent);
             }
         });

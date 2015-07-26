@@ -60,5 +60,9 @@ dependencies {
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
     // This is for ImageView gestures and image scaleing
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.1.4'
+    // This is for the pull to refresh layout
+    compile 'com.baoyz.pullrefreshlayout:library:1.0.1'
+    // This is for sticky list sub-headers
+    compile 'se.emilsjolander:stickylistheaders:2.7.0'
 
 }

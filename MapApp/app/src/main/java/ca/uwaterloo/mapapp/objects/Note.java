@@ -22,6 +22,7 @@ public class Note {
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_DESCRIPTION = "description";
     public static final String COLUMN_BUILDING_CODE = "building_code";
+    public static final String COLUMN_ROOM_NUMBER = "room_number";
     public static final String COLUMN_DATE_CREATED = "date_created";
     public static final String COLUMN_LAST_MODIFIED = "last_modified";
 
@@ -36,6 +37,9 @@ public class Note {
 
     @DatabaseField(columnName = COLUMN_BUILDING_CODE)
     private String buildingCode;
+
+    @DatabaseField(columnName = COLUMN_ROOM_NUMBER)
+    private String roomNumber;
 
     @DatabaseField(columnName = COLUMN_DATE_CREATED)
     private Date dateCreated;
@@ -68,6 +72,14 @@ public class Note {
     }
 
     public void setBuildingCode(String buildingCode) { this.buildingCode = buildingCode; }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
 
     public Date getDateCreated() {
         return dateCreated;
@@ -114,11 +126,13 @@ public class Note {
         Note other = (Note)o;
 
         if (other.buildingCode == null && buildingCode != null) return false;
+        if (other.roomNumber == null && roomNumber != null) return false;
         if (other.title == null && title != null) return false;
         if (other.description == null && description != null) return false;
 
         if (id != other.id) return false;
         if (other.buildingCode == null || !other.buildingCode.equals(buildingCode)) return false;
+        if (other.roomNumber == null   || !other.roomNumber.equals(roomNumber)) return false;
         if (other.title == null        || !other.title.equals(title)) return false;
         if (other.description == null  || !other.description.equals(description)) return false;
         return true;

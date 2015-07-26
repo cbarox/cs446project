@@ -20,32 +20,39 @@
             android:hint="Title"
             android:minHeight="44dp" />
 
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/note_title"
-            android:layout_marginLeft="16dp"
-            android:src="@drawable/ic_store_black_24dp" />
-
         <Button
             android:id="@+id/note_building"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_below="@id/note_title"
-            android:layout_marginLeft="@dimen/note_text_margin_left"
-            android:gravity="left"
+            android:drawableLeft="@drawable/ic_store_black_24dp"
+            android:paddingLeft="0dp"
+            android:layout_marginLeft="16dp"
+            android:drawablePadding="36dp"
+            android:gravity="left|center_vertical"
             android:text="PHYSICS"
             android:onClick="selectNewBuilding"/>
+
+        <EditText
+            android:id="@+id/note_room_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/note_building"
+            android:layout_marginTop="2dp"
+            android:paddingTop="2dp"
+            android:layout_marginLeft="@dimen/note_text_margin_left"
+            android:hint="Room number"
+            android:inputType="number" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/icon"
+            android:layout_alignLeft="@id/note_building"
             android:layout_alignTop="@+id/note_description"
             android:src="@drawable/ic_subject_black_24dp" />
 
@@ -54,19 +61,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="0dp"
-            android:layout_alignLeft="@id/note_building"
+            android:layout_alignParentLeft="true"
             android:layout_alignRight="@id/note_building"
+            android:layout_marginLeft="@dimen/note_text_margin_left"
+            android:layout_marginTop="@dimen/fake_list_margin_bottom"
             android:layout_marginBottom="@dimen/fake_list_margin_bottom"
-            android:layout_below="@id/note_building"
+            android:layout_below="@id/note_room_number"
             android:text="line 1\nline 2\nline 3"
-            android:hint="Descriptionuup"/>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/icon"
-            android:layout_alignTop="@+id/note_tags"
-            android:src="@drawable/ic_announcement_black_24dp"/>
+            android:hint="Description"/>
 
         <Button
             android:id="@+id/note_tags"
@@ -76,7 +78,10 @@
             android:layout_alignRight="@id/note_building"
             android:layout_below="@id/note_description"
             android:text="@string/note_no_tags"
-            android:gravity="left"
+            android:drawableLeft="@drawable/ic_announcement_black_24dp"
+            android:paddingLeft="0dp"
+            android:drawablePadding="36dp"
+            android:gravity="left|center_vertical"
             style="?android:attr/borderlessButtonStyle"
             android:onClick="selectTags"/>
 
