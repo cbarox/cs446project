@@ -60,6 +60,9 @@ public class EventDataUpdater extends TimerTask {
     public String matchBuildingCode(List<Building> buildings, String locationText) {
         for (Building building : buildings) {
             String buildingCode = building.getBuildingCode();
+            if (buildingCode == null || locationText == null) {
+                return null;
+            }
             if (locationText.contains(buildingCode)) {
                 return buildingCode;
             }
