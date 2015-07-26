@@ -42,19 +42,23 @@ public class EventDataUpdater extends TimerTask {
         ICallback callback = new ICallback() {
             @Override
             public void call(Object param) {
-                System.out.printf("Processing %s%n", event.toString());
-                if (param == null) {
-                    return;
+                try {
+                    System.out.printf("Processing %s%n", event.toString());
+                    if (param == null) {
+                        return;
+                    }
+                    String locationTextFromHtml = (String) param;
+                    String buildingCode = matchBuildingCode(buildingList, locationTextFromHtml);
+                    // Got a match on the location from event website
+                    if (buildingCode != null) {
+                        event.setLocation(buildingCode);
+                        System.out.printf("Matched %s to %s%n", buildingCode, event.toString());
+                        Main.getDataManager(Event.class).update(event);
+                    }
+                    System.out.printf("Done processing %s%n", event.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                String locationTextFromHtml = (String) param;
-                String buildingCode = matchBuildingCode(buildingList, locationTextFromHtml);
-                // Got a match on the location from event website
-                if (buildingCode != null) {
-                    event.setLocation(buildingCode);
-                    System.out.printf("Matched %s to %s%n", buildingCode, event.toString());
-                    Main.getDataManager(Event.class).update(event);
-                }
-                System.out.printf("Done processing %s%n", event.toString());
             }
         };
 
