@@ -24,6 +24,7 @@ import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
 import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
+import ca.uwaterloo.mapapp.shared.objects.event.EventTimes;
 import ca.uwaterloo.mapapp.ui.adapters.EventNoteAdapter;
 import ca.uwaterloo.mapapp.util.ListViewUtil;
 
@@ -47,6 +48,7 @@ public class ViewEventActivity extends ActionBarActivity {
 
     private List<EventNote> mEventNotes;
     private EventNoteAdapter mAdapter;
+    private List<EventTimes> mEventTimes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +115,7 @@ public class ViewEventActivity extends ActionBarActivity {
         }
 
         loadEventNotes();
+        loadEventTimes();
     }
 
     private void loadEventNotes() {
@@ -130,5 +133,16 @@ public class ViewEventActivity extends ActionBarActivity {
             }
         };
         ServerRestApi.requestEventNotes(callback, mEvent.getId());
+    }
+
+    private void loadEventTimes() {
+        final Context context = this;
+        ICallback callback = new ICallback() {
+            @Override
+            public void call(Object param) {
+                mEventTimes = (List<EventTimes>) param;
+            }
+        };
+        ServerRestApi.requestEventTimes(callback, mEvent.getId());
     }
 }

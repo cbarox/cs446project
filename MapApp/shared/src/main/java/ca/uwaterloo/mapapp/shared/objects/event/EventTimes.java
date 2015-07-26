@@ -17,6 +17,7 @@ public class EventTimes implements Serializable {
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_START = "start";
     public static final String COLUMN_END = "end";
+    public static final String COLUMN_EVENT_ID = "event_id";
 
     @DatabaseField(columnName = COLUMN_ID, generatedId = true)
     private long id;
@@ -26,6 +27,9 @@ public class EventTimes implements Serializable {
 
     @DatabaseField(columnName = COLUMN_END)
     private String end;
+
+    @DatabaseField(columnName = COLUMN_EVENT_ID)
+    private Integer eventId;
 
     public long getId() {
         return id;
@@ -47,4 +51,11 @@ public class EventTimes implements Serializable {
         this.end = end;
     }
 
+    public Integer getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(Integer eventId) {
+        this.eventId = eventId;
+    }
 }
