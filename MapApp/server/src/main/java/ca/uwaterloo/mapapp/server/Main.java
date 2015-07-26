@@ -86,7 +86,7 @@ public class Main {
                 System.out.println("Converting to JSON");
                 response.body(gson.toJson(events));
                 System.out.println("Sending JSON");
-                return gson.toJson(events);
+                return "{\"events\":" + gson.toJson(events) + "}";
             }
         });
     }
