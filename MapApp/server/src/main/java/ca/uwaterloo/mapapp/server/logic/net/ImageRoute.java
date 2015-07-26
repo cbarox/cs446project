@@ -35,6 +35,7 @@ public class ImageRoute implements IGetSetDeleteRoute {
             System.err.println("Failed to insert or update image for event " + image.getEventId() + ". Database error.");
             return "Failed to insert object";
         }
+        System.out.println("Successfully inserted or updated image for event with id " + image.getEventId());
         response.status(200);
         return "";
     }
@@ -50,7 +51,7 @@ public class ImageRoute implements IGetSetDeleteRoute {
             System.err.println("Failed to delete image with id " + image.getId() + ". Database error.");
             return "Failed to delete object";
         }
-
+        System.out.println("Successfully deleted image with id " + image.getId() );
         response.status(200);
         return "";
     }

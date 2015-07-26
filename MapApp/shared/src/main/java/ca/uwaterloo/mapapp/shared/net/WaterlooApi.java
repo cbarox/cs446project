@@ -64,7 +64,8 @@ public class WaterlooApi {
                     localCacheMap.put(cacheKey, result);
                     callback.call(result);
                 } catch (Exception e) {
-                    System.err.println(e.toString());
+                    System.err.println("Error in requestor thread " + e.toString());
+                    e.printStackTrace();
                 }
 
             }
