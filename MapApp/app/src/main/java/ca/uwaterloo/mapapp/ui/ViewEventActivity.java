@@ -123,6 +123,7 @@ public class ViewEventActivity extends ActionBarActivity {
         loadEventNotes();
         loadEventTimes();
         loadEventRankings();
+        loadEventImages();
     }
 
     private void loadEventNotes() {
