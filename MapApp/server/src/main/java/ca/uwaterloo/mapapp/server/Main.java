@@ -71,7 +71,7 @@ public class Main {
 
         // Update the data once in a while
         DATA_UPDATE_TIMER.scheduleAtFixedRate(buildingDataUpdater, 0, PERIOD_THREE_WEEKS);
-        DATA_UPDATE_TIMER.scheduleAtFixedRate(eventDataUpdater, 5000, PERIOD_ONE_DAY);
+        DATA_UPDATE_TIMER.scheduleAtFixedRate(eventDataUpdater, 10000, PERIOD_ONE_DAY);
 
         postGetSetDelete("note", new NoteRoute());
         postGetSetDelete("image", new ImageRoute());
@@ -86,7 +86,7 @@ public class Main {
                 System.out.println("Converting to JSON");
                 response.body(gson.toJson(events));
                 System.out.println("Sending JSON");
-                return "{\"events\":" + gson.toJson(events) + "}";
+                return "\"events\":" + gson.toJson(events);
             }
         });
     }
