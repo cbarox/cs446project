@@ -17,22 +17,23 @@ import ca.uwaterloo.mapapp.shared.objects.event.Event;
 public class EventDataUpdater extends TimerTask {
 
     private static final String MAGIC_CSS_SELECTOR = "span.fn";
-    private static final DataManager buildingDataManager = Main.getDataManager(Building.class);
-    private static final DataManager eventDataManager = Main.getDataManager(Event.class);
 
     @Override
     public void run() {
+        DataManager buildingDataManager = Main.getDataManager(Building.class);
         final List<Building> buildingList = buildingDataManager.getAll();
         ICallback eventsCallback = new ICallback() {
             @Override
             public void call(Object param) {
                 List<Event> events = (List<Event>) param;
                 System.out.printf("Got %d events from the API%n", events.size());
+                DataManager eventDataManager = Main.getDataManager(Event.class);
                 eventDataManager.insertOrUpdateAll(events);
                 for (Event event : events) {
-                    System.out.printf("Processing event %d%n", event.getId());
+                    System.out.printf("Processing %s%n", event.toString());
                     addEventLocation(event, buildingList);
                 }
+                System.out.println("Done processing events");
             }
         };
         WaterlooApi.requestEvents(eventsCallback);
@@ -50,7 +51,8 @@ public class EventDataUpdater extends TimerTask {
                 // Got a match on the location from event website
                 if (buildingCode != null) {
                     event.setLocation(buildingCode);
-                    System.out.printf("Matched %s to event %d%n", buildingCode, event.getId());
+                    System.out.printf("Matched %s to %s%n", buildingCode, event.toString());
+                    DataManager eventDataManager = Main.getDataManager(Event.class);
                     eventDataManager.update(event);
                 }
             }

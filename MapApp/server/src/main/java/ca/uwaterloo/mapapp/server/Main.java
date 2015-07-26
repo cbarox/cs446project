@@ -1,8 +1,5 @@
 package ca.uwaterloo.mapapp.server;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -11,7 +8,6 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Timer;
 
 import ca.uwaterloo.mapapp.server.logic.net.BuildingDataUpdater;
@@ -61,11 +57,11 @@ public class Main {
 
         // Update the data once in a while
         DATA_UPDATE_TIMER.scheduleAtFixedRate(buildingDataUpdater, 0, PERIOD_THREE_WEEKS);
-        DATA_UPDATE_TIMER.scheduleAtFixedRate(eventDataUpdater, 10000, PERIOD_ONE_DAY);
+        DATA_UPDATE_TIMER.scheduleAtFixedRate(eventDataUpdater, 5000, PERIOD_ONE_DAY);
 
         /*postGetSetDelete("note", new NoteRoute());
         postGetSetDelete("image", new ImageRoute());
-        postGetSetDelete("ranking", new RankingRoute());*/
+        postGetSetDelete("ranking", new RankingRoute());
         get("/events", new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
@@ -78,7 +74,7 @@ public class Main {
                 System.out.println("Sending JSON");
                 return gson.toJson(events);
             }
-        });
+        });*/
     }
 
     private static void postGetSetDelete(String type, final IGetSetDeleteRoute route)
