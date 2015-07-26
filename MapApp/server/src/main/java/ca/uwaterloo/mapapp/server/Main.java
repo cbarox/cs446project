@@ -13,10 +13,17 @@ import java.util.Timer;
 
 import ca.uwaterloo.mapapp.server.logic.net.BuildingDataUpdater;
 import ca.uwaterloo.mapapp.server.logic.net.EventDataUpdater;
+import ca.uwaterloo.mapapp.server.logic.net.IGetSetDeleteRoute;
+import ca.uwaterloo.mapapp.server.logic.net.ImageRoute;
+import ca.uwaterloo.mapapp.server.logic.net.NoteRoute;
+import ca.uwaterloo.mapapp.server.logic.net.RankingRoute;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.net.ServerResponse;
 import ca.uwaterloo.mapapp.shared.objects.building.Building;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
+import ca.uwaterloo.mapapp.shared.objects.event.EventImage;
+import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
+import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -31,7 +38,6 @@ public class Main {
     private static final Timer DATA_UPDATE_TIMER = new Timer("dataUpdateTimer");
     private static final int PERIOD_ONE_DAY = 86400000;
     private static final int PERIOD_THREE_WEEKS = 1814400000;
-    private static Gson gson = new Gson();
     private static HashMap<Class, DataManager> dataManagers = new HashMap<>();
     private static ConnectionSource connectionSource;
     private static BuildingDataUpdater buildingDataUpdater = new BuildingDataUpdater();
@@ -41,6 +47,9 @@ public class Main {
         // Initialize the database
         try {
             connectionSource = new JdbcConnectionSource(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
+            TableUtils.createTableIfNotExists(connectionSource, EventNote.class);
+            TableUtils.createTableIfNotExists(connectionSource, EventRanking.class);
+            //TableUtils.createTableIfNotExists(connectionSource, EventImage.class);
             TableUtils.createTableIfNotExists(connectionSource, Building.class);
             TableUtils.createTableIfNotExists(connectionSource, Event.class);
         } catch (SQLException e) {
@@ -53,14 +62,29 @@ public class Main {
         DATA_UPDATE_TIMER.scheduleAtFixedRate(buildingDataUpdater, 0, PERIOD_THREE_WEEKS);
         DATA_UPDATE_TIMER.scheduleAtFixedRate(eventDataUpdater, 0, PERIOD_ONE_DAY);
 
-        // insert or update a note
-        post("/eventnote", new Route() {
+        postGetSetDelete("note", new NoteRoute());
+        postGetSetDelete("image", new ImageRoute());
+        postGetSetDelete("ranking", new RankingRoute());
+    }
+
+    private static void postGetSetDelete(String type, final IGetSetDeleteRoute route)
+    {
+        get(String.format("/%s/get/:event", type), new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
-                ServerResponse serverResponse = new ServerResponse();
-                serverResponse.setStatus("success");
-                serverResponse.setId(0L);
-                return gson.toJson(serverResponse);
+                return route.get(request, response);
+            }
+        });
+        post(String.format("/%s/set", type), new Route() {
+            @Override
+            public Object handle(Request request, Response response) throws Exception {
+                return route.set(request, response);
+            }
+        });
+        post(String.format("/%s/delete/:id", type), new Route() {
+            @Override
+            public Object handle(Request request, Response response) throws Exception {
+                return route.delete(request, response);
             }
         });
     }

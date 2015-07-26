@@ -53,10 +53,13 @@
             android:id="@id/note_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="0dp"
             android:layout_alignLeft="@id/note_building"
             android:layout_alignRight="@id/note_building"
+            android:layout_marginBottom="@dimen/fake_list_margin_bottom"
             android:layout_below="@id/note_building"
-            android:text="line 1\nline 2\nline 3" />
+            android:text="line 1\nline 2\nline 3"
+            android:hint="Descriptionuup"/>
 
         <ImageView
             android:layout_width="wrap_content"

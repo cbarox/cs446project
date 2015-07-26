@@ -17,7 +17,6 @@
         android:visibility="gone"
         android:text="No notes :("/>
 
-
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/fab_new_note"
         android:layout_width="wrap_content"
@@ -27,6 +26,7 @@
         android:src="@drawable/ic_add_black_24dp"
         fab:fab_colorNormal="@color/primary"
         fab:fab_colorPressed="@color/primaryDark"
-        fab:fab_colorRipple="@color/accent" />
+        fab:fab_colorRipple="@color/accent"
+        android:tint="#FFF"/>
 
 </FrameLayout>

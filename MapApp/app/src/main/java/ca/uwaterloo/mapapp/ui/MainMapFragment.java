@@ -30,9 +30,13 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
+import ca.uwaterloo.mapapp.logic.net.FloorplanApi;
+import ca.uwaterloo.mapapp.logic.net.ServerRestApi;
 import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.net.WaterlooApi;
 import ca.uwaterloo.mapapp.shared.objects.building.Building;
+import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
+import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 
 public class MainMapFragment extends Fragment implements OnMapReadyCallback {
 

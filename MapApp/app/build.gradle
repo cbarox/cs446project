@@ -7,7 +7,7 @@ android {
     buildToolsVersion "22.0.1"
     defaultConfig {
         applicationId "ca.uwaterloo.mapapp"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -60,4 +60,5 @@ dependencies {
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
     // This is for ImageView gestures and image scaleing
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.1.4'
+
 }
