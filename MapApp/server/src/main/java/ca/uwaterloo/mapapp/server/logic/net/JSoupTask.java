@@ -9,7 +9,7 @@ import ca.uwaterloo.mapapp.shared.ICallback;
 /**
  * Created by Hyunwook on 2015-06-14.
  */
-public class JSoupApi implements Runnable {
+public class JSoupTask implements Runnable {
 
     private String url;
     private String selector;
@@ -20,7 +20,7 @@ public class JSoupApi implements Runnable {
      * @param selector The selector to
      * @param callback The callback that is called when the parsing is done
      */
-    public JSoupApi(String url, String selector, ICallback callback) {
+    public JSoupTask(String url, String selector, ICallback callback) {
         this.url = url;
         this.selector = selector;
         this.callback = callback;
