@@ -27,8 +27,10 @@ public class EventDataUpdater extends TimerTask {
             @Override
             public void call(Object param) {
                 List<Event> events = (List<Event>) param;
+                System.out.printf("Got %d events from the API%n", events.size());
                 eventDataManager.insertOrUpdateAll(events);
                 for (Event event : events) {
+                    System.out.printf("Processing event %d%n", event.getId());
                     addEventLocation(event, buildingList);
                 }
             }
@@ -40,6 +42,9 @@ public class EventDataUpdater extends TimerTask {
         ICallback callback = new ICallback() {
             @Override
             public void call(Object param) {
+                if (param == null) {
+                    return;
+                }
                 String locationTextFromHtml = (String) param;
                 String buildingCode = matchBuildingCode(buildingList, locationTextFromHtml);
                 // Got a match on the location from event website
@@ -59,8 +64,11 @@ public class EventDataUpdater extends TimerTask {
 
     public String matchBuildingCode(List<Building> buildings, String locationText) {
         for (Building building : buildings) {
+            if (building == null) {
+                return null;
+            }
             String buildingCode = building.getBuildingCode();
-            if (buildingCode == null || locationText == null) {
+            if (buildingCode == null) {
                 return null;
             }
             if (locationText.contains(buildingCode)) {
