@@ -73,9 +73,12 @@ public class Main {
             @Override
             public Object handle(Request request, Response response) throws Exception {
                 final DataManager dataManager = getDataManager(Event.class);
+                System.out.println("Getting events from database");
                 final List events = dataManager.getAll();
                 Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+                System.out.println("Converting to JSON");
                 response.body(gson.toJson(events));
+                System.out.println("Sending JSON");
                 return response;
             }
         });
