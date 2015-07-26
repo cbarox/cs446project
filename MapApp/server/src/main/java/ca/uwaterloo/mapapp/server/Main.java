@@ -86,7 +86,7 @@ public class Main {
                 final DataManager dataManager = getDataManager(Event.class);
                 MagicLogger.log("Getting events from database");
                 final List events = dataManager.getAll();
-                MagicLogger.log("Got %d events from database");
+                MagicLogger.log("Got %d events from database", events.size());
                 response.body(GSON.toJson(events));
                 MagicLogger.log("Sending JSON response");
                 return GSON.toJson(events);
