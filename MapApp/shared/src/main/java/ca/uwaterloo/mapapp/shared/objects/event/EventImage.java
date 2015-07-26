@@ -17,9 +17,6 @@ public class EventImage implements Serializable {
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_BASE64 = "base64";
     public static final String COLUMN_EVENT_ID = "event_id";
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     @DatabaseField(columnName = COLUMN_ID, generatedId = true)
     private Long id;
@@ -29,4 +26,28 @@ public class EventImage implements Serializable {
 
     @DatabaseField(columnName = COLUMN_EVENT_ID)
     private Integer eventId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getBase64() {
+        return base64;
+    }
+
+    public void setBase64(String base64) {
+        this.base64 = base64;
+    }
+
+    public Integer getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(Integer eventId) {
+        this.eventId = eventId;
+    }
 }

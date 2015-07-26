@@ -46,6 +46,7 @@ public class NoteRoute implements IGetSetDeleteRoute {
         DataManager<EventNote, String> notesDataManager = Main.getDataManager(EventNote.class);
         if( !notesDataManager.delete(note) ) {
             response.status(500);
+            System.err.println("Failed to delete note with id " + note.getId() + ". Database error.");
             return "Failed to delete object";
         }
 

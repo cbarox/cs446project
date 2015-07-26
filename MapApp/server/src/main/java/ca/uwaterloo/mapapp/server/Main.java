@@ -29,6 +29,7 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
@@ -91,24 +92,45 @@ public class Main {
         });
     }
 
-    private static void postGetSetDelete(String type, final IGetSetDeleteRoute route)
+    private static void postGetSetDelete(final String type, final IGetSetDeleteRoute route)
     {
-        get(String.format("/%s/get/:event", type), new Route() {
+        get(String.format("/%s/:event", type), new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
-                return route.get(request, response);
+                try {
+                    return route.get(request, response);
+                }
+                catch(Exception e)
+                {
+                    System.err.println("Failed to get '" + type + "'. Exception: " + e.getMessage());
+                }
+                return null;
             }
         });
-        post(String.format("/%s/set", type), new Route() {
+        post(String.format("/%s", type), new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
-                return route.set(request, response);
+                try {
+                    return route.set(request, response);
+                }
+                catch(Exception e)
+                {
+                    System.err.println("Failed to set '" + type + "'. Exception: " + e.getMessage());
+                }
+                return null;
             }
         });
-        post(String.format("/%s/delete/:id", type), new Route() {
+        delete(String.format("/%s/:id", type), new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
-                return route.delete(request, response);
+                try {
+                    return route.delete(request, response);
+                }
+                catch(Exception e)
+                {
+                    System.err.println("Failed to delete '" + type + "'. Exception: " + e.getMessage());
+                }
+                return null;
             }
         });
     }

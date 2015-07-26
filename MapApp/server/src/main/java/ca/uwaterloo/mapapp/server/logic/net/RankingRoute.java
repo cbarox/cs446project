@@ -33,6 +33,7 @@ public class RankingRoute implements IGetSetDeleteRoute {
         DataManager<EventRanking, String> rankingsDataManager = Main.getDataManager(EventRanking.class);
         if( rankingsDataManager.insertOrUpdate(ranking) == null ) {
             response.status(500);
+            System.err.println("Failed to insert or update ranking for event " + ranking.getEventId() + ". Database error.");
             return "Failed to insert object";
         }
 
@@ -48,6 +49,7 @@ public class RankingRoute implements IGetSetDeleteRoute {
         DataManager<EventRanking, String> rankingsDataManager = Main.getDataManager(EventRanking.class);
         if( !rankingsDataManager.delete(ranking) ) {
             response.status(500);
+            System.err.println("Failed to delete ranking with id " + ranking.getId() + ". Database error.");
             return "Failed to delete object";
         }
             
