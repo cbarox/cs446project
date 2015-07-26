@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.melnykov.fab.FloatingActionButton;
 
@@ -21,11 +20,12 @@ import ca.uwaterloo.mapapp.data.DatabaseHelper;
 import ca.uwaterloo.mapapp.objects.Note;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.ui.adapters.NoteAdapter;
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 public class AllNotesFragment extends Fragment {
 
     @InjectView(R.id.note_list)
-    protected ListView noteList;
+    protected StickyListHeadersListView noteList;
     @InjectView(R.id.fab_new_note)
     protected FloatingActionButton fab;
 
@@ -58,7 +58,6 @@ public class AllNotesFragment extends Fragment {
         });
         noteList.setEmptyView(view.findViewById(R.id.empty_list_state));
 
-        fab.attachToListView(noteList);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

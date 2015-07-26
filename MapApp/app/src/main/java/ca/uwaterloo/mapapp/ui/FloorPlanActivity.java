@@ -17,6 +17,8 @@ import ca.uwaterloo.mapapp.ui.adapters.FloorSelectorAdapter;
 
 public class FloorPlanActivity extends ActionBarActivity {
 
+    public static final String ARG_BUILDING_CODE = "arg_building_code";
+
     @InjectView(R.id.tool_bar)
     protected Toolbar mToolbar;
     @InjectView(R.id.floor_map)
@@ -25,6 +27,7 @@ public class FloorPlanActivity extends ActionBarActivity {
     protected ListView mFloorSelector;
 
     private boolean isOptionsVisible = true;
+    private String mBuildingCode = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +53,25 @@ public class FloorPlanActivity extends ActionBarActivity {
             }
         });
 
-        mFloorSelector.setAdapter(new FloorSelectorAdapter(this, 5));
+        loadFloorPlans(getIntent().getExtras());
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return false;
+    }
+
+    private void loadFloorPlans(Bundle b) {
+        mBuildingCode = b.getString(ARG_BUILDING_CODE);
+
+
+
+        mFloorSelector.setAdapter(new FloorSelectorAdapter(this, 5));
+        loadFloor(1);
+    }
+
+    private void loadFloor(int floorNum) {
+
     }
 
     private void toggleOptionsVisible() {
