@@ -25,6 +25,7 @@ public class NoteRoute implements IGetSetDeleteRoute {
         List<EventNote> notes = notesDataManager.find(EventNote.COLUMN_EVENT_ID, Integer.parseInt(request.params(":event")));
 
         response.status(200);
+        System.out.printf("NoteRoute: Successfully got notes %n" );
         return gson.toJson(notes);
     }
 
@@ -35,6 +36,7 @@ public class NoteRoute implements IGetSetDeleteRoute {
         notesDataManager.insertOrUpdate(note);
         
         response.status(200);
+        System.out.printf("NoteRoute: Successfully inserted or updated note with id %d%n", note.getId());
         return "";
     }
 
@@ -46,10 +48,10 @@ public class NoteRoute implements IGetSetDeleteRoute {
         DataManager<EventNote, String> notesDataManager = Main.getDataManager(EventNote.class);
         if( !notesDataManager.delete(note) ) {
             response.status(500);
-            System.err.println("Failed to delete note with id " + note.getId() + ". Database error.");
+            System.err.println("NoteRoute: Failed to delete note with id " + note.getId() + ". Database error.");
             return "Failed to delete object";
         }
-
+        System.out.printf("NoteRoute: Successfully deleted note with id %d%n", note.getId() );
         response.status(200);
         return "";
     }

@@ -56,6 +56,7 @@ public class EventDataUpdater extends TimerTask {
                     }
                     System.out.printf("Done processing %s%n", event.toString());
                 } catch (Exception e) {
+                    System.err.printf("Error processing %s%n", event.toString());
                     e.printStackTrace();
                 }
             }
@@ -68,9 +69,11 @@ public class EventDataUpdater extends TimerTask {
             try {
                 jSoupTask.run();
             } catch (Exception e) {
+                System.err.printf("Error running jsoupTask from %s%n", url);
                 e.printStackTrace();
             }
         }
+        System.out.printf("Successfully ran jsoupTask from %s%n", url);
     }
 
     public String matchBuildingCode(List<Building> buildings, String locationText) {
