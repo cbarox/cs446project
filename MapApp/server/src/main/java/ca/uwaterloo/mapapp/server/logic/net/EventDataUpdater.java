@@ -66,8 +66,7 @@ public class EventDataUpdater extends TimerTask {
         if (url != null && !url.isEmpty()) {
             JSoupTask jSoupTask = new JSoupTask(url, MAGIC_CSS_SELECTOR, callback);
             try {
-                Thread jSoupTaskThread = new Thread(jSoupTask);
-                jSoupTaskThread.start();
+                jSoupTask.run();
             } catch (Exception e) {
                 e.printStackTrace();
             }
