@@ -1,5 +1,8 @@
 package ca.uwaterloo.mapapp.server;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -8,11 +11,15 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 
 import ca.uwaterloo.mapapp.server.logic.net.BuildingDataUpdater;
 import ca.uwaterloo.mapapp.server.logic.net.EventDataUpdater;
 import ca.uwaterloo.mapapp.server.logic.net.IGetSetDeleteRoute;
+import ca.uwaterloo.mapapp.server.logic.net.ImageRoute;
+import ca.uwaterloo.mapapp.server.logic.net.NoteRoute;
+import ca.uwaterloo.mapapp.server.logic.net.RankingRoute;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.objects.building.Building;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
@@ -66,7 +73,7 @@ public class Main {
         DATA_UPDATE_TIMER.scheduleAtFixedRate(buildingDataUpdater, 0, PERIOD_THREE_WEEKS);
         DATA_UPDATE_TIMER.scheduleAtFixedRate(eventDataUpdater, 5000, PERIOD_ONE_DAY);
 
-        /*postGetSetDelete("note", new NoteRoute());
+        postGetSetDelete("note", new NoteRoute());
         postGetSetDelete("image", new ImageRoute());
         postGetSetDelete("ranking", new RankingRoute());
         get("/events", new Route() {
@@ -81,7 +88,7 @@ public class Main {
                 System.out.println("Sending JSON");
                 return gson.toJson(events);
             }
-        });*/
+        });
     }
 
     private static void postGetSetDelete(String type, final IGetSetDeleteRoute route)
