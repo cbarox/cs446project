@@ -1,6 +1,5 @@
 package ca.uwaterloo.mapapp.server;
 
-import com.google.gson.Gson;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -18,16 +17,15 @@ import ca.uwaterloo.mapapp.server.logic.net.ImageRoute;
 import ca.uwaterloo.mapapp.server.logic.net.NoteRoute;
 import ca.uwaterloo.mapapp.server.logic.net.RankingRoute;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
-import ca.uwaterloo.mapapp.shared.net.ServerResponse;
 import ca.uwaterloo.mapapp.shared.objects.building.Building;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
-import ca.uwaterloo.mapapp.shared.objects.event.EventImage;
 import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
 import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import static spark.Spark.get;
 import static spark.Spark.post;
 
 public class Main {
