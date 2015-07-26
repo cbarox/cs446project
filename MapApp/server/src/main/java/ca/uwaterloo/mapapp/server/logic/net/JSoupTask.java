@@ -29,10 +29,18 @@ public class JSoupTask implements Runnable {
     @Override
     public void run() {
         try {
+            if (url == null) {
+                callback.call(null);
+            }
             Document doc = Jsoup.connect(url).get();
             Element element = doc.select(selector/*e.g. span.fn*/).first();
-            callback.call(element.toString());
+            if (element != null) {
+                callback.call(element.toString());
+            } else {
+                callback.call(null);
+            }
         } catch (Exception e) {
+            e.printStackTrace();
             callback.call(null);
         }
     }
