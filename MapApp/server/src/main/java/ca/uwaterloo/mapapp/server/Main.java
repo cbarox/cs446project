@@ -17,9 +17,6 @@ import java.util.Timer;
 import ca.uwaterloo.mapapp.server.logic.net.BuildingDataUpdater;
 import ca.uwaterloo.mapapp.server.logic.net.EventDataUpdater;
 import ca.uwaterloo.mapapp.server.logic.net.IGetSetDeleteRoute;
-import ca.uwaterloo.mapapp.server.logic.net.ImageRoute;
-import ca.uwaterloo.mapapp.server.logic.net.NoteRoute;
-import ca.uwaterloo.mapapp.server.logic.net.RankingRoute;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.objects.building.Building;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
@@ -64,11 +61,11 @@ public class Main {
 
         // Update the data once in a while
         DATA_UPDATE_TIMER.scheduleAtFixedRate(buildingDataUpdater, 0, PERIOD_THREE_WEEKS);
-        DATA_UPDATE_TIMER.scheduleAtFixedRate(eventDataUpdater, 0, PERIOD_ONE_DAY);
+        DATA_UPDATE_TIMER.scheduleAtFixedRate(eventDataUpdater, 10000, PERIOD_ONE_DAY);
 
-        postGetSetDelete("note", new NoteRoute());
+        /*postGetSetDelete("note", new NoteRoute());
         postGetSetDelete("image", new ImageRoute());
-        postGetSetDelete("ranking", new RankingRoute());
+        postGetSetDelete("ranking", new RankingRoute());*/
         get("/events", new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
@@ -79,7 +76,7 @@ public class Main {
                 System.out.println("Converting to JSON");
                 response.body(gson.toJson(events));
                 System.out.println("Sending JSON");
-                return response;
+                return gson.toJson(events);
             }
         });
     }

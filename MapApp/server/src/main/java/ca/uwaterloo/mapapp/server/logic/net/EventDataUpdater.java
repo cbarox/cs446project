@@ -50,6 +50,7 @@ public class EventDataUpdater extends TimerTask {
                 // Got a match on the location from event website
                 if (buildingCode != null) {
                     event.setLocation(buildingCode);
+                    System.out.printf("Matched %s to event %d%n", buildingCode, event.getId());
                     eventDataManager.update(event);
                 }
             }
@@ -57,9 +58,15 @@ public class EventDataUpdater extends TimerTask {
 
         // Try and get the event's location from the website
         String url = event.getLink();
-        JSoupTask jSoupTask = new JSoupTask(url, MAGIC_CSS_SELECTOR, callback);
-        Thread jSoupTaskThread = new Thread(jSoupTask);
-        jSoupTaskThread.start();
+        if (url != null && !url.isEmpty()) {
+            JSoupTask jSoupTask = new JSoupTask(url, MAGIC_CSS_SELECTOR, callback);
+            try {
+                Thread jSoupTaskThread = new Thread(jSoupTask);
+                jSoupTaskThread.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public String matchBuildingCode(List<Building> buildings, String locationText) {
