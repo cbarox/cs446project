@@ -26,7 +26,7 @@ public interface IServerRestService {
     List<Event> getEvents();
 
     @GET("/image")
-    List<EventImage> getEventImages();
+    List<EventImage> getEventImages(@Path("id") Integer eventId);
 
     @POST("/image")
     Response setEventImage(@Body EventImage image);

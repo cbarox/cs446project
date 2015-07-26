@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * Created by cjbarrac
  * 7/6/15
- * <p/>
+ * <p>
  * A single image that is associated with a particular event
  */
 @DatabaseTable(tableName = EventImage.TABLE)
@@ -49,5 +49,14 @@ public class EventImage implements Serializable {
 
     public void setEventId(Integer eventId) {
         this.eventId = eventId;
+    }
+
+    @Override
+    public String toString() {
+        return "EventImage{" +
+                "id=" + id +
+                ", base64='" + base64.length() + " byte string\'" +
+                ", eventId=" + eventId +
+                '}';
     }
 }

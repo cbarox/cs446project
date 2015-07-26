@@ -49,11 +49,11 @@ public class ServerRestApi {
         });
     }
 
-    public static void requestEventImages(final ICallback callback) {
+    public static void requestEventImages(final ICallback callback, final Integer eventId) {
         requestData("EventImages", callback, new IRequestor() {
             @Override
             public Object request() {
-                return service.getEventImages();
+                return service.getEventImages(eventId);
             }
         });
     }

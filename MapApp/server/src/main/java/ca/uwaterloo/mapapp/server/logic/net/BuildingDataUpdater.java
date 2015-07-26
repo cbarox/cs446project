@@ -3,6 +3,7 @@ package ca.uwaterloo.mapapp.server.logic.net;
 import java.util.List;
 import java.util.TimerTask;
 
+import ca.uwaterloo.mapapp.server.MagicLogger;
 import ca.uwaterloo.mapapp.server.Main;
 import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
@@ -24,11 +25,11 @@ public class BuildingDataUpdater extends TimerTask {
                     return;
                 }
                 List<Building> buildings = (List<Building>) param;
-                System.out.printf("Got %d buildings%n", buildings.size());
+                MagicLogger.log("Got %d buildings%n", buildings.size());
                 DataManager buildingDataManager = Main.getDataManager(Building.class);
-                System.out.println("Adding buildings to db");
+                MagicLogger.log("Adding buildings to db");
                 buildingDataManager.insertOrUpdateAll(buildings);
-                System.out.println("Done processing buildings");
+                MagicLogger.log("Done processing buildings");
             }
         };
         WaterlooApi.requestBuildings(buildingsCallback);

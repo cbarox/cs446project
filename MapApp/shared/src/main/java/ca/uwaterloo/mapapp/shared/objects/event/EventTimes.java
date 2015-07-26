@@ -58,4 +58,14 @@ public class EventTimes implements Serializable {
     public void setEventId(Integer eventId) {
         this.eventId = eventId;
     }
+
+    @Override
+    public String toString() {
+        return "EventTimes{" +
+                "id=" + id +
+                ", start='" + start + '\'' +
+                ", end='" + end + '\'' +
+                ", eventId=" + eventId +
+                '}';
+    }
 }

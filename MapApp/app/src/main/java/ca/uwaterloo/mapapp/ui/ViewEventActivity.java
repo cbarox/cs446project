@@ -23,7 +23,9 @@ import ca.uwaterloo.mapapp.logic.net.ServerRestApi;
 import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
+import ca.uwaterloo.mapapp.shared.objects.event.EventImage;
 import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
+import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 import ca.uwaterloo.mapapp.shared.objects.event.EventTimes;
 import ca.uwaterloo.mapapp.ui.adapters.EventNoteAdapter;
 import ca.uwaterloo.mapapp.util.ListViewUtil;
@@ -49,6 +51,8 @@ public class ViewEventActivity extends ActionBarActivity {
     private List<EventNote> mEventNotes;
     private EventNoteAdapter mAdapter;
     private List<EventTimes> mEventTimes;
+    private List<EventRanking> mEventRankings;
+    private List<EventImage> mEventImages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +84,9 @@ public class ViewEventActivity extends ActionBarActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) { return false; }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return false;
+    }
 
     private void setEvent(long eventId) {
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
@@ -116,6 +122,8 @@ public class ViewEventActivity extends ActionBarActivity {
 
         loadEventNotes();
         loadEventTimes();
+        loadEventRankings();
+        loadEventImages();
     }
 
     private void loadEventNotes() {
@@ -141,8 +149,33 @@ public class ViewEventActivity extends ActionBarActivity {
             @Override
             public void call(Object param) {
                 mEventTimes = (List<EventTimes>) param;
+                // process/display event times here
             }
         };
         ServerRestApi.requestEventTimes(callback, mEvent.getId());
+    }
+
+    private void loadEventRankings() {
+        final Context context = this;
+        ICallback callback = new ICallback() {
+            @Override
+            public void call(Object param) {
+                mEventRankings = (List<EventRanking>) param;
+                // process/display event rankings here
+            }
+        };
+        ServerRestApi.requestEventRanking(callback, mEvent.getId());
+    }
+
+    private void loadEventImages() {
+        final Context context = this;
+        ICallback callback = new ICallback() {
+            @Override
+            public void call(Object param) {
+                mEventImages = (List<EventImage>) param;
+                // process/display event rankings here
+            }
+        };
+        ServerRestApi.requestEventImages(callback, mEvent.getId());
     }
 }
