@@ -5,9 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.HashMap;
-import java.util.List;
 
-import ca.uwaterloo.mapapp.logic.net.serialization.ServerApiJsonDeserializer;
 import ca.uwaterloo.mapapp.logic.net.services.IServerRestService;
 import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.IRequestor;
@@ -23,7 +21,6 @@ public class ServerRestApi {
 
     private static Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeAdapter(List.class, new ServerApiJsonDeserializer<List>())
             .create();
 
     private static RestAdapter restAdapter = new RestAdapter.Builder()

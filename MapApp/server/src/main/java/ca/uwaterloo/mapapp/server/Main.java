@@ -46,6 +46,13 @@ public class Main {
     private static EventDataUpdater eventDataUpdater;
 
     public static void main(String[] args) {
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                e.printStackTrace();
+            }
+        });
+
         // Initialize the database
         try {
             connectionSource = new JdbcConnectionSource(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
@@ -64,7 +71,7 @@ public class Main {
 
         // Update the data once in a while
         DATA_UPDATE_TIMER.scheduleAtFixedRate(buildingDataUpdater, 0, PERIOD_THREE_WEEKS);
-        DATA_UPDATE_TIMER.scheduleAtFixedRate(eventDataUpdater, 0, PERIOD_ONE_DAY);
+        DATA_UPDATE_TIMER.scheduleAtFixedRate(eventDataUpdater, 10000, PERIOD_ONE_DAY);
 
         postGetSetDelete("note", new NoteRoute());
         postGetSetDelete("image", new ImageRoute());
@@ -73,8 +80,12 @@ public class Main {
             @Override
             public Object handle(Request request, Response response) throws Exception {
                 final DataManager dataManager = getDataManager(Event.class);
+                System.out.println("Getting events from database");
                 final List events = dataManager.getAll();
                 Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+                System.out.println("Converting to JSON");
+                response.body(gson.toJson(events));
+                System.out.println("Sending JSON");
                 return gson.toJson(events);
             }
         });

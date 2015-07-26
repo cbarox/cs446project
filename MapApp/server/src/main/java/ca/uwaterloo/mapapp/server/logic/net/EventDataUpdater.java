@@ -17,16 +17,17 @@ import ca.uwaterloo.mapapp.shared.objects.event.Event;
 public class EventDataUpdater extends TimerTask {
 
     private static final String MAGIC_CSS_SELECTOR = "span.fn";
-    private static final DataManager buildingDataManager = Main.getDataManager(Building.class);
-    private static final DataManager eventDataManager = Main.getDataManager(Event.class);
 
     @Override
     public void run() {
+        DataManager buildingDataManager = Main.getDataManager(Building.class);
         final List<Building> buildingList = buildingDataManager.getAll();
         ICallback eventsCallback = new ICallback() {
             @Override
             public void call(Object param) {
                 List<Event> events = (List<Event>) param;
+                System.out.printf("Got %d events from the API%n", events.size());
+                DataManager eventDataManager = Main.getDataManager(Event.class);
                 eventDataManager.insertOrUpdateAll(events);
                 for (Event event : events) {
                     addEventLocation(event, buildingList);
@@ -40,26 +41,47 @@ public class EventDataUpdater extends TimerTask {
         ICallback callback = new ICallback() {
             @Override
             public void call(Object param) {
-                String locationTextFromHtml = (String) param;
-                String buildingCode = matchBuildingCode(buildingList, locationTextFromHtml);
-                // Got a match on the location from event website
-                if (buildingCode != null) {
-                    event.setLocation(buildingCode);
-                    eventDataManager.update(event);
+                try {
+                    System.out.printf("Processing %s%n", event.toString());
+                    if (param == null) {
+                        return;
+                    }
+                    String locationTextFromHtml = (String) param;
+                    String buildingCode = matchBuildingCode(buildingList, locationTextFromHtml);
+                    // Got a match on the location from event website
+                    if (buildingCode != null) {
+                        event.setLocation(buildingCode);
+                        System.out.printf("Matched %s to %s%n", buildingCode, event.toString());
+                        Main.getDataManager(Event.class).update(event);
+                    }
+                    System.out.printf("Done processing %s%n", event.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         };
 
         // Try and get the event's location from the website
         String url = event.getLink();
-        JSoupTask jSoupTask = new JSoupTask(url, MAGIC_CSS_SELECTOR, callback);
-        Thread jSoupTaskThread = new Thread(jSoupTask);
-        jSoupTaskThread.start();
+        if (url != null && !url.isEmpty()) {
+            JSoupTask jSoupTask = new JSoupTask(url, MAGIC_CSS_SELECTOR, callback);
+            try {
+                jSoupTask.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public String matchBuildingCode(List<Building> buildings, String locationText) {
         for (Building building : buildings) {
+            if (building == null) {
+                return null;
+            }
             String buildingCode = building.getBuildingCode();
+            if (buildingCode == null) {
+                return null;
+            }
             if (locationText.contains(buildingCode)) {
                 return buildingCode;
             }
