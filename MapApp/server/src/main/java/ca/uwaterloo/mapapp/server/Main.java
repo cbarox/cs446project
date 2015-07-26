@@ -1,5 +1,8 @@
 package ca.uwaterloo.mapapp.server;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -8,6 +11,7 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 
 import ca.uwaterloo.mapapp.server.logic.net.BuildingDataUpdater;
@@ -63,6 +67,15 @@ public class Main {
         postGetSetDelete("note", new NoteRoute());
         postGetSetDelete("image", new ImageRoute());
         postGetSetDelete("ranking", new RankingRoute());
+        get("/events", new Route() {
+            @Override
+            public Object handle(Request request, Response response) throws Exception {
+                final DataManager dataManager = getDataManager(Event.class);
+                final List events = dataManager.getAll();
+                Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+                return gson.toJson(events);
+            }
+        });
     }
 
     private static void postGetSetDelete(String type, final IGetSetDeleteRoute route)

@@ -1,23 +1,9 @@
 package ca.uwaterloo.mapapp.logic.net;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Environment;
-
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,13 +25,22 @@ public class ServerRestApi {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(List.class, new ServerApiJsonDeserializer<List>())
             .create();
-    
+
     private static RestAdapter restAdapter = new RestAdapter.Builder()
             .setEndpoint(IServerRestService.API_ENDPOINT)
             .setConverter(new GsonConverter(gson))
             .build();
 
     private static IServerRestService service = restAdapter.create(IServerRestService.class);
+
+    public static void requestBuildings(final ICallback callback) {
+        requestData("Buildings", callback, new IRequestor() {
+            @Override
+            public Object request() {
+                return service.getEvents();
+            }
+        });
+    }
 
     public static void requestEvents(final ICallback callback) {
         requestData("Events", callback, new IRequestor() {
@@ -55,6 +50,7 @@ public class ServerRestApi {
             }
         });
     }
+
     public static void requestEventImages(final ICallback callback) {
         requestData("EventImages", callback, new IRequestor() {
             @Override
@@ -63,14 +59,7 @@ public class ServerRestApi {
             }
         });
     }
-    public static void requestEventLocations(final ICallback callback) {
-        requestData("EventLocations", callback, new IRequestor() {
-            @Override
-            public Object request() {
-                return service.getEventLocations();
-            }
-        });
-    }
+
     public static void requestEventTimes(final ICallback callback) {
         requestData("EventTimes", callback, new IRequestor() {
             @Override
@@ -79,7 +68,8 @@ public class ServerRestApi {
             }
         });
     }
-    public static void requestEventNotes(final ICallback callback, final Long eventId) {
+
+    public static void requestEventNotes(final ICallback callback, final Integer eventId) {
         requestData("EventNotes", callback, new IRequestor() {
             @Override
             public Object request() {
@@ -87,7 +77,8 @@ public class ServerRestApi {
             }
         });
     }
-    public static void requestEventRanking(final ICallback callback, final Long eventId) {
+
+    public static void requestEventRanking(final ICallback callback, final Integer eventId) {
         requestData("EventRanking", callback, new IRequestor() {
             @Override
             public Object request() {
@@ -95,15 +86,17 @@ public class ServerRestApi {
             }
         });
     }
+
     public static void addOrSetEventNote(final ICallback callback, final EventNote note) {
         sendData(callback, new IRequestor() {
             @Override
             public Object request() {
-                Response result =service.setEventNote(note);
+                Response result = service.setEventNote(note);
                 return result.getStatus() == 200;
             }
         });
     }
+
     public static void addOrSetEventRanking(final ICallback callback, final EventRanking ranking) {
         sendData(callback, new IRequestor() {
             @Override
@@ -114,6 +107,7 @@ public class ServerRestApi {
             }
         });
     }
+
     public static void deleteEventNote(final ICallback callback, final EventNote note) {
         sendData(callback, new IRequestor() {
             @Override
@@ -123,6 +117,7 @@ public class ServerRestApi {
             }
         });
     }
+
     public static void deleteEventRanking(final ICallback callback, final EventRanking ranking) {
         sendData(callback, new IRequestor() {
             @Override
@@ -133,9 +128,8 @@ public class ServerRestApi {
         });
     }
 
-    private static void requestData(final String cacheKey, final ICallback callback, final IRequestor requestor)
-    {
-        if(localCacheMap.containsKey(cacheKey)) {
+    private static void requestData(final String cacheKey, final ICallback callback, final IRequestor requestor) {
+        if (localCacheMap.containsKey(cacheKey)) {
             callback.call(localCacheMap.get(cacheKey));
             return;
         }
@@ -155,8 +149,7 @@ public class ServerRestApi {
         }).start();
     }
 
-    private static void sendData(final ICallback callback, final IRequestor requestor)
-    {
+    private static void sendData(final ICallback callback, final IRequestor requestor) {
         new Thread(new Runnable() {
             @Override
             public void run() {

@@ -1,5 +1,6 @@
 package ca.uwaterloo.mapapp.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,13 +13,14 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
+import ca.uwaterloo.mapapp.logic.net.ServerRestApi;
+import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
 import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
@@ -114,18 +116,19 @@ public class ViewEventActivity extends ActionBarActivity {
     }
 
     private void loadEventNotes() {
-        /*DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
-        DataManager<EventNote, Long> dataManager = databaseHelper.getDataManager(EventNote.class);
-        mEventNotes = dataManager.find(EventNote.COLUMN_EVENT_ID, mEvent.getId()); */
-        mEventNotes = new ArrayList<>(0);
+        final Context context = this;
+        ICallback callback = new ICallback() {
+            @Override
+            public void call(Object param) {
+                mEventNotes = (List<EventNote>) param;
+                mAdapter = new EventNoteAdapter(context, mEventNotes);
+                mNoteList.setAdapter(mAdapter);
+                ListViewUtil.setListViewHeightBasedOnChildren(mNoteList);
 
-        mAdapter = new EventNoteAdapter(this, mEventNotes);
-        mNoteList.setAdapter(mAdapter);
-        ListViewUtil.setListViewHeightBasedOnChildren(mNoteList);
-
-        if (mEventNotes.isEmpty())
-            moreNotes.setVisibility(View.INVISIBLE);
-        else
-            moreNotes.setVisibility(View.VISIBLE);
+                int visibility = mEventNotes.isEmpty() ? View.INVISIBLE : View.VISIBLE;
+                moreNotes.setVisibility(visibility);
+            }
+        };
+        ServerRestApi.requestEventNotes(callback, mEvent.getId());
     }
 }

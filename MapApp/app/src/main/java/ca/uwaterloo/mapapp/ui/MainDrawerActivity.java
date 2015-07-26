@@ -8,6 +8,7 @@ import java.util.List;
 
 import ca.uwaterloo.mapapp.R;
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
+import ca.uwaterloo.mapapp.logic.net.ServerRestApi;
 import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.net.WaterlooApi;
@@ -40,16 +41,19 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
 
         final DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
 
-        // Cache buildings
+        // Cache buildings once
+        final DataManager buildingsDataManager = databaseHelper.getDataManager(Building.class);
         ICallback buildingsCallback = new ICallback() {
             @Override
             public void call(Object param) {
-                DataManager<Building, String> buildingsDataManager = databaseHelper.getDataManager(Building.class);
                 List<Building> buildings = (List<Building>) param;
                 buildingsDataManager.insertOrUpdateAll(buildings);
             }
         };
-        WaterlooApi.requestBuildings(buildingsCallback);
+        final List buildings = buildingsDataManager.getAll();
+        if (buildings.size() == 0) {
+            WaterlooApi.requestBuildings(buildingsCallback);
+        }
 
         // Cache events
         ICallback eventsCallback = new ICallback() {
@@ -60,17 +64,7 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
                 eventDataManager.insertOrUpdateAll(events);
             }
         };
-        WaterlooApi.requestEvents(eventsCallback);
-
-        // TODO implement this
-        // Cache event locations
-        ICallback eventLocationsCallback = new ICallback() {
-            @Override
-            public void call(Object param) {
-
-            }
-        };
-        // TODO add rest service for our server to request from
+        ServerRestApi.requestEvents(eventsCallback);
     }
 
     @Override
