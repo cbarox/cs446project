@@ -9,6 +9,7 @@ import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.net.WaterlooApi;
 import ca.uwaterloo.mapapp.shared.objects.building.Building;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
+import ca.uwaterloo.mapapp.shared.objects.event.EventTimes;
 
 /**
  * Created by cjbarrac
@@ -31,10 +32,27 @@ public class EventDataUpdater extends TimerTask {
                 eventDataManager.insertOrUpdateAll(events);
                 for (Event event : events) {
                     addEventLocation(event, buildingList);
+                    addEventTimes(event);
                 }
             }
         };
         WaterlooApi.requestEvents(eventsCallback);
+    }
+
+    private void addEventTimes(Event event) {
+        final Integer eventId = event.getId();
+        DataManager eventTimesDataManager = Main.getDataManager(EventTimes.class);
+        final List eventTimesList = eventTimesDataManager.find(EventTimes.COLUMN_EVENT_ID, eventId);
+
+        // already have times in the db
+        if (eventTimesList.size() > 0) {
+            return;
+        }
+        for (EventTimes eventTimes : event.getTimes()) {
+            eventTimes.setEventId(eventId);
+            eventTimesDataManager.insert(eventTimes);
+        }
+
     }
 
     public void addEventLocation(final Event event, final List<Building> buildingList) {

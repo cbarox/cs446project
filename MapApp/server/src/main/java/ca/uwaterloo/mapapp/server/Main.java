@@ -25,6 +25,7 @@ import ca.uwaterloo.mapapp.shared.objects.building.Building;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
 import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
 import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
+import ca.uwaterloo.mapapp.shared.objects.event.EventTimes;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -38,6 +39,7 @@ public class Main {
     public static final String DATABASE_URL = "jdbc:mysql://localhost/whatsnuw";
     public static final String DATABASE_USERNAME = "root";
     public static final String DATABASE_PASSWORD = "whatsnuw";
+    public static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
     private static final Timer DATA_UPDATE_TIMER = new Timer("dataUpdateTimer");
     private static final int PERIOD_ONE_DAY = 86400000;
     private static final int PERIOD_THREE_WEEKS = 1814400000;
@@ -83,25 +85,35 @@ public class Main {
                 final DataManager dataManager = getDataManager(Event.class);
                 System.out.println("Getting events from database");
                 final List events = dataManager.getAll();
-                Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
                 System.out.println("Converting to JSON");
-                response.body(gson.toJson(events));
+                response.body(GSON.toJson(events));
                 System.out.println("Sending JSON");
-                return gson.toJson(events);
+                return GSON.toJson(events);
+            }
+        });
+
+        get("/times/:id", new Route() {
+            @Override
+            public Object handle(Request request, Response response) throws Exception {
+                Integer eventId = Integer.parseInt(request.params("id"));
+                final DataManager dataManager = getDataManager(EventTimes.class);
+                System.out.printf("/times: Getting event times for event %d from db%n", eventId);
+                final List eventTimes = dataManager.getAll();
+                System.out.printf("/times: Got %d event times for event %d%n", eventTimes.size(), eventId);
+                response.body(GSON.toJson(eventTimes));
+                System.out.println("/times: Sending JSON");
+                return GSON.toJson(eventTimes);
             }
         });
     }
 
-    private static void postGetSetDelete(final String type, final IGetSetDeleteRoute route)
-    {
+    private static void postGetSetDelete(final String type, final IGetSetDeleteRoute route) {
         get(String.format("/%s/:event", type), new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
                 try {
                     return route.get(request, response);
-                }
-                catch(Exception e)
-                {
+                } catch (Exception e) {
                     System.err.println("Failed to get '" + type + "'. Exception: " + e.getMessage());
                 }
                 return null;
@@ -112,9 +124,7 @@ public class Main {
             public Object handle(Request request, Response response) throws Exception {
                 try {
                     return route.set(request, response);
-                }
-                catch(Exception e)
-                {
+                } catch (Exception e) {
                     System.err.println("Failed to set '" + type + "'. Exception: " + e.getMessage());
                 }
                 return null;
@@ -125,9 +135,7 @@ public class Main {
             public Object handle(Request request, Response response) throws Exception {
                 try {
                     return route.delete(request, response);
-                }
-                catch(Exception e)
-                {
+                } catch (Exception e) {
                     System.err.println("Failed to delete '" + type + "'. Exception: " + e.getMessage());
                 }
                 return null;

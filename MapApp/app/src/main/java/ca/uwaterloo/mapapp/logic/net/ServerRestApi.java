@@ -78,11 +78,11 @@ public class ServerRestApi {
         });
     }
 
-    public static void requestEventTimes(final ICallback callback) {
+    public static void requestEventTimes(final ICallback callback, final Integer eventId) {
         requestData("EventTimes", callback, new IRequestor() {
             @Override
             public Object request() {
-                return service.getEventTimes();
+                return service.getEventTimes(eventId);
             }
         });
     }

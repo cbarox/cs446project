@@ -32,6 +32,8 @@ public class Event implements Serializable {
     @DatabaseField(columnName = COLUMN_LOCATION)
     private String location;
 
+    private EventTimes[] times;
+
     public Integer getId() {
         return id;
     }
@@ -62,6 +64,14 @@ public class Event implements Serializable {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public EventTimes[] getTimes() {
+        return times;
+    }
+
+    public void setTimes(EventTimes[] times) {
+        this.times = times;
     }
 
     @Override

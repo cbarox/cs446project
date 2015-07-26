@@ -34,8 +34,8 @@ public interface IServerRestService {
     @DELETE("/image")
     Response deleteEventImage(@Path("id") Long rankingId);
 
-    @GET("/event_times")
-    List<EventTimes> getEventTimes();
+    @GET("/times/{id}")
+    List<EventTimes> getEventTimes(@Path("id") Integer eventId);
 
     @GET("/note/{id}")
     List<EventNote> getEventNotes(@Path("id") Integer eventId);
