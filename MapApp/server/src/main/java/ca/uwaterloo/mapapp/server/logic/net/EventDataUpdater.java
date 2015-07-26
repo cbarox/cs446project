@@ -9,38 +9,34 @@ import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.net.WaterlooApi;
 import ca.uwaterloo.mapapp.shared.objects.building.Building;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
-import ca.uwaterloo.mapapp.shared.objects.event.EventLocation;
 
 /**
  * Created by cjbarrac
  * 7/1/15
  */
-public class EventLocationUpdater extends TimerTask {
+public class EventDataUpdater extends TimerTask {
 
-    private static DataManager eventLocationDataManager = Main.getDataManager(EventLocation.class);
+    private static final String MAGIC_CSS_SELECTOR = "span.fn";
+    private static final DataManager buildingDataManager = Main.getDataManager(Building.class);
+    private static final DataManager eventDataManager = Main.getDataManager(Event.class);
 
     @Override
     public void run() {
-        ICallback buildingsCallback = new ICallback() {
+        final List<Building> buildingList = buildingDataManager.getAll();
+        ICallback eventsCallback = new ICallback() {
             @Override
             public void call(Object param) {
-                final List<Building> buildingList = (List<Building>) param;
-                ICallback eventsCallback = new ICallback() {
-                    @Override
-                    public void call(Object param) {
-                        List<Event> events = (List<Event>) param;
-                        for (Event event : events) {
-                            processEvent(event, buildingList);
-                        }
-                    }
-                };
-                WaterlooApi.requestEvents(eventsCallback);
+                List<Event> events = (List<Event>) param;
+                eventDataManager.insertOrUpdateAll(events);
+                for (Event event : events) {
+                    addEventLocation(event, buildingList);
+                }
             }
         };
-        WaterlooApi.requestBuildings(buildingsCallback);
+        WaterlooApi.requestEvents(eventsCallback);
     }
 
-    public void processEvent(final Event event, final List<Building> buildingList) {
+    public void addEventLocation(final Event event, final List<Building> buildingList) {
         ICallback callback = new ICallback() {
             @Override
             public void call(Object param) {
@@ -48,19 +44,17 @@ public class EventLocationUpdater extends TimerTask {
                 String buildingCode = matchBuildingCode(buildingList, locationTextFromHtml);
                 // Got a match on the location from event website
                 if (buildingCode != null) {
-                    EventLocation eventLocation = new EventLocation();
-                    eventLocation.setEventId(event.getId());
-                    eventLocation.setLocation(buildingCode);
-                    eventLocationDataManager.insertOrUpdate(eventLocation);
+                    event.setLocation(buildingCode);
+                    eventDataManager.update(event);
                 }
             }
         };
 
         // Try and get the event's location from the website
         String url = event.getLink();
-        JSoupApi jSoupApi = new JSoupApi(url, "span.fn", callback);
-        Thread jSoupApiThread = new Thread(jSoupApi);
-        jSoupApiThread.start();
+        JSoupTask jSoupTask = new JSoupTask(url, MAGIC_CSS_SELECTOR, callback);
+        Thread jSoupTaskThread = new Thread(jSoupTask);
+        jSoupTaskThread.start();
     }
 
     public String matchBuildingCode(List<Building> buildings, String locationText) {
