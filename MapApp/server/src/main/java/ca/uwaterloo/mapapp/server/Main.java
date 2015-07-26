@@ -84,9 +84,9 @@ public class Main {
                 final List events = dataManager.getAll();
                 Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
                 System.out.println("Converting to JSON");
-                response.body("events:" + gson.toJson(events));
+                response.body(gson.toJson(events));
                 System.out.println("Sending JSON");
-                return "events:" + gson.toJson(events);
+                return gson.toJson(events);
             }
         });
     }
