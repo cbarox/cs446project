@@ -23,6 +23,7 @@ import ca.uwaterloo.mapapp.logic.net.ServerRestApi;
 import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
+import ca.uwaterloo.mapapp.shared.objects.event.EventImage;
 import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
 import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 import ca.uwaterloo.mapapp.shared.objects.event.EventTimes;
@@ -51,6 +52,7 @@ public class ViewEventActivity extends ActionBarActivity {
     private EventNoteAdapter mAdapter;
     private List<EventTimes> mEventTimes;
     private List<EventRanking> mEventRankings;
+    private List<EventImage> mEventImages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,5 +164,17 @@ public class ViewEventActivity extends ActionBarActivity {
             }
         };
         ServerRestApi.requestEventRanking(callback, mEvent.getId());
+    }
+
+    private void loadEventImages() {
+        final Context context = this;
+        ICallback callback = new ICallback() {
+            @Override
+            public void call(Object param) {
+                mEventImages = (List<EventImage>) param;
+                // process/display event rankings here
+            }
+        };
+        ServerRestApi.requestEventImages(callback, mEvent.getId());
     }
 }
