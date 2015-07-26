@@ -7,7 +7,6 @@ import ca.uwaterloo.mapapp.shared.objects.event.EventImage;
 import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
 import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 import ca.uwaterloo.mapapp.shared.objects.event.EventTimes;
-import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
@@ -29,10 +28,10 @@ public interface IServerRestService {
     List<EventImage> getEventImages();
 
     @POST("/image")
-    Response setEventImage(@Body EventImage image);
+    void setEventImage(@Body EventImage image);
 
     @DELETE("/image")
-    Response deleteEventImage(@Path("id") Long rankingId);
+    void deleteEventImage(@Path("id") Long rankingId);
 
     @GET("/times/{id}")
     List<EventTimes> getEventTimes(@Path("id") Integer eventId);
@@ -41,17 +40,17 @@ public interface IServerRestService {
     List<EventNote> getEventNotes(@Path("id") Integer eventId);
 
     @POST("/note")
-    Response setEventNote(@Body EventNote note);
+    void setEventNote(@Body EventNote note);
 
     @DELETE("/note/{id}")
-    Response deleteEventNote(@Path("id") Long eventNoteId);
+    void deleteEventNote(@Path("id") Long eventNoteId);
 
     @GET("/ranking/{id}")
     EventRanking getEventRanking(@Path("id") Integer eventId);
 
     @POST("/ranking")
-    Response setEventRanking(@Body EventRanking ranking);
+    void setEventRanking(@Body EventRanking ranking);
 
     @DELETE("/ranking/{id}")
-    Response deleteEventRanking(@Path("id") Long rankingId);
+    void deleteEventRanking(@Path("id") Long rankingId);
 }

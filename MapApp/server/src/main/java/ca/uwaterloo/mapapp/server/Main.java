@@ -59,6 +59,7 @@ public class Main {
         // Initialize the database
         try {
             connectionSource = new JdbcConnectionSource(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
+            MagicLogger.log("Creating database tables");
             TableUtils.createTableIfNotExists(connectionSource, EventNote.class);
             TableUtils.createTableIfNotExists(connectionSource, EventRanking.class);
             //TableUtils.createTableIfNotExists(connectionSource, EventImage.class);
@@ -72,7 +73,7 @@ public class Main {
             return;
         }
 
-        // Update the data once in a while
+        MagicLogger.log("Starting updaters");
         DATA_UPDATE_TIMER.scheduleAtFixedRate(buildingDataUpdater, 0, PERIOD_THREE_WEEKS);
         DATA_UPDATE_TIMER.scheduleAtFixedRate(eventDataUpdater, 10000, PERIOD_ONE_DAY);
 
@@ -83,11 +84,11 @@ public class Main {
             @Override
             public Object handle(Request request, Response response) throws Exception {
                 final DataManager dataManager = getDataManager(Event.class);
-                System.out.println("Getting events from database");
+                MagicLogger.log("Getting events from database");
                 final List events = dataManager.getAll();
-                System.out.println("Converting to JSON");
+                MagicLogger.log("Got %d events from database");
                 response.body(GSON.toJson(events));
-                System.out.println("Sending JSON");
+                MagicLogger.log("Sending JSON response");
                 return GSON.toJson(events);
             }
         });
@@ -97,11 +98,11 @@ public class Main {
             public Object handle(Request request, Response response) throws Exception {
                 Integer eventId = Integer.parseInt(request.params("id"));
                 final DataManager dataManager = getDataManager(EventTimes.class);
-                System.out.printf("/times: Getting event times for event %d from db%n", eventId);
+                MagicLogger.log("Getting event times for event %d from db", eventId);
                 final List eventTimes = dataManager.getAll();
-                System.out.printf("/times: Got %d event times for event %d%n", eventTimes.size(), eventId);
+                MagicLogger.log("Got %d event times for event %d", eventTimes.size(), eventId);
                 response.body(GSON.toJson(eventTimes));
-                System.out.println("/times: Sending JSON");
+                MagicLogger.log("Sending JSON response");
                 return GSON.toJson(eventTimes);
             }
         });
@@ -114,7 +115,8 @@ public class Main {
                 try {
                     return route.get(request, response);
                 } catch (Exception e) {
-                    System.err.println("Failed to get '" + type + "'. Exception: " + e.getMessage());
+                    MagicLogger.log("Failed to get %s from database", type);
+                    e.printStackTrace();
                 }
                 return null;
             }
@@ -125,7 +127,8 @@ public class Main {
                 try {
                     return route.set(request, response);
                 } catch (Exception e) {
-                    System.err.println("Failed to set '" + type + "'. Exception: " + e.getMessage());
+                    MagicLogger.log("Failed to update %s in database", type);
+                    e.printStackTrace();
                 }
                 return null;
             }
@@ -136,7 +139,8 @@ public class Main {
                 try {
                     return route.delete(request, response);
                 } catch (Exception e) {
-                    System.err.println("Failed to delete '" + type + "'. Exception: " + e.getMessage());
+                    MagicLogger.log("Failed to delete %s from database", type);
+                    e.printStackTrace();
                 }
                 return null;
             }

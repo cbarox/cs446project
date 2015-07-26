@@ -3,6 +3,7 @@ package ca.uwaterloo.mapapp.server.logic.net;
 import java.util.List;
 import java.util.TimerTask;
 
+import ca.uwaterloo.mapapp.server.MagicLogger;
 import ca.uwaterloo.mapapp.server.Main;
 import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
@@ -27,7 +28,7 @@ public class EventDataUpdater extends TimerTask {
             @Override
             public void call(Object param) {
                 List<Event> events = (List<Event>) param;
-                System.out.printf("Got %d events from the API%n", events.size());
+                MagicLogger.log("Got %d events from the API", events.size());
                 DataManager eventDataManager = Main.getDataManager(Event.class);
                 eventDataManager.insertOrUpdateAll(events);
                 for (Event event : events) {
@@ -48,6 +49,7 @@ public class EventDataUpdater extends TimerTask {
         if (eventTimesList.size() > 0) {
             return;
         }
+        MagicLogger.log("Adding %d event times to the database", eventTimesList.size());
         for (EventTimes eventTimes : event.getTimes()) {
             eventTimes.setEventId(eventId);
             eventTimesDataManager.insert(eventTimes);
@@ -60,7 +62,7 @@ public class EventDataUpdater extends TimerTask {
             @Override
             public void call(Object param) {
                 try {
-                    System.out.printf("Processing %s%n", event.toString());
+                    MagicLogger.log("Processing %s", event.toString());
                     if (param == null) {
                         return;
                     }
@@ -69,12 +71,12 @@ public class EventDataUpdater extends TimerTask {
                     // Got a match on the location from event website
                     if (buildingCode != null) {
                         event.setLocation(buildingCode);
-                        System.out.printf("Matched %s to %s%n", buildingCode, event.toString());
+                        MagicLogger.log("Matched %s to %s", buildingCode, event.toString());
                         Main.getDataManager(Event.class).update(event);
                     }
-                    System.out.printf("Done processing %s%n", event.toString());
+                    MagicLogger.log("Done processing %s", event.toString());
                 } catch (Exception e) {
-                    System.err.printf("Error processing %s%n", event.toString());
+                    MagicLogger.log("Error processing %s", event.toString());
                     e.printStackTrace();
                 }
             }
@@ -87,11 +89,11 @@ public class EventDataUpdater extends TimerTask {
             try {
                 jSoupTask.run();
             } catch (Exception e) {
-                System.err.printf("Error running jsoupTask from %s%n", url);
+                MagicLogger.log("Error running jsoupTask from %s", url);
                 e.printStackTrace();
             }
         }
-        System.out.printf("Successfully ran jsoupTask from %s%n", url);
+        MagicLogger.log("Successfully ran jsoupTask from %s", url);
     }
 
     public String matchBuildingCode(List<Building> buildings, String locationText) {
