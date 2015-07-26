@@ -9,6 +9,7 @@ import java.util.HashMap;
 import ca.uwaterloo.mapapp.logic.net.services.IServerRestService;
 import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.IRequestor;
+import ca.uwaterloo.mapapp.shared.objects.event.EventImage;
 import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
 import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 import retrofit.RestAdapter;
@@ -53,6 +54,26 @@ public class ServerRestApi {
             @Override
             public Object request() {
                 return service.getEventImages();
+            }
+        });
+    }
+
+    public static void addOrSetEventImage(final ICallback callback, final EventImage image) {
+        sendData(callback, new IRequestor() {
+            @Override
+            public Object request() {
+                Response result = service.setEventImage(image);
+                return result.getStatus() == 200;
+            }
+        });
+    }
+
+    public static void deleteEventImage(final ICallback callback, final EventImage image) {
+        sendData(callback, new IRequestor() {
+            @Override
+            public Object request() {
+                Response result = service.deleteEventImage(image.getId());
+                return result.getStatus() == 200;
             }
         });
     }
