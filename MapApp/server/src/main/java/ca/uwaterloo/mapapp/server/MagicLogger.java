@@ -29,7 +29,11 @@ public class MagicLogger {
 
     public static void log(String format, Object... objects) {
         final String logFormat = getCallerInfo() + format + "%n";
-        System.out.printf(logFormat, objects);
+        try {
+            System.out.printf(logFormat, objects);
+        } catch (Exception e) {
+            System.out.print(logFormat);
+        }
     }
 
 }
