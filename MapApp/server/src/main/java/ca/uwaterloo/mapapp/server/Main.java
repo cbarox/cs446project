@@ -42,8 +42,8 @@ public class Main {
     private static final int PERIOD_THREE_WEEKS = 1814400000;
     private static HashMap<Class, DataManager> dataManagers = new HashMap<>();
     private static ConnectionSource connectionSource;
-    private static BuildingDataUpdater buildingDataUpdater = new BuildingDataUpdater();
-    private static EventDataUpdater eventDataUpdater = new EventDataUpdater();
+    private static BuildingDataUpdater buildingDataUpdater;
+    private static EventDataUpdater eventDataUpdater;
 
     public static void main(String[] args) {
         // Initialize the database
@@ -54,6 +54,8 @@ public class Main {
             //TableUtils.createTableIfNotExists(connectionSource, EventImage.class);
             TableUtils.createTableIfNotExists(connectionSource, Building.class);
             TableUtils.createTableIfNotExists(connectionSource, Event.class);
+            buildingDataUpdater = new BuildingDataUpdater();
+            eventDataUpdater = new EventDataUpdater();
         } catch (SQLException e) {
             System.err.println("Unable to create connection to the database");
             e.printStackTrace();
