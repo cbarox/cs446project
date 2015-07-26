@@ -30,7 +30,6 @@ public class EventDataUpdater extends TimerTask {
                 DataManager eventDataManager = Main.getDataManager(Event.class);
                 eventDataManager.insertOrUpdateAll(events);
                 for (Event event : events) {
-                    System.out.printf("Processing %s%n", event.toString());
                     addEventLocation(event, buildingList);
                 }
                 System.out.println("Done processing events");
@@ -43,6 +42,7 @@ public class EventDataUpdater extends TimerTask {
         ICallback callback = new ICallback() {
             @Override
             public void call(Object param) {
+                System.out.printf("Processing %s%n", event.toString());
                 if (param == null) {
                     return;
                 }
@@ -52,9 +52,9 @@ public class EventDataUpdater extends TimerTask {
                 if (buildingCode != null) {
                     event.setLocation(buildingCode);
                     System.out.printf("Matched %s to %s%n", buildingCode, event.toString());
-                    DataManager eventDataManager = Main.getDataManager(Event.class);
-                    eventDataManager.update(event);
+                    Main.getDataManager(Event.class).update(event);
                 }
+                System.out.printf("Done processing %s%n", event.toString());
             }
         };
 
