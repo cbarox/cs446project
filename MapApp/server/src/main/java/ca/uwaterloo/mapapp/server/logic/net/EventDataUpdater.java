@@ -32,7 +32,6 @@ public class EventDataUpdater extends TimerTask {
                 for (Event event : events) {
                     addEventLocation(event, buildingList);
                 }
-                System.out.println("Done processing events");
             }
         };
         WaterlooApi.requestEvents(eventsCallback);
