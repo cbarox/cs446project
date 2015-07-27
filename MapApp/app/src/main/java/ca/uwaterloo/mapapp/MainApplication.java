@@ -1,7 +1,6 @@
 package ca.uwaterloo.mapapp;
 
 import android.app.Application;
-import android.util.Log;
 
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
 
@@ -11,7 +10,7 @@ import ca.uwaterloo.mapapp.data.DatabaseHelper;
  */
 public class MainApplication extends Application {
 
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     @Override
     public void onCreate() {
@@ -27,8 +26,6 @@ public class MainApplication extends Application {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable exception) {
-                String msg = String.format("Caught unhandled exception\n%s", exception.toString());
-                Log.e("Whats nUW", msg);
                 exception.printStackTrace();
             }
         });
