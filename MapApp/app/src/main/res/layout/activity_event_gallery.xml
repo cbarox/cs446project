@@ -19,6 +19,7 @@
         android:layout_alignParentStart="false"
         tools:listitem="@android:layout/simple_list_item_checked"
         android:layout_below="@+id/tool_bar"
-        android:numColumns="2" />
+        android:numColumns="2"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>
