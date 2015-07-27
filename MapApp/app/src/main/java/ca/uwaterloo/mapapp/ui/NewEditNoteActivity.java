@@ -34,7 +34,8 @@ import ca.uwaterloo.mapapp.shared.objects.building.Building;
 
 public class NewEditNoteActivity extends ActionBarActivity {
 
-    public static final String ARG_SELECTED_BUILD = "selected_building";
+    public static final String ARG_SELECTED_BUILD = "ARG_SELECTED_BUILDING";
+    public static final String ARG_SELECTED_ROOM = "ARG_SELECTED_ROOM";
     public static final String ARG_NOTE_ID = "note_id";
     public static final String ARG_TAG_ID = "tag_id";
 
@@ -358,6 +359,10 @@ public class NewEditNoteActivity extends ActionBarActivity {
                 mBuildingBtn.setText(this.getString(R.string.note_no_building));
             } else {
                 mBuildingBtn.setText(selectedBuildCode);
+                String roomNum = b.getString(ARG_SELECTED_ROOM, "");
+                if (!roomNum.isEmpty()) {
+                    mRoomNumber.setText(roomNum);
+                }
             }
             long tagId = b.getLong(ARG_TAG_ID, -1);
             if (tagId > 0) {

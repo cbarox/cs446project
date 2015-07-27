@@ -1,6 +1,5 @@
 package ca.uwaterloo.mapapp.ui;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 
@@ -96,11 +95,11 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
                 allNotesFragment);
         this.addSection(allNotesSection);
 
-        allBuildingsFragment = new AllBuildingsFragment();
+        /*allBuildingsFragment = new AllBuildingsFragment();
         allBuildingsSection = newSection("All Buildings",
                 res.getDrawable(R.drawable.ic_store_black_24dp),
                 allBuildingsFragment);
-        this.addSection(allBuildingsSection);
+        this.addSection(allBuildingsSection);*/
 
         allTagsFragment = new AllTagsFragment();
         allTagsSections = newSection("All Tags",
@@ -108,9 +107,9 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
                 allTagsFragment);
         this.addSection(allTagsSections);
 
-        this.addBottomSection(newSection("Settings",
+        /*this.addBottomSection(newSection("Settings",
                 res.getDrawable(R.drawable.ic_settings_black_24dp),
-                new Intent(this, SettingsActivity.class)));
+                new Intent(this, SettingsActivity.class)));*/
 
         setBackPattern(MaterialNavigationDrawer.BACKPATTERN_BACK_TO_FIRST);
 
