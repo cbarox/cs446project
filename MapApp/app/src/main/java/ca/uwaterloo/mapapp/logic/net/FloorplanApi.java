@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -79,9 +80,11 @@ public class FloorplanApi {
                 try {
                     Object result = requestor.request();
                     localCacheMap.put(cacheKey, result);
+                    Log.i("FloorplanApi", "requestData complete" );
                     callback.call(result);
                 } catch (Exception e) {
-                    System.err.println(e.toString());
+                    Log.e("FloorplanApi", "Exception:" , e);
+                    e.printStackTrace();
                 }
 
             }
@@ -97,15 +100,17 @@ public class FloorplanApi {
                 public void run() {
                     try {
                         String absoluteDownloadPath = DownloadFile(floorplanURL, floor, context);
-                        System.out.println(String.format("Downloaded floorplan image to %s", absoluteDownloadPath));
+                        Log.i("Floorplan", "Downloaded floorplan image to " + absoluteDownloadPath);
                         callback.call(absoluteDownloadPath);
                     } catch (Exception e) {
-                        System.err.println(e.toString());
+                        Log.e("FloorplanApi", "Exception:" , e);
+                        e.printStackTrace();
                     }
                 }
             }).start();
         } catch (MalformedURLException e) {
-            System.err.println(e.toString());
+            Log.e("FloorplanApi", "Exception:" , e);
+            e.printStackTrace();
         }
     }
 

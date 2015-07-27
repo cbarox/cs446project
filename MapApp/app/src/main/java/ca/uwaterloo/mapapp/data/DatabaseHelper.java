@@ -90,8 +90,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             dao = getDao(clazz);
             dataManager = new DataManager<>(dao);
             dataManagers.put(clazz, dataManager);
+            Log.i("DatabaseHelper", "loaded data manager successfully" );
             return dataManager;
         } catch (SQLException e) {
+            Log.e("DatabaseHelper", "Exception:" + e.toString() );
             e.printStackTrace();
         }
         return null;
