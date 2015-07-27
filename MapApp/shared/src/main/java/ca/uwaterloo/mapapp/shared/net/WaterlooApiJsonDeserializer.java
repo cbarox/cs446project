@@ -31,10 +31,10 @@ public class WaterlooApiJsonDeserializer<T> implements JsonDeserializer<T> {
         String dateString = split[0] + "+" + timezone;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         try {
-            System.out.println("Successfully deserialized date " + date );
+           System.out.println("WaterlooApiJsonDeserializer: Successfully deserialized date " + date);
             return dateFormat.parse(dateString);
         } catch (ParseException e) {
-            System.err.println("Failed to deserialize date  " + date );
+            System.err.println("WaterlooApiJsonDeserializer: Failed to deserialize date  " + date + " " + e.toString());
             e.printStackTrace();
         }
         return null;
