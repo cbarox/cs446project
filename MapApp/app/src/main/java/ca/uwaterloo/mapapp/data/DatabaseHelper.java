@@ -93,7 +93,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             Log.i("DatabaseHelper", "loaded data manager successfully" );
             return dataManager;
         } catch (SQLException e) {
-            Log.e("DatabaseHelper", "Exception:" + e.toString() );
+            Log.e("DatabaseHelper", "Exception:", e );
             e.printStackTrace();
         }
         return null;
