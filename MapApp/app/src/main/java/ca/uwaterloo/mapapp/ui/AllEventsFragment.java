@@ -3,6 +3,7 @@ package ca.uwaterloo.mapapp.ui;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +77,7 @@ public class AllEventsFragment extends Fragment {
                 ServerRestApi.requestEvents(eventsCallback);
             }
         });
-
+        Log.i("AllEventsFragment", "onCreateView finished" );
         return view;
     }
 

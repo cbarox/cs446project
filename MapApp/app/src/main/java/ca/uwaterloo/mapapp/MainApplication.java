@@ -29,6 +29,7 @@ public class MainApplication extends Application {
             public void uncaughtException(Thread thread, Throwable exception) {
                 String msg = String.format("Caught unhandled exception\n%s", exception.toString());
                 Log.e("Whats nUW", msg);
+                exception.printStackTrace();
             }
         });
     }
