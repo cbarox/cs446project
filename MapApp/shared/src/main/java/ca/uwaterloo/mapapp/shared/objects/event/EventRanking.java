@@ -24,7 +24,7 @@ public class EventRanking implements Serializable {
     @DatabaseField(columnName = COLUMN_EVENT_ID)
     private Integer eventId;
 
-    @DatabaseField(columnName = COLUMN_ID)
+    @DatabaseField(columnName = COLUMN_ID, id = true)
     private String id;
 
     public Float getRanking() {
