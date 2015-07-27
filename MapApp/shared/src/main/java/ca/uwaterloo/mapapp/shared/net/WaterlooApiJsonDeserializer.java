@@ -12,7 +12,9 @@ import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 
 /**
@@ -25,19 +27,18 @@ public class WaterlooApiJsonDeserializer<T> implements JsonDeserializer<T> {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 
-    public static Date deserializeDate(String date) {
-        String[] split = date.split("\\+");
-        String timezone = split[1].replace(":", "");
-        String dateString = split[0] + "+" + timezone;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+    public static Calendar toCalendar(final String iso8601string)
+            throws ParseException {
+        Calendar calendar = GregorianCalendar.getInstance();
+        String s = iso8601string.replace("Z", "+00:00");
         try {
-           System.out.println("WaterlooApiJsonDeserializer: Successfully deserialized date " + date);
-            return dateFormat.parse(dateString);
-        } catch (ParseException e) {
-            System.err.println("WaterlooApiJsonDeserializer: Failed to deserialize date  " + date + " " + e.toString());
-            e.printStackTrace();
+            s = s.substring(0, 22) + s.substring(23);  // to get rid of the ":"
+        } catch (IndexOutOfBoundsException e) {
+            throw new ParseException("Invalid length", 0);
         }
-        return null;
+        Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").parse(s);
+        calendar.setTime(date);
+        return calendar;
     }
 
     @Override
