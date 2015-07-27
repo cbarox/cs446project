@@ -67,6 +67,10 @@
             android:name=".ui.FilteredEventListActivity"
             android:label="@string/title_activity_filtered_event_list" >
         </activity>
+        <activity
+            android:name=".ui.EventGalleryActivity"
+            android:label="@string/title_activity_event_gallery" >
+        </activity>
     </application>
 
 </manifest>

@@ -1,0 +1,25 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ca.uwaterloo.mapapp.ui.EventGalleryActivity">
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/tool_bar_accent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:id="@+id/tool_bar" />
+
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/image_grid"
+        android:layout_alignParentStart="false"
+        tools:listitem="@android:layout/simple_list_item_checked"
+        android:layout_below="@+id/tool_bar"
+        android:numColumns="2"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>
