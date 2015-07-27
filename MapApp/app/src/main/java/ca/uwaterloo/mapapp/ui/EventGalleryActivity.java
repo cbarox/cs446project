@@ -13,6 +13,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import ca.uwaterloo.mapapp.R;
 import ca.uwaterloo.mapapp.data.DatabaseHelper;
+import ca.uwaterloo.mapapp.logic.net.ServerRestApi;
+import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.objects.event.EventImage;
 import ca.uwaterloo.mapapp.ui.adapters.EventImageAdapter;
@@ -52,12 +54,15 @@ public class EventGalleryActivity extends ActionBarActivity {
         // Load the list of events by building code
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
         eventId = b.getInt(ARG_FILTER_VALUE_INTEGER, 0);
-        //filterName = eventId;
-        DataManager<EventImage, Long> dataManager = databaseHelper.getDataManager(EventImage.class);
-        imageList = dataManager.find(EventImage.COLUMN_EVENT_ID, eventId);
-
-        mAdapter = new EventImageAdapter(this, imageList);
-        mImageGrid.setAdapter(mAdapter);
+        ICallback callback = new ICallback() {
+            @Override
+            public void call(Object param) {
+                imageList = (List<EventImage>)param;
+                mAdapter = new EventImageAdapter(EventGalleryActivity.this, imageList);
+                mImageGrid.setAdapter(mAdapter);
+            }
+        };
+        ServerRestApi.requestEventImages(callback, eventId);
     }
 
     @Override

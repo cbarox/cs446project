@@ -2,17 +2,22 @@ package ca.uwaterloo.mapapp.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -47,6 +52,8 @@ public class ViewEventActivity extends ActionBarActivity {
     protected Button moreNotes;
     @InjectView(R.id.galleryButton)
     protected Button galleryButton;
+    @InjectView(R.id.add_picture)
+    protected Button addPictureButton;
 
     private Event mEvent;
 
@@ -55,6 +62,8 @@ public class ViewEventActivity extends ActionBarActivity {
     private List<EventTimes> mEventTimes;
     private List<EventRanking> mEventRankings;
     private List<EventImage> mEventImages;
+
+    private static final int REQUEST_IMAGE_CAPTURE = 105;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,11 +139,48 @@ public class ViewEventActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+        addPictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if(takePictureIntent.resolveActivity(getPackageManager()) != null)
+                {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+            }
+        });
+
 
         loadEventNotes();
         loadEventTimes();
         loadEventRankings();
         loadEventImages();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if(requestCode == REQUEST_IMAGE_CAPTURE)
+        {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap)extras.get("data");
+            ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bitmapStream);
+            byte[] b = bitmapStream.toByteArray();
+            String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+
+            EventImage eImage = new EventImage();
+            eImage.setEventId(mEvent.getId());
+            eImage.setBase64(imageEncoded);
+            ServerRestApi.addOrSetEventImage(new ICallback() {
+                @Override
+                public void call(Object param) {
+                    if((boolean)param)
+                        Toast.makeText(getApplicationContext(), "Image posted", Toast.LENGTH_SHORT);
+                    else Toast.makeText(getApplicationContext(), "Image posting failed!", Toast.LENGTH_SHORT);
+                }
+            }, eImage);
+        }
     }
 
     private void loadEventNotes() {

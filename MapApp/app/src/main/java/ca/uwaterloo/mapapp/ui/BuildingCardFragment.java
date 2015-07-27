@@ -109,6 +109,16 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
             }
         });
 
+        mEventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), ViewEventActivity.class);
+                intent.putExtra(ViewEventActivity.ARG_EVENT_ID, id);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
+            }
+        });
+
         mFloorPlanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

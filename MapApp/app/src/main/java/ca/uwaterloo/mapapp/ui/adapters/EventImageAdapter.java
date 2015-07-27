@@ -53,7 +53,7 @@ public class EventImageAdapter extends BaseAdapter {
         EventImage image = images.get(position);
 
         ImageView imageView = (ImageView)view.findViewById(R.id.imageView);
-        byte[] decodedString = Base64.decode(image.getBase64(), Base64.URL_SAFE);
+        byte[] decodedString = Base64.decode(image.getBase64(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         imageView.setImageBitmap(decodedByte);
 
