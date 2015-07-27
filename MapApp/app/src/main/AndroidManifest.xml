@@ -44,7 +44,7 @@
         <activity
             android:name=".ui.NewEditNoteActivity"
             android:label="@string/title_activity_new_note"
-            android:theme="@style/MaterialNavigationDrawerTheme.Light.TranslucentKitKatStatusBar">
+            android:theme="@style/MaterialNavigationDrawerTheme.Light.TranslucentKitKatStatusBar" >
         </activity>
         <activity
             android:name=".ui.ViewNoteActivity"
@@ -57,11 +57,15 @@
         <activity
             android:name=".ui.ViewEventActivity"
             android:label="@string/title_activity_view_event"
-            android:theme="@style/mainLightTheme">
+            android:theme="@style/mainLightTheme" >
         </activity>
         <activity
             android:name=".ui.FilteredNoteListActivity"
             android:label="@string/title_activity_filtered_note_list" >
+        </activity>
+        <activity
+            android:name=".ui.FilteredEventListActivity"
+            android:label="@string/title_activity_filtered_event_list" >
         </activity>
     </application>
 
