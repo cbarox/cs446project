@@ -327,7 +327,7 @@ public class ViewEventActivity extends ActionBarActivity {
                                 e.printStackTrace();
                             }
                         }
-                        eventTimeTextView.setText(times);
+                        eventTimeTextView.setText(times.trim());
                     }
                 });
             }
