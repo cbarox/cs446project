@@ -1,5 +1,4 @@
 package ca.uwaterloo.mapapp.server.logic.net;
-
 import java.util.List;
 
 import ca.uwaterloo.mapapp.server.MagicLogger;
