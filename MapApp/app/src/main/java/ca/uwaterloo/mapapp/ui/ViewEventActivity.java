@@ -91,7 +91,7 @@ public class ViewEventActivity extends ActionBarActivity {
         });
 
         Bundle b = getIntent().getExtras();
-        Integer eventId = b.getInt(ARG_EVENT_ID, -1);
+        Integer eventId = (Integer) b.get(ARG_EVENT_ID);
         setEvent(eventId);
 
 
@@ -111,9 +111,9 @@ public class ViewEventActivity extends ActionBarActivity {
 
     private void setEvent(final Integer eventId) {
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
-        DataManager<Event, Long> dataManager = databaseHelper.getDataManager(Event.class);
+        DataManager dataManager = databaseHelper.getDataManager(Event.class);
 
-        mEvent = dataManager.findFirst(Event.COLUMN_ID, eventId);
+        mEvent = (Event) dataManager.findFirst(Event.COLUMN_ID, eventId);
         title.setText(Html.fromHtml(mEvent.getTitle()));
 
         if (mEvent.getLocation() != null && !mEvent.getLocation().isEmpty()) {
@@ -173,14 +173,20 @@ public class ViewEventActivity extends ActionBarActivity {
         final Context context = this;
         ICallback callback = new ICallback() {
             @Override
-            public void call(Object param) {
-                mEventNotes = (List<EventNote>) param;
-                mAdapter = new EventNoteAdapter(context, mEventNotes);
-                mNoteList.setAdapter(mAdapter);
-                ListViewUtil.setListViewHeightBasedOnChildren(mNoteList);
+            public void call(final Object param) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mEventNotes = (List<EventNote>) param;
+                        mAdapter = new EventNoteAdapter(context, mEventNotes);
+                        mNoteList.setAdapter(mAdapter);
+                        ListViewUtil.setListViewHeightBasedOnChildren(mNoteList);
 
-                int visibility = mEventNotes.isEmpty() ? View.INVISIBLE : View.VISIBLE;
-                moreNotes.setVisibility(visibility);
+                        int visibility = mEventNotes.isEmpty() ? View.INVISIBLE : View.VISIBLE;
+                        moreNotes.setVisibility(visibility);
+                    }
+                });
+
             }
         };
         ServerRestApi.requestEventNotes(callback, mEvent.getId());
@@ -190,9 +196,14 @@ public class ViewEventActivity extends ActionBarActivity {
         final Context context = this;
         ICallback callback = new ICallback() {
             @Override
-            public void call(Object param) {
-                mEventTimes = (List<EventTimes>) param;
-                // process/display event times here
+            public void call(final Object param) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mEventTimes = (List<EventTimes>) param;
+                        // process/display event times here
+                    }
+                });
             }
         };
         ServerRestApi.requestEventTimes(callback, mEvent.getId());
@@ -208,22 +219,22 @@ public class ViewEventActivity extends ActionBarActivity {
                     public void run() {
                         mEventRankings = (List<EventRanking>) param;
                         final int numRankings = mEventRankings.size();
-                        sumTotalTextView.setText(numRankings);
+                        sumTotalTextView.setText("" + numRankings);
                         if (numRankings > 0) {
                             int avg = 0;
                             for (EventRanking eventRanking : mEventRankings) {
                                 avg += eventRanking.getRanking();
                             }
                             avg /= numRankings;
-                            sumAvgTextView.setText(avg);
+                            sumAvgTextView.setText("" + avg);
                         } else {
-                            sumAvgTextView.setText(0);
+                            sumAvgTextView.setText("" + 0);
                         }
                     }
                 });
             }
         };
-        ServerRestApi.requestEventRanking(callback, mEvent.getId());
+        ServerRestApi.requestEventRankings(callback, mEvent.getId());
     }
 
     private void loadEventImages() {

@@ -53,7 +53,7 @@ public class AllEventsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), ViewEventActivity.class);
-                intent.putExtra(ViewEventActivity.ARG_EVENT_ID, id);
+                intent.putExtra(ViewEventActivity.ARG_EVENT_ID, (int) id);
                 getActivity().startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
             }

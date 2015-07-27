@@ -47,11 +47,11 @@ public interface IServerRestService {
     Response deleteEventNote(@Path("id") Long eventNoteId);
 
     @GET("/ranking/{id}")
-    EventRanking getEventRanking(@Path("id") Integer eventId);
+    List<EventRanking> getEventRankings(@Path("id") Integer eventId);
 
     @POST("/ranking")
     Response setEventRanking(@Body EventRanking ranking);
 
     @DELETE("/ranking/{id}")
-    Response deleteEventRanking(@Path("id") Long rankingId);
+    Response deleteEventRanking(@Path("id") String rankingId);
 }

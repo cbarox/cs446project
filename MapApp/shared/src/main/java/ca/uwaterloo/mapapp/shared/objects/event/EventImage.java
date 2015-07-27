@@ -55,7 +55,6 @@ public class EventImage implements Serializable {
     public String toString() {
         return "EventImage{" +
                 "id=" + id +
-                ", base64='" + base64.length() + " byte string\'" +
                 ", eventId=" + eventId +
                 '}';
     }
