@@ -34,7 +34,7 @@ public class ServerRestApi {
     private static IServerRestService service = restAdapter.create(IServerRestService.class);
 
     public static void requestBuildings(final ICallback callback) {
-        requestData("Buildings", callback, new IRequestor() {
+        requestData(callback, new IRequestor() {
             @Override
             public Object request() {
                 return service.getEvents();
@@ -43,7 +43,7 @@ public class ServerRestApi {
     }
 
     public static void requestEvents(final ICallback callback) {
-        requestData("Events", callback, new IRequestor() {
+        requestData(callback, new IRequestor() {
             @Override
             public Object request() {
                 return service.getEvents();
@@ -52,7 +52,7 @@ public class ServerRestApi {
     }
 
     public static void requestEventImages(final ICallback callback, final Integer eventId) {
-        requestData("EventImages", callback, new IRequestor() {
+        requestData(callback, new IRequestor() {
             @Override
             public Object request() {
                 return service.getEventImages(eventId);
@@ -81,7 +81,7 @@ public class ServerRestApi {
     }
 
     public static void requestEventTimes(final ICallback callback, final Integer eventId) {
-        requestData("EventTimes", callback, new IRequestor() {
+        requestData(callback, new IRequestor() {
             @Override
             public Object request() {
                 return service.getEventTimes(eventId);
@@ -90,7 +90,7 @@ public class ServerRestApi {
     }
 
     public static void requestEventNotes(final ICallback callback, final Integer eventId) {
-        requestData("EventNotes", callback, new IRequestor() {
+        requestData(callback, new IRequestor() {
             @Override
             public Object request() {
                 return service.getEventNotes(eventId);
@@ -99,7 +99,7 @@ public class ServerRestApi {
     }
 
     public static void requestEventRankings(final ICallback callback, final Integer eventId) {
-        requestData("EventRanking", callback, new IRequestor() {
+        requestData(callback, new IRequestor() {
             @Override
             public Object request() {
                 return service.getEventRankings(eventId);
@@ -148,18 +148,12 @@ public class ServerRestApi {
         });
     }
 
-    private static void requestData(final String cacheKey, final ICallback callback, final IRequestor requestor) {
-        if (localCacheMap.containsKey(cacheKey)) {
-            callback.call(localCacheMap.get(cacheKey));
-            return;
-        }
-
+    private static void requestData(final ICallback callback, final IRequestor requestor) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     Object result = requestor.request();
-                    localCacheMap.put(cacheKey, result);
                     callback.call(result);
                 } catch (Exception e) {
                     Log.e("ServerRestApi", "Exception:" , e);
