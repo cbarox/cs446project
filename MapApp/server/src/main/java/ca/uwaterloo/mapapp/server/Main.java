@@ -23,12 +23,14 @@ import ca.uwaterloo.mapapp.server.logic.net.RankingRoute;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.objects.building.Building;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
+import ca.uwaterloo.mapapp.shared.objects.event.EventImage;
 import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
 import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 import ca.uwaterloo.mapapp.shared.objects.event.EventTimes;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+
 import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
@@ -61,7 +63,7 @@ public class Main {
             MagicLogger.log("Creating database tables");
             TableUtils.createTableIfNotExists(connectionSource, EventNote.class);
             TableUtils.createTableIfNotExists(connectionSource, EventRanking.class);
-            //TableUtils.createTableIfNotExists(connectionSource, EventImage.class);
+            TableUtils.createTableIfNotExists(connectionSource, EventImage.class);
             TableUtils.createTableIfNotExists(connectionSource, Building.class);
             TableUtils.createTableIfNotExists(connectionSource, Event.class);
             buildingDataUpdater = new BuildingDataUpdater();
