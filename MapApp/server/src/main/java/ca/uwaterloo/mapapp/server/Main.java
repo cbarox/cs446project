@@ -67,7 +67,6 @@ public class Main {
             buildingDataUpdater = new BuildingDataUpdater();
             eventDataUpdater = new EventDataUpdater();
         } catch (SQLException e) {
-            Log.e("Main", "Unable to create connection to the database", e );
             e.printStackTrace();
             return;
         }
