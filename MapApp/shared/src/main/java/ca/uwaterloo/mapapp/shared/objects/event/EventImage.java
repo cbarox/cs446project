@@ -21,7 +21,7 @@ public class EventImage implements Serializable {
     @DatabaseField(columnName = COLUMN_ID, generatedId = true)
     private Long id;
 
-    @DatabaseField(columnName = COLUMN_BASE64)
+    @DatabaseField(columnName = COLUMN_BASE64, width = 8000000)
     private String base64;
 
     @DatabaseField(columnName = COLUMN_EVENT_ID)
