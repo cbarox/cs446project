@@ -64,6 +64,7 @@ public class Main {
             TableUtils.createTableIfNotExists(connectionSource, EventNote.class);
             TableUtils.createTableIfNotExists(connectionSource, EventRanking.class);
             TableUtils.createTableIfNotExists(connectionSource, EventImage.class);
+            TableUtils.createTableIfNotExists(connectionSource, EventTimes.class);
             TableUtils.createTableIfNotExists(connectionSource, Building.class);
             TableUtils.createTableIfNotExists(connectionSource, Event.class);
             buildingDataUpdater = new BuildingDataUpdater();
