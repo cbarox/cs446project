@@ -98,11 +98,11 @@ public class ServerRestApi {
         });
     }
 
-    public static void requestEventRanking(final ICallback callback, final Integer eventId) {
+    public static void requestEventRankings(final ICallback callback, final Integer eventId) {
         requestData("EventRanking", callback, new IRequestor() {
             @Override
             public Object request() {
-                return service.getEventRanking(eventId);
+                return service.getEventRankings(eventId);
             }
         });
     }
