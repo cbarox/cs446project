@@ -100,7 +100,7 @@ public class Main {
                 Integer eventId = Integer.parseInt(request.params("id"));
                 final DataManager dataManager = getDataManager(EventTimes.class);
                 MagicLogger.log("Getting event times for event %d from db", eventId);
-                final List eventTimes = dataManager.getAll();
+                final List eventTimes = dataManager.find(EventTimes.COLUMN_EVENT_ID, eventId);
                 MagicLogger.log("Got %d event times for event %d", eventTimes.size(), eventId);
                 response.body(GSON.toJson(eventTimes));
                 MagicLogger.log("Sending JSON response");

@@ -29,7 +29,10 @@ import com.melnykov.fab.FloatingActionButton;
 import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -38,6 +41,7 @@ import ca.uwaterloo.mapapp.data.DatabaseHelper;
 import ca.uwaterloo.mapapp.logic.net.ServerRestApi;
 import ca.uwaterloo.mapapp.shared.ICallback;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
+import ca.uwaterloo.mapapp.shared.net.WaterlooApiJsonDeserializer;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
 import ca.uwaterloo.mapapp.shared.objects.event.EventImage;
 import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
@@ -48,6 +52,7 @@ import ca.uwaterloo.mapapp.util.ListViewUtil;
 
 public class ViewEventActivity extends ActionBarActivity {
     public static final String ARG_EVENT_ID = "ARG_EVENT_ID";
+    private static final int REQUEST_IMAGE_CAPTURE = 105;
     @InjectView(R.id.tool_bar)
     protected Toolbar mToolbar;
     @InjectView(R.id.event_title)
@@ -68,11 +73,12 @@ public class ViewEventActivity extends ActionBarActivity {
     protected TextView sumTotalTextView;
     @InjectView(R.id.event_sum_avg_txt)
     protected TextView sumAvgTextView;
+    @InjectView(R.id.event_time_txt)
+    protected TextView eventTimeTextView;
     @InjectView(R.id.event_sum_avg_bar)
     protected RatingBar sumAvgRatingBar;
     @InjectView(R.id.event_rating)
     protected RatingBar eventRatingBar;
-
     @InjectView(R.id.fab_new_note)
     protected FloatingActionButton fab;
 
@@ -104,8 +110,6 @@ public class ViewEventActivity extends ActionBarActivity {
         }
         return null;
     }
-
-    private static final int REQUEST_IMAGE_CAPTURE = 105;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,8 +207,7 @@ public class ViewEventActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if(takePictureIntent.resolveActivity(getPackageManager()) != null)
-                {
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 }
             }
@@ -244,7 +247,7 @@ public class ViewEventActivity extends ActionBarActivity {
 
         if (requestCode == REQUEST_IMAGE_CAPTURE) {
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap)extras.get("data");
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
             ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, bitmapStream);
             byte[] b = bitmapStream.toByteArray();
@@ -298,7 +301,33 @@ public class ViewEventActivity extends ActionBarActivity {
                     @Override
                     public void run() {
                         mEventTimes = (List<EventTimes>) param;
-                        // process/display event times here
+                        String times = "";
+                        for (EventTimes eventTimes : mEventTimes) {
+                            final Calendar start;
+                            final Calendar end;
+                            try {
+                                start = WaterlooApiJsonDeserializer.toCalendar(eventTimes.getStart());
+                                String dayName = start.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.CANADA);
+                                String month = start.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.CANADA);
+                                int day = start.get(Calendar.DAY_OF_MONTH);
+                                int startHour = start.get(Calendar.HOUR_OF_DAY);
+                                int startMinutes = start.get(Calendar.MINUTE);
+                                String startMinutesString = (startMinutes < 10) ? "0" : "";
+                                startMinutesString += startMinutes;
+
+                                end = WaterlooApiJsonDeserializer.toCalendar(eventTimes.getEnd());
+                                int endHour = end.get(Calendar.HOUR_OF_DAY);
+                                int endMinutes = end.get(Calendar.MINUTE);
+                                String endMinutesString = (endMinutes < 10) ? "0" : "";
+                                endMinutesString += endMinutes;
+                                times += dayName + " " + month + " " + day;
+                                times += " " + startHour + ":" + startMinutesString;
+                                times += " - " + endHour + ":" + endMinutesString + "\n";
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        eventTimeTextView.setText(times);
                     }
                 });
             }
