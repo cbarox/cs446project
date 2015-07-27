@@ -61,13 +61,21 @@ public class ViewEventActivity extends ActionBarActivity {
     private List<EventRanking> mEventRankings;
     private List<EventImage> mEventImages;
 
+    private static String byteArrayToHexString(byte[] data) {
+        String result = "";
+        for (byte b : data) {
+            result += Integer.toString((b & 0xff) + 0x100, 16).substring(1);
+        }
+        return result;
+    }
+
     private static String hash(String text) {
         byte[] data = text.getBytes();
         try {
             MessageDigest digester = MessageDigest.getInstance("SHA1");
             digester.update(data, 0, data.length);
             byte[] digest = digester.digest();
-            return new String(digest);
+            return byteArrayToHexString(digest);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -91,7 +99,7 @@ public class ViewEventActivity extends ActionBarActivity {
         });
 
         Bundle b = getIntent().getExtras();
-        Integer eventId = (Integer) b.get(ARG_EVENT_ID);
+        Integer eventId = b.getInt(ARG_EVENT_ID);
         setEvent(eventId);
 
 

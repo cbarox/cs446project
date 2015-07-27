@@ -1,4 +1,5 @@
 package ca.uwaterloo.mapapp.server.logic.net;
+
 import java.util.List;
 
 import ca.uwaterloo.mapapp.server.MagicLogger;
@@ -41,10 +42,10 @@ public class RankingRoute implements IGetSetDeleteRoute {
         EventRanking ranking = Main.GSON.fromJson(request.body(), EventRanking.class);
         System.out.println(ranking.toString());
 
-        DataManager<EventRanking, String> rankingsDataManager = Main.getDataManager(EventRanking.class);
+        DataManager rankingsDataManager = Main.getDataManager(EventRanking.class);
         if (rankingsDataManager.insertOrUpdate(ranking) == null) {
             response.status(500);
-            System.err.println("Failed to insert or update ranking for event " + ranking.getEventId() + ". Database error.");
+            MagicLogger.log("Failed to update %s for event %d", ranking.getEventId());
             return "Failed to insert object";
         }
 
@@ -58,10 +59,10 @@ public class RankingRoute implements IGetSetDeleteRoute {
         EventRanking ranking = new EventRanking();
         ranking.setId(id);
 
-        DataManager<EventRanking, String> rankingsDataManager = Main.getDataManager(EventRanking.class);
+        DataManager rankingsDataManager = Main.getDataManager(EventRanking.class);
         if (!rankingsDataManager.delete(ranking)) {
             response.status(500);
-            System.err.println("Failed to delete ranking with id " + ranking.getId() + ". Database error.");
+            MagicLogger.log("Failed to delete %s", ranking);
             return "Failed to delete object";
         }
 
