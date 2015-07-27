@@ -199,6 +199,7 @@ public class DataManager<T, ID> {
         try {
             return dao.queryForId(id);
         } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -207,6 +208,28 @@ public class DataManager<T, ID> {
         List<T> objects = new ArrayList<>();
         try {
             objects = dao.queryForEq(columnName, value);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return objects;
+    }
+
+    public List<T> find(String[] columnNames, Object[] values, String sortColumn, boolean isAsc) {
+        List<T> objects = new ArrayList<>();
+        try {
+            QueryBuilder<T, ID> qb = dao.queryBuilder();
+            Where<T, ID> where = qb.where();
+            for (int i = 0; i < columnNames.length; i++) {
+                where.eq(columnNames[i], values[i]);
+                if (i != columnNames.length - 1) {
+                    where.and();
+                }
+            }
+            qb.setWhere(where);
+            if (sortColumn != null && !sortColumn.isEmpty()) {
+                qb.orderBy(sortColumn, isAsc);
+            }
+            objects = qb.query();
         } catch (SQLException e) {
             e.printStackTrace();
         }
