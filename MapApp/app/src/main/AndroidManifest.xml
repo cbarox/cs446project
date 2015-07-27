@@ -70,6 +70,13 @@
         <activity
             android:name=".ui.EventGalleryActivity"
             android:label="@string/title_activity_event_gallery" >
+            android:name=".ui.AddEventNoteActivity"
+            android:label="@string/title_activity_add_event_note"
+            android:theme="@style/MaterialNavigationDrawerTheme.Light.TranslucentKitKatStatusBar" >
+        </activity>
+        <activity
+            android:name=".ui.ViewEventNoteActivity"
+            android:label="@string/title_activity_view_event_note" >
         </activity>
         <activity
             android:name=".ui.DisplayImageActivity"

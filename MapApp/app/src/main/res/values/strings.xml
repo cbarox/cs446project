@@ -28,4 +28,6 @@
     <string name="title_activity_filtered_event_list">FilteredEventListActivity</string>
     <string name="title_activity_event_gallery">EventGalleryActivity</string>
     <string name="title_activity_display_image">DisplayImageActivity</string>
+    <string name="title_activity_add_event_note">AddEventNoteActivity</string>
+    <string name="title_activity_view_event_note">ViewEventNoteActivity</string>
 </resources>
