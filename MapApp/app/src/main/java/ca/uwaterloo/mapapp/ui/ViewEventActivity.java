@@ -52,14 +52,17 @@ public class ViewEventActivity extends ActionBarActivity {
     protected TextView sumTotalTextView;
     @InjectView(R.id.event_sum_avg_txt)
     protected TextView sumAvgTextView;
+    @InjectView(R.id.event_sum_avg_bar)
+    protected RatingBar sumAvgRatingBar;
     @InjectView(R.id.event_rating)
-    protected RatingBar eventRating;
+    protected RatingBar eventRatingBar;
     private Event mEvent;
     private List<EventNote> mEventNotes;
     private EventNoteAdapter mAdapter;
     private List<EventTimes> mEventTimes;
     private List<EventRanking> mEventRankings;
     private List<EventImage> mEventImages;
+    private String uniqueId;
 
     private static String byteArrayToHexString(byte[] data) {
         String result = "";
@@ -149,9 +152,9 @@ public class ViewEventActivity extends ActionBarActivity {
             link.setVisibility(View.INVISIBLE);
         }
 
-        final String uniqueId = hash(Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID) + eventId);
+        uniqueId = hash(Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID) + eventId);
 
-        eventRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+        eventRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, final float rating, boolean fromUser) {
                 if (!fromUser) {
@@ -229,12 +232,16 @@ public class ViewEventActivity extends ActionBarActivity {
                         final int numRankings = mEventRankings.size();
                         sumTotalTextView.setText("" + numRankings);
                         if (numRankings > 0) {
-                            int avg = 0;
+                            float avg = 0;
                             for (EventRanking eventRanking : mEventRankings) {
+                                if (eventRanking.getId().equals(uniqueId)) {
+                                    eventRatingBar.setRating(eventRanking.getRanking());
+                                }
                                 avg += eventRanking.getRanking();
                             }
                             avg /= numRankings;
                             sumAvgTextView.setText("" + avg);
+                            sumAvgRatingBar.setRating(avg);
                         } else {
                             sumAvgTextView.setText("" + 0);
                         }
