@@ -1,5 +1,5 @@
 package ca.uwaterloo.mapapp.server.logic.net;
-import android.util.Log;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,7 +30,7 @@ public class JSoupTask implements Runnable {
     public void run() {
         try {
             if (url == null) {
-                Log.i("Jsoup run()", "URL is null" );
+                System.out.printf("Jsoup run(): url is Null %n" );
                 callback.call(null);
             }
             Document doc = Jsoup.connect(url).get();
@@ -38,11 +38,11 @@ public class JSoupTask implements Runnable {
             if (element != null) {
                 callback.call(element.toString());
             } else {
-                Log.i("Jsoup run()", "Element is null" );
+                System.out.printf("Jsoup run(): element is Null %n" );
                 callback.call(null);
             }
         } catch (Exception e) {
-            Log.e("Jsoup run()", "Exception: ", e );
+            System.err.printf("Jsoup run(): exception %s%n", e.toString() );
             e.printStackTrace();
             callback.call(null);
         }
