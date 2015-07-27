@@ -29,7 +29,6 @@ import ca.uwaterloo.mapapp.shared.objects.event.EventTimes;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import android.util.Log;
 import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
