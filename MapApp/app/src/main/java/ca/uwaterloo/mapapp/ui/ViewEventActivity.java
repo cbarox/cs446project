@@ -2,7 +2,10 @@ package ca.uwaterloo.mapapp.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,6 +17,7 @@ import android.util.Base64;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -313,6 +317,19 @@ public class ViewEventActivity extends ActionBarActivity {
             @Override
             public void call(Object param) {
                 mEventImages = (List<EventImage>) param;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        galleryButton.setText(String.format("%d PHOTOS", mEventImages.size()));
+                        if (mEventImages.size() > 0) {
+                            EventImage image = mEventImages.get(0);
+                            byte[] decodedString = Base64.decode(image.getBase64(), Base64.DEFAULT);
+                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                            galleryButton.setBackground(new BitmapDrawable(Resources.getSystem(), decodedByte));
+                        }
+                    }
+                });
+
                 // process/display event rankings here
             }
         };
