@@ -219,7 +219,7 @@ public class ViewEventActivity extends ActionBarActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap)extras.get("data");
             ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bitmapStream);
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, bitmapStream);
             byte[] b = bitmapStream.toByteArray();
             String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
 
