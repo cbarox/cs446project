@@ -229,9 +229,7 @@ public class ViewEventActivity extends ActionBarActivity {
             ServerRestApi.addOrSetEventImage(new ICallback() {
                 @Override
                 public void call(Object param) {
-                    if((boolean)param)
-                        Toast.makeText(getApplicationContext(), "Image posted", Toast.LENGTH_SHORT);
-                    else Toast.makeText(getApplicationContext(), "Image posting failed!", Toast.LENGTH_SHORT);
+                    Toast.makeText(getApplicationContext(), "Image posted", Toast.LENGTH_SHORT);
                 }
             }, eImage);
         }
