@@ -57,9 +57,15 @@ public class EventGalleryActivity extends ActionBarActivity {
         ICallback callback = new ICallback() {
             @Override
             public void call(Object param) {
-                imageList = (List<EventImage>)param;
-                mAdapter = new EventImageAdapter(EventGalleryActivity.this, imageList);
-                mImageGrid.setAdapter(mAdapter);
+                imageList = (List<EventImage>) param;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter = new EventImageAdapter(EventGalleryActivity.this, imageList);
+                        mImageGrid.setAdapter(mAdapter);
+                    }
+                });
+
             }
         };
         ServerRestApi.requestEventImages(callback, eventId);
