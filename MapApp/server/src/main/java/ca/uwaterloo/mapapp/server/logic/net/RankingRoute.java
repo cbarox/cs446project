@@ -1,5 +1,4 @@
 package ca.uwaterloo.mapapp.server.logic.net;
-
 import java.util.List;
 
 import ca.uwaterloo.mapapp.server.MagicLogger;
@@ -55,8 +54,9 @@ public class RankingRoute implements IGetSetDeleteRoute {
 
     @Override
     public Object delete(Request request, Response response) throws Exception {
+        final String id = request.params(":id");
         EventRanking ranking = new EventRanking();
-        ranking.setId(Long.parseLong(request.params(":id")));
+        ranking.setId(id);
 
         DataManager<EventRanking, String> rankingsDataManager = Main.getDataManager(EventRanking.class);
         if (!rankingsDataManager.delete(ranking)) {

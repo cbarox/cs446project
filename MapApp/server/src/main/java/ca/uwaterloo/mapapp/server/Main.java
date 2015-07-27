@@ -30,7 +30,6 @@ import ca.uwaterloo.mapapp.shared.objects.event.EventTimes;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-
 import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
@@ -69,7 +68,6 @@ public class Main {
             buildingDataUpdater = new BuildingDataUpdater();
             eventDataUpdater = new EventDataUpdater();
         } catch (SQLException e) {
-            System.err.println("Unable to create connection to the database");
             e.printStackTrace();
             return;
         }

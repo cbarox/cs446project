@@ -255,7 +255,7 @@ public class DataManager<T, ID> {
      * @return A list of objects from the database or null if the operation failed
      */
     public List<T> getAll() {
-        List<T> objects = null;
+        List<T> objects = new ArrayList<>();
         try {
             objects = dao.queryForAll();
         } catch (SQLException e) {
@@ -264,7 +264,7 @@ public class DataManager<T, ID> {
     }
 
     public List<T> getAll(String sortColumn, boolean isAsc) {
-        List<T> objects = null;
+        List<T> objects = new ArrayList<>();
         try {
             QueryBuilder<T, ID> qb = dao.queryBuilder();
             qb.orderBy(sortColumn, isAsc);

@@ -1,5 +1,7 @@
 package ca.uwaterloo.mapapp.logic.net;
 
+import android.util.Log;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -96,11 +98,11 @@ public class ServerRestApi {
         });
     }
 
-    public static void requestEventRanking(final ICallback callback, final Integer eventId) {
+    public static void requestEventRankings(final ICallback callback, final Integer eventId) {
         requestData("EventRanking", callback, new IRequestor() {
             @Override
             public Object request() {
-                return service.getEventRanking(eventId);
+                return service.getEventRankings(eventId);
             }
         });
     }
@@ -119,7 +121,7 @@ public class ServerRestApi {
         sendData(callback, new IRequestor() {
             @Override
             public Object request() {
-                System.out.println(gson.toJson(ranking, EventRanking.class));
+                Log.i("ServerRestApi", gson.toJson(ranking, EventRanking.class));
                 Response result = service.setEventRanking(ranking);
                 return result.getStatus() == 200;
             }
@@ -160,7 +162,8 @@ public class ServerRestApi {
                     localCacheMap.put(cacheKey, result);
                     callback.call(result);
                 } catch (Exception e) {
-                    System.err.println(e.toString());
+                    Log.e("ServerRestApi", "Exception:" , e);
+                    e.printStackTrace();
                 }
 
             }
@@ -175,7 +178,8 @@ public class ServerRestApi {
                     requestor.request();
                     callback.call(null);
                 } catch (Exception e) {
-                    System.err.println(e.toString());
+                    Log.e("ServerRestApi", "Exception:" , e);
+                    e.printStackTrace();
                 }
 
             }

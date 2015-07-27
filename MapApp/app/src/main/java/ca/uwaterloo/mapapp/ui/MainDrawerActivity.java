@@ -59,7 +59,7 @@ public class MainDrawerActivity extends MaterialNavigationDrawer {
         ICallback eventsCallback = new ICallback() {
             @Override
             public void call(Object param) {
-                DataManager<Event, Integer> eventDataManager = databaseHelper.getDataManager(Event.class);
+                DataManager eventDataManager = databaseHelper.getDataManager(Event.class);
                 List<Event> events = (List<Event>) param;
                 eventDataManager.insertOrUpdateAll(events);
             }

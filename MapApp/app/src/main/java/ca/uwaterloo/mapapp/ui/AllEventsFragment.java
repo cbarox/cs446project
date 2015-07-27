@@ -3,6 +3,7 @@ package ca.uwaterloo.mapapp.ui;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,7 @@ public class AllEventsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), ViewEventActivity.class);
-                intent.putExtra(ViewEventActivity.ARG_EVENT_ID, id);
+                intent.putExtra(ViewEventActivity.ARG_EVENT_ID, (int) id);
                 getActivity().startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
             }
@@ -76,7 +77,7 @@ public class AllEventsFragment extends Fragment {
                 ServerRestApi.requestEvents(eventsCallback);
             }
         });
-
+        Log.i("AllEventsFragment", "onCreateView finished" );
         return view;
     }
 
