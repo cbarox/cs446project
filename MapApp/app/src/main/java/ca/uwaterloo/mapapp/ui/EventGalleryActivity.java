@@ -1,10 +1,12 @@
 package ca.uwaterloo.mapapp.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import java.util.List;
@@ -50,6 +52,18 @@ public class EventGalleryActivity extends ActionBarActivity {
 
         Bundle b = getIntent().getExtras();
         String filterName = "";
+
+        mImageGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(id < 0) return; // without this it crashed if you clicked the title
+
+                Intent intent = new Intent(EventGalleryActivity.this, DisplayImageActivity.class);
+                intent.putExtra(DisplayImageActivity.ARG_IMAGE, imageList.get(position));
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_up, R.anim.nothing);
+            }
+        });
 
         // Load the list of events by building code
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();

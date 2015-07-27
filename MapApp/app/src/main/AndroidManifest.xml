@@ -71,6 +71,10 @@
             android:name=".ui.EventGalleryActivity"
             android:label="@string/title_activity_event_gallery" >
         </activity>
+        <activity
+            android:name=".ui.DisplayImageActivity"
+            android:label="@string/title_activity_display_image" >
+        </activity>
     </application>
 
 </manifest>
