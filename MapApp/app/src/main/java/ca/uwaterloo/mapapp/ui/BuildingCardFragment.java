@@ -99,6 +99,16 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
         mEventList.setEmptyView(view.findViewById(R.id.empty_events_list_state));
         mNoteList.setEmptyView(view.findViewById(R.id.empty_note_list_state));
 
+        mEventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), ViewEventActivity.class);
+                intent.putExtra(ViewEventActivity.ARG_EVENT_ID, mEvents.get(position).getId());
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
+            }
+        });
+
         mNoteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -142,7 +152,7 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), FilteredNoteListActivity.class);
                 intent.putExtra(FilteredNoteListActivity.ARG_FILTER_TYPE, FilteredNoteListActivity.FILTER_BUILDING);
-                intent.putExtra(FilteredNoteListActivity.ARG_FILTER_VALUE_STRING, mBuilding.getBuildingCode());
+                intent.putExtra(FilteredNoteListActivity.ARG_FILTER_BUILDING_CODE, mBuilding.getBuildingCode());
                 startActivity(intent);
             }
         });
@@ -189,6 +199,7 @@ public class BuildingCardFragment extends Fragment implements SlidingUpPanelLayo
 
         updateEventList();
         updateNoteList();
+        mScrollContent.setScrollY(0);
     }
 
     public void updateEventList() {

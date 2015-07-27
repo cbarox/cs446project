@@ -40,28 +40,27 @@ public class RankingRoute implements IGetSetDeleteRoute {
     @Override
     public Object set(Request request, Response response) throws Exception {
         EventRanking ranking = Main.GSON.fromJson(request.body(), EventRanking.class);
-        System.out.println(ranking.toString());
-
-        DataManager<EventRanking, String> rankingsDataManager = Main.getDataManager(EventRanking.class);
+        DataManager rankingsDataManager = Main.getDataManager(EventRanking.class);
         if (rankingsDataManager.insertOrUpdate(ranking) == null) {
             response.status(500);
-            System.err.println("Failed to insert or update ranking for event " + ranking.getEventId() + ". Database error.");
-            return "Failed to insert object";
+            MagicLogger.log("Failed to update %s", ranking.toString());
+            return "failure";
         }
-
         response.status(200);
+        MagicLogger.log("Successfully updated %s", ranking.toString());
         return "success";
     }
 
     @Override
     public Object delete(Request request, Response response) throws Exception {
+        final String id = request.params(":id");
         EventRanking ranking = new EventRanking();
-        ranking.setId(Long.parseLong(request.params(":id")));
+        ranking.setId(id);
 
-        DataManager<EventRanking, String> rankingsDataManager = Main.getDataManager(EventRanking.class);
+        DataManager rankingsDataManager = Main.getDataManager(EventRanking.class);
         if (!rankingsDataManager.delete(ranking)) {
             response.status(500);
-            System.err.println("Failed to delete ranking with id " + ranking.getId() + ". Database error.");
+            MagicLogger.log("Failed to delete %s", ranking);
             return "Failed to delete object";
         }
 

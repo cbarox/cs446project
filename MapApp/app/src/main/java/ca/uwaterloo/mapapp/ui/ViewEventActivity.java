@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -14,10 +15,13 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -37,7 +41,6 @@ import ca.uwaterloo.mapapp.util.ListViewUtil;
 
 public class ViewEventActivity extends ActionBarActivity {
     public static final String ARG_EVENT_ID = "ARG_EVENT_ID";
-
     @InjectView(R.id.tool_bar)
     protected Toolbar mToolbar;
     @InjectView(R.id.event_title)
@@ -54,14 +57,43 @@ public class ViewEventActivity extends ActionBarActivity {
     protected Button galleryButton;
     @InjectView(R.id.add_picture)
     protected Button addPictureButton;
+    @InjectView(R.id.event_sum_total)
+    protected TextView sumTotalTextView;
+    @InjectView(R.id.event_sum_avg_txt)
+    protected TextView sumAvgTextView;
+    @InjectView(R.id.event_sum_avg_bar)
+    protected RatingBar sumAvgRatingBar;
+    @InjectView(R.id.event_rating)
+    protected RatingBar eventRatingBar;
 
     private Event mEvent;
-
     private List<EventNote> mEventNotes;
     private EventNoteAdapter mAdapter;
     private List<EventTimes> mEventTimes;
     private List<EventRanking> mEventRankings;
     private List<EventImage> mEventImages;
+    private String uniqueId;
+
+    private static String byteArrayToHexString(byte[] data) {
+        String result = "";
+        for (byte b : data) {
+            result += Integer.toString((b & 0xff) + 0x100, 16).substring(1);
+        }
+        return result;
+    }
+
+    private static String hash(String text) {
+        byte[] data = text.getBytes();
+        try {
+            MessageDigest digester = MessageDigest.getInstance("SHA1");
+            digester.update(data, 0, data.length);
+            byte[] digest = digester.digest();
+            return byteArrayToHexString(digest);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     private static final int REQUEST_IMAGE_CAPTURE = 105;
 
@@ -82,8 +114,9 @@ public class ViewEventActivity extends ActionBarActivity {
         });
 
         Bundle b = getIntent().getExtras();
-        long eventId = b.getLong(ARG_EVENT_ID, -1);
+        Integer eventId = b.getInt(ARG_EVENT_ID);
         setEvent(eventId);
+
 
         mNoteList.setEmptyView(findViewById(R.id.empty_list_state));
     }
@@ -99,11 +132,11 @@ public class ViewEventActivity extends ActionBarActivity {
         return false;
     }
 
-    private void setEvent(long eventId) {
+    private void setEvent(final Integer eventId) {
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
-        DataManager<Event, Long> dataManager = databaseHelper.getDataManager(Event.class);
+        DataManager dataManager = databaseHelper.getDataManager(Event.class);
 
-        mEvent = dataManager.findFirst(Event.COLUMN_ID, eventId);
+        mEvent = (Event) dataManager.findFirst(Event.COLUMN_ID, eventId);
         title.setText(Html.fromHtml(mEvent.getTitle()));
 
         if (mEvent.getLocation() != null && !mEvent.getLocation().isEmpty()) {
@@ -150,6 +183,27 @@ public class ViewEventActivity extends ActionBarActivity {
             }
         });
 
+        uniqueId = hash(Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID) + eventId);
+
+        eventRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, final float rating, boolean fromUser) {
+                if (!fromUser) {
+                    return;
+                }
+                EventRanking eventRanking = new EventRanking();
+                eventRanking.setEventId(eventId);
+                eventRanking.setId(uniqueId);
+                eventRanking.setRanking(rating);
+                ICallback callback = new ICallback() {
+                    @Override
+                    public void call(Object param) {
+                        // don't care
+                    }
+                };
+                ServerRestApi.addOrSetEventRanking(callback, eventRanking);
+            }
+        });
 
         loadEventNotes();
         loadEventTimes();
@@ -187,14 +241,20 @@ public class ViewEventActivity extends ActionBarActivity {
         final Context context = this;
         ICallback callback = new ICallback() {
             @Override
-            public void call(Object param) {
-                mEventNotes = (List<EventNote>) param;
-                mAdapter = new EventNoteAdapter(context, mEventNotes);
-                mNoteList.setAdapter(mAdapter);
-                ListViewUtil.setListViewHeightBasedOnChildren(mNoteList);
+            public void call(final Object param) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mEventNotes = (List<EventNote>) param;
+                        mAdapter = new EventNoteAdapter(context, mEventNotes);
+                        mNoteList.setAdapter(mAdapter);
+                        ListViewUtil.setListViewHeightBasedOnChildren(mNoteList);
 
-                int visibility = mEventNotes.isEmpty() ? View.INVISIBLE : View.VISIBLE;
-                moreNotes.setVisibility(visibility);
+                        int visibility = mEventNotes.isEmpty() ? View.INVISIBLE : View.VISIBLE;
+                        moreNotes.setVisibility(visibility);
+                    }
+                });
+
             }
         };
         ServerRestApi.requestEventNotes(callback, mEvent.getId());
@@ -204,9 +264,14 @@ public class ViewEventActivity extends ActionBarActivity {
         final Context context = this;
         ICallback callback = new ICallback() {
             @Override
-            public void call(Object param) {
-                mEventTimes = (List<EventTimes>) param;
-                // process/display event times here
+            public void call(final Object param) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mEventTimes = (List<EventTimes>) param;
+                        // process/display event times here
+                    }
+                });
             }
         };
         ServerRestApi.requestEventTimes(callback, mEvent.getId());
@@ -216,12 +281,32 @@ public class ViewEventActivity extends ActionBarActivity {
         final Context context = this;
         ICallback callback = new ICallback() {
             @Override
-            public void call(Object param) {
-                mEventRankings = (List<EventRanking>) param;
-                // process/display event rankings here
+            public void call(final Object param) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mEventRankings = (List<EventRanking>) param;
+                        final int numRankings = mEventRankings.size();
+                        sumTotalTextView.setText("" + numRankings);
+                        if (numRankings > 0) {
+                            float avg = 0;
+                            for (EventRanking eventRanking : mEventRankings) {
+                                if (eventRanking.getId().equals(uniqueId)) {
+                                    eventRatingBar.setRating(eventRanking.getRanking());
+                                }
+                                avg += eventRanking.getRanking();
+                            }
+                            avg /= numRankings;
+                            sumAvgTextView.setText("" + avg);
+                            sumAvgRatingBar.setRating(avg);
+                        } else {
+                            sumAvgTextView.setText("" + 0);
+                        }
+                    }
+                });
             }
         };
-        ServerRestApi.requestEventRanking(callback, mEvent.getId());
+        ServerRestApi.requestEventRankings(callback, mEvent.getId());
     }
 
     private void loadEventImages() {

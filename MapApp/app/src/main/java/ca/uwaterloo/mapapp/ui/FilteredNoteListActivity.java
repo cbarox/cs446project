@@ -28,8 +28,9 @@ import ca.uwaterloo.mapapp.ui.adapters.FilteredNoteAdapter;
 
 public class FilteredNoteListActivity extends ActionBarActivity {
     public static final String ARG_FILTER_TYPE = "ARG_FILTER_TYPE";
-    public static final String ARG_FILTER_VALUE_STRING = "ARG_FILTER_STRING";
-    public static final String ARG_FILTER_VALUE_ID = "ARG_FILTER_ID";
+    public static final String ARG_FILTER_BUILDING_CODE = "ARG_BUILDING_CODE";
+    public static final String ARG_FILTER_ROOM_NUMBER = "ARG_ROOM_NUMBER";
+    public static final String ARG_FILTER_TAG_ID = "ARG_TAG_ID";
 
     public static final int FILTER_BUILDING = 1;
     public static final int FILTER_TAGS = 2;
@@ -45,7 +46,8 @@ public class FilteredNoteListActivity extends ActionBarActivity {
     private List<Note> noteList;
     private FilteredNoteAdapter mAdapter;
     private int filterType;
-    private String filterString;
+    private String filterBuildCode;
+    private String filterRoomNumber;
     private long filterId;
 
     @Override
@@ -71,13 +73,21 @@ public class FilteredNoteListActivity extends ActionBarActivity {
         // Load the list of notes
         DatabaseHelper databaseHelper = DatabaseHelper.getDatabaseHelper();
         if (filterType == FILTER_BUILDING) {
-            filterString = b.getString(ARG_FILTER_VALUE_STRING, "");
-            filterName = filterString;
+            filterBuildCode = b.getString(ARG_FILTER_BUILDING_CODE, "");
+            filterRoomNumber = b.getString(ARG_FILTER_ROOM_NUMBER, "");
+            filterName = filterBuildCode;
             DataManager<Note, Long> dataManager = databaseHelper.getDataManager(Note.class);
-            noteList = dataManager.find(Note.COLUMN_BUILDING_CODE, filterString, Note.COLUMN_LAST_MODIFIED, false);
+            if (!filterRoomNumber.isEmpty()) {
+                noteList = dataManager.find(new String[]{Note.COLUMN_BUILDING_CODE, Note.COLUMN_ROOM_NUMBER},
+                        new Object[]{filterName, filterRoomNumber}, Note.COLUMN_LAST_MODIFIED, false);
+                filterName += " " + filterRoomNumber;
+            } else {
+                noteList = dataManager.find(Note.COLUMN_BUILDING_CODE, filterBuildCode,
+                        Note.COLUMN_LAST_MODIFIED, false);
+            }
 
         } else if (filterType == FILTER_TAGS) {
-            filterId = b.getLong(ARG_FILTER_VALUE_ID, -1);
+            filterId = b.getLong(ARG_FILTER_TAG_ID, -1);
             DataManager<Tag, Long> dataManager = databaseHelper.getDataManager(Tag.class);
             Tag tag = dataManager.findById(filterId);
             filterName = "#" + tag.getTitle();
@@ -119,7 +129,8 @@ public class FilteredNoteListActivity extends ActionBarActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(FilteredNoteListActivity.this, NewEditNoteActivity.class);
                 if (filterType == FILTER_BUILDING) {
-                    intent.putExtra(NewEditNoteActivity.ARG_SELECTED_BUILD, filterString);
+                    intent.putExtra(NewEditNoteActivity.ARG_SELECTED_BUILD, filterBuildCode);
+                    intent.putExtra(NewEditNoteActivity.ARG_SELECTED_ROOM, filterRoomNumber);
                 } else if (filterType == FILTER_TAGS) {
                     intent.putExtra(NewEditNoteActivity.ARG_TAG_ID, filterId);
                 }
@@ -142,9 +153,17 @@ public class FilteredNoteListActivity extends ActionBarActivity {
 
         if (requestCode == NewEditNoteActivity.REQUEST_INSERT) {
             if (filterType == FILTER_BUILDING) {
-                if (note.getBuildingCode().equals(filterString)) {
-                    noteList.add(0, note);
-                    mAdapter.notifyDataSetChanged();
+                if (note.getBuildingCode().equals(filterBuildCode)) {
+                    if (!filterRoomNumber.isEmpty()) {
+                        if (note.getRoomNumber().equals(filterRoomNumber)) {
+                            noteList.add(0, note);
+                            mAdapter.notifyDataSetChanged();
+                        }
+
+                    } else {
+                        noteList.add(0, note);
+                        mAdapter.notifyDataSetChanged();
+                    }
                 }
 
             } else if (filterType == FILTER_TAGS) {
@@ -169,7 +188,7 @@ public class FilteredNoteListActivity extends ActionBarActivity {
             }
 
             if (filterType == FILTER_BUILDING) {
-                if (note.getBuildingCode().equals(filterString)) {
+                if (note.getBuildingCode().equals(filterBuildCode)) {
                     noteList.add(0, note);
                 }
 

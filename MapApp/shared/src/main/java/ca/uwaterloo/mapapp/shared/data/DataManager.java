@@ -38,7 +38,7 @@ public class DataManager<T, ID> {
                 }
             });
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -52,6 +52,7 @@ public class DataManager<T, ID> {
             dao.delete(object);
             return true;
         } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -65,6 +66,7 @@ public class DataManager<T, ID> {
         try {
             dao.delete(objects);
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -81,6 +83,7 @@ public class DataManager<T, ID> {
             dao.create(object);
             return dao.extractId(object);
         } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -96,6 +99,7 @@ public class DataManager<T, ID> {
             dao.createOrUpdate(object);
             return dao.extractId(object);
         } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -118,6 +122,7 @@ public class DataManager<T, ID> {
                 }
             });
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -139,6 +144,7 @@ public class DataManager<T, ID> {
                 }
             });
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -159,6 +165,7 @@ public class DataManager<T, ID> {
                 }
             });
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -179,6 +186,7 @@ public class DataManager<T, ID> {
                 }
             });
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -191,6 +199,7 @@ public class DataManager<T, ID> {
         try {
             return dao.queryForId(id);
         } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -200,6 +209,29 @@ public class DataManager<T, ID> {
         try {
             objects = dao.queryForEq(columnName, value);
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return objects;
+    }
+
+    public List<T> find(String[] columnNames, Object[] values, String sortColumn, boolean isAsc) {
+        List<T> objects = new ArrayList<>();
+        try {
+            QueryBuilder<T, ID> qb = dao.queryBuilder();
+            Where<T, ID> where = qb.where();
+            for (int i = 0; i < columnNames.length; i++) {
+                where.eq(columnNames[i], values[i]);
+                if (i != columnNames.length - 1) {
+                    where.and();
+                }
+            }
+            qb.setWhere(where);
+            if (sortColumn != null && !sortColumn.isEmpty()) {
+                qb.orderBy(sortColumn, isAsc);
+            }
+            objects = qb.query();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return objects;
     }
@@ -211,7 +243,9 @@ public class DataManager<T, ID> {
             qb.setWhere(qb.where().eq(columnName, value));
             qb.orderBy(sortColumn, isAsc);
             objects = qb.query();
-        } catch (SQLException e) {}
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return objects;
     }
 
@@ -220,6 +254,7 @@ public class DataManager<T, ID> {
         try {
             objects = dao.queryForEq(columnName, value);
         } catch (SQLException e) {
+            e.printStackTrace();
         }
         if (objects.size() == 0) {
             return null;
@@ -241,7 +276,9 @@ public class DataManager<T, ID> {
             }
             qb.setWhere(where);
             objects = qb.query();
-        } catch (SQLException e) {}
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         if (objects.size() == 0) {
             return null;
         } else {
@@ -255,21 +292,24 @@ public class DataManager<T, ID> {
      * @return A list of objects from the database or null if the operation failed
      */
     public List<T> getAll() {
-        List<T> objects = null;
+        List<T> objects = new ArrayList<>();
         try {
             objects = dao.queryForAll();
         } catch (SQLException e) {
+            e.printStackTrace();
         }
         return objects;
     }
 
     public List<T> getAll(String sortColumn, boolean isAsc) {
-        List<T> objects = null;
+        List<T> objects = new ArrayList<>();
         try {
             QueryBuilder<T, ID> qb = dao.queryBuilder();
             qb.orderBy(sortColumn, isAsc);
             objects = qb.query();
-        } catch (SQLException e) {}
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return objects;
     }
 
@@ -277,6 +317,7 @@ public class DataManager<T, ID> {
         try {
             dao.update(object);
         } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

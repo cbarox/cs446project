@@ -23,6 +23,7 @@ import ca.uwaterloo.mapapp.server.logic.net.RankingRoute;
 import ca.uwaterloo.mapapp.shared.data.DataManager;
 import ca.uwaterloo.mapapp.shared.objects.building.Building;
 import ca.uwaterloo.mapapp.shared.objects.event.Event;
+import ca.uwaterloo.mapapp.shared.objects.event.EventImage;
 import ca.uwaterloo.mapapp.shared.objects.event.EventNote;
 import ca.uwaterloo.mapapp.shared.objects.event.EventRanking;
 import ca.uwaterloo.mapapp.shared.objects.event.EventTimes;
@@ -62,13 +63,13 @@ public class Main {
             MagicLogger.log("Creating database tables");
             TableUtils.createTableIfNotExists(connectionSource, EventNote.class);
             TableUtils.createTableIfNotExists(connectionSource, EventRanking.class);
-            //TableUtils.createTableIfNotExists(connectionSource, EventImage.class);
+            TableUtils.createTableIfNotExists(connectionSource, EventImage.class);
+            TableUtils.createTableIfNotExists(connectionSource, EventTimes.class);
             TableUtils.createTableIfNotExists(connectionSource, Building.class);
             TableUtils.createTableIfNotExists(connectionSource, Event.class);
             buildingDataUpdater = new BuildingDataUpdater();
             eventDataUpdater = new EventDataUpdater();
         } catch (SQLException e) {
-            System.err.println("Unable to create connection to the database");
             e.printStackTrace();
             return;
         }

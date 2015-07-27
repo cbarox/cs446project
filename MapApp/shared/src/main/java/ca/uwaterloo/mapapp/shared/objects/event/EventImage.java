@@ -1,5 +1,6 @@
 package ca.uwaterloo.mapapp.shared.objects.event;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -21,7 +22,7 @@ public class EventImage implements Serializable {
     @DatabaseField(columnName = COLUMN_ID, generatedId = true)
     private Long id;
 
-    @DatabaseField(columnName = COLUMN_BASE64)
+    @DatabaseField(columnName = COLUMN_BASE64, dataType = DataType.LONG_STRING)
     private String base64;
 
     @DatabaseField(columnName = COLUMN_EVENT_ID)
@@ -55,7 +56,6 @@ public class EventImage implements Serializable {
     public String toString() {
         return "EventImage{" +
                 "id=" + id +
-                ", base64='" + base64.length() + " byte string\'" +
                 ", eventId=" + eventId +
                 '}';
     }
