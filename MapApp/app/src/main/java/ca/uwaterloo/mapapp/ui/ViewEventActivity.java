@@ -45,6 +45,8 @@ public class ViewEventActivity extends ActionBarActivity {
     protected ListView mNoteList;
     @InjectView(R.id.event_more_notes)
     protected Button moreNotes;
+    @InjectView(R.id.galleryButton)
+    protected Button galleryButton;
 
     private Event mEvent;
 
@@ -119,6 +121,15 @@ public class ViewEventActivity extends ActionBarActivity {
         } else {
             link.setVisibility(View.INVISIBLE);
         }
+
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ViewEventActivity.this, EventGalleryActivity.class);
+                intent.putExtra(EventGalleryActivity.ARG_FILTER_VALUE_INTEGER, mEvent.getId());
+                startActivity(intent);
+            }
+        });
 
         loadEventNotes();
         loadEventTimes();
