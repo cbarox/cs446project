@@ -25,13 +25,13 @@ public interface IServerRestService {
     @GET("/events")
     List<Event> getEvents();
 
-    @GET("/image")
+    @GET("/image/{id}")
     List<EventImage> getEventImages(@Path("id") Integer eventId);
 
     @POST("/image")
     Response setEventImage(@Body EventImage image);
 
-    @DELETE("/image")
+    @DELETE("/image/{id}")
     Response deleteEventImage(@Path("id") Long rankingId);
 
     @GET("/times/{id}")
