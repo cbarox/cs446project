@@ -50,6 +50,10 @@ public class ImageRoute implements IGetSetDeleteRoute {
             return "failure";
         }
         MagicLogger.log("Successfully updated %s", image.toString());
+        final String base64 = image.getBase64();
+        if (base64 != null) {
+            MagicLogger.log("Base64 length: %d", base64.length());
+        }
         response.status(200);
         return "success";
     }

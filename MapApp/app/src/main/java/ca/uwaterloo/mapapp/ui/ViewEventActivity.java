@@ -1,8 +1,12 @@
 package ca.uwaterloo.mapapp.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,11 +17,14 @@ import android.text.Html;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.melnykov.fab.FloatingActionButton;
 
 import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
@@ -56,12 +63,12 @@ public class ViewEventActivity extends ActionBarActivity {
     protected Button link;
     @InjectView(R.id.event_notes_list)
     protected ListView mNoteList;
-    @InjectView(R.id.event_more_notes)
-    protected Button moreNotes;
     @InjectView(R.id.galleryButton)
     protected Button galleryButton;
     @InjectView(R.id.add_picture)
     protected Button addPictureButton;
+    /*@InjectView(R.id.event_more_notes)
+    protected Button moreNotes;*/
     @InjectView(R.id.event_sum_total)
     protected TextView sumTotalTextView;
     @InjectView(R.id.event_sum_avg_txt)
@@ -72,6 +79,9 @@ public class ViewEventActivity extends ActionBarActivity {
     protected RatingBar sumAvgRatingBar;
     @InjectView(R.id.event_rating)
     protected RatingBar eventRatingBar;
+    @InjectView(R.id.fab_new_note)
+    protected FloatingActionButton fab;
+
     private Event mEvent;
     private List<EventNote> mEventNotes;
     private EventNoteAdapter mAdapter;
@@ -121,8 +131,25 @@ public class ViewEventActivity extends ActionBarActivity {
         Integer eventId = b.getInt(ARG_EVENT_ID);
         setEvent(eventId);
 
-
         mNoteList.setEmptyView(findViewById(R.id.empty_list_state));
+        mNoteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(ViewEventActivity.this, ViewEventNoteActivity.class);
+                intent.putExtra(ViewEventNoteActivity.ARG_EVENT_ID, mEvent.getId());
+                intent.putExtra(ViewEventNoteActivity.ARG_EVENT_NOTE_ID, mEventNotes.get(position).getId());
+                startActivity(intent);
+            }
+        });
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ViewEventActivity.this, AddEventNoteActivity.class);
+                intent.putExtra(AddEventNoteActivity.ARG_EVENT_ID, mEvent.getId());
+                startActivityForResult(intent, AddEventNoteActivity.REQUEST_INSERT);
+            }
+        });
     }
 
     @Override
@@ -216,6 +243,8 @@ public class ViewEventActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_CANCELED) return;
+
         if (requestCode == REQUEST_IMAGE_CAPTURE) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
@@ -233,6 +262,9 @@ public class ViewEventActivity extends ActionBarActivity {
                     Toast.makeText(getApplicationContext(), "Image posted", Toast.LENGTH_SHORT);
                 }
             }, eImage);
+
+        } else if (requestCode == AddEventNoteActivity.REQUEST_INSERT) {
+            loadEventNotes();
         }
     }
 
@@ -247,10 +279,11 @@ public class ViewEventActivity extends ActionBarActivity {
                         mEventNotes = (List<EventNote>) param;
                         mAdapter = new EventNoteAdapter(context, mEventNotes);
                         mNoteList.setAdapter(mAdapter);
+
                         ListViewUtil.setListViewHeightBasedOnChildren(mNoteList);
 
-                        int visibility = mEventNotes.isEmpty() ? View.INVISIBLE : View.VISIBLE;
-                        moreNotes.setVisibility(visibility);
+                        /*int visibility = mEventNotes.isEmpty() ? View.INVISIBLE : View.VISIBLE;
+                        moreNotes.setVisibility(visibility);*/
                     }
                 });
 
@@ -326,6 +359,7 @@ public class ViewEventActivity extends ActionBarActivity {
                             sumAvgRatingBar.setRating(avg);
                         } else {
                             sumAvgTextView.setText("" + 0);
+                            sumAvgRatingBar.setRating(0);
                         }
                     }
                 });
@@ -340,7 +374,33 @@ public class ViewEventActivity extends ActionBarActivity {
             @Override
             public void call(Object param) {
                 mEventImages = (List<EventImage>) param;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        galleryButton.setText(String.format("%d PHOTOS", mEventImages.size()));
+                        if (mEventImages.size() > 0) {
+                            EventImage image = mEventImages.get(0);
+                            byte[] decodedString = Base64.decode(image.getBase64(), Base64.DEFAULT);
+                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                            galleryButton.setBackground(new BitmapDrawable(Resources.getSystem(), decodedByte));
+                        }
+                    }
+                });
+
                 // process/display event rankings here
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mEventImages.isEmpty()) {
+                            galleryButton.setVisibility(View.GONE);
+
+                        } else {
+                            galleryButton.setVisibility(View.VISIBLE);
+                            galleryButton.setText("" + mEventImages.size() + " PHOTOS");
+                        }
+                    }
+                });
             }
         };
         ServerRestApi.requestEventImages(callback, mEvent.getId());
