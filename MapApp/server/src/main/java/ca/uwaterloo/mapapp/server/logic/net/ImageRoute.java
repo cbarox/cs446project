@@ -43,7 +43,7 @@ public class ImageRoute implements IGetSetDeleteRoute {
         EventImage image = Main.GSON.fromJson(request.body(), EventImage.class);
         MagicLogger.log(image.toString());
 
-        DataManager<EventImage, String> imagesDataManager = Main.getDataManager(EventImage.class);
+        DataManager imagesDataManager = Main.getDataManager(EventImage.class);
         if (imagesDataManager.insertOrUpdate(image) == null) {
             response.status(500);
             MagicLogger.log("Failed to update %s", image.toString());
@@ -59,7 +59,7 @@ public class ImageRoute implements IGetSetDeleteRoute {
         EventImage image = new EventImage();
         image.setId(Long.parseLong(request.params(":id")));
 
-        DataManager<EventImage, String> imagesDataManager = Main.getDataManager(EventImage.class);
+        DataManager imagesDataManager = Main.getDataManager(EventImage.class);
         if (!imagesDataManager.delete(image)) {
             response.status(500);
             MagicLogger.log("Failed to delete %s", image.toString());
