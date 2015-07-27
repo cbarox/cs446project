@@ -4,6 +4,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import ca.uwaterloo.mapapp.server.MagicLogger;
 import ca.uwaterloo.mapapp.shared.ICallback;
 
 /**
@@ -30,7 +31,7 @@ public class JSoupTask implements Runnable {
     public void run() {
         try {
             if (url == null) {
-                System.out.printf("Jsoup run(): url is Null %n" );
+                MagicLogger.log("url is Null");
                 callback.call(null);
             }
             Document doc = Jsoup.connect(url).get();
@@ -38,11 +39,11 @@ public class JSoupTask implements Runnable {
             if (element != null) {
                 callback.call(element.toString());
             } else {
-                System.out.printf("Jsoup run(): element is Null %n" );
+                MagicLogger.log("element is null");
                 callback.call(null);
             }
         } catch (Exception e) {
-            System.err.printf("Jsoup run(): exception %s%n", e.toString() );
+            MagicLogger.log("Error getting location text");
             e.printStackTrace();
             callback.call(null);
         }
