@@ -91,7 +91,7 @@ public class ViewEventActivity extends ActionBarActivity {
         });
 
         Bundle b = getIntent().getExtras();
-        Integer eventId = (Integer) b.get(ARG_EVENT_ID);
+        Integer eventId = b.getInt(ARG_EVENT_ID);
         setEvent(eventId);
 
 

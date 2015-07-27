@@ -215,6 +215,26 @@ public class DataManager<T, ID> {
         return objects;
     }
 
+    public List<T> find(String[] columnNames, Object[] values, String sortColumn, boolean isAsc) {
+        List<T> objects = new ArrayList<>();
+        try {
+            QueryBuilder<T, ID> qb = dao.queryBuilder();
+            Where<T, ID> where = qb.where();
+            for (int i = 0; i < columnNames.length; i++) {
+                where.eq(columnNames[i], values[i]);
+                if (i != columnNames.length-1) {
+                    where.and();
+                }
+            }
+            qb.setWhere(where);
+            if (sortColumn != null && !sortColumn.isEmpty()) {
+                qb.orderBy(sortColumn, isAsc);
+            }
+            objects = qb.query();
+        } catch (SQLException e) {}
+        return objects;
+    }
+
     public T findFirst(String columnName, Object value) throws NullPointerException {
         List<T> objects = new ArrayList<>();
         try {
@@ -229,19 +249,7 @@ public class DataManager<T, ID> {
     }
 
     public T findFirst(String[] columnNames, Object[] values) throws NullPointerException {
-        List<T> objects = new ArrayList<>();
-        try {
-            QueryBuilder<T, ID> qb = dao.queryBuilder();
-            Where<T, ID> where = qb.where();
-            for (int i = 0; i < columnNames.length; i++) {
-                where.eq(columnNames[i], values[i]);
-                if (i != columnNames.length-1) {
-                    where.and();
-                }
-            }
-            qb.setWhere(where);
-            objects = qb.query();
-        } catch (SQLException e) {}
+        List<T> objects = find(columnNames, values, null, true);
         if (objects.size() == 0) {
             return null;
         } else {

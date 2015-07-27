@@ -53,7 +53,7 @@ public class EventAdapter extends BaseAdapter {
         TextView titleView = (TextView)view.findViewById(R.id.item_title);
         TextView locView = (TextView)view.findViewById(R.id.item_location);
         titleView.setText(Html.fromHtml(event.getTitle()));
-        if (event.getLocation() == null || !event.getLocation().isEmpty())
+        if (event.getLocation() == null || event.getLocation().isEmpty())
             locView.setText("UW");
         else
             locView.setText(event.getLocation());

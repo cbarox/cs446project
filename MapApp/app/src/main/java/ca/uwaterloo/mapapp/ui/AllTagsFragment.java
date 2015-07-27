@@ -55,7 +55,7 @@ public class AllTagsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), FilteredNoteListActivity.class);
                 intent.putExtra(FilteredNoteListActivity.ARG_FILTER_TYPE, FilteredNoteListActivity.FILTER_TAGS);
-                intent.putExtra(FilteredNoteListActivity.ARG_FILTER_VALUE_ID, id);
+                intent.putExtra(FilteredNoteListActivity.ARG_FILTER_TAG_ID, id);
                 startActivity(intent);
                 //getActivity().overridePendingTransition(R.anim.slide_up, R.anim.nothing);
             }

@@ -1,9 +1,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="ca.uwaterloo.mapapp.ui.FloorPlanActivity">
+    android:layout_height="match_parent">
 
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/floor_map"
@@ -20,12 +18,22 @@
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
-        android:orientation="vertical"
         android:background="@color/floating_options_bck_dark"
-        android:divider="#80000000"/>
+        android:divider="#80000000" />
 
     <include
         android:id="@+id/tool_bar"
         layout="@layout/tool_bar_dark_grey"/>
+
+    <ProgressBar
+        android:id="@+id/prog_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tool_bar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="-6dp"
+        android:indeterminate="true"
+        style="?android:attr/progressBarStyleHorizontal"/>
 
 </RelativeLayout>
