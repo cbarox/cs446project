@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -44,7 +45,12 @@ public class EventNoteAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         if (view == null)
-            view = inflater.inflate(R.layout.list_item_event, null);
+            view = inflater.inflate(R.layout.list_item_note, null);
+
+        TextView titleView = (TextView)view.findViewById(R.id.item_title);
+        TextView descView = (TextView)view.findViewById(R.id.item_desc);
+        titleView.setText(eventNotes.get(position).getTitle());
+        descView.setText(eventNotes.get(position).getDescription());
 
         return view;
     }
